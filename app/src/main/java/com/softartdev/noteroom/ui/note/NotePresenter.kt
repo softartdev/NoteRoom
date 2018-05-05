@@ -5,7 +5,9 @@ import com.softartdev.noteroom.data.DataManager
 import com.softartdev.noteroom.di.ConfigPersistent
 import com.softartdev.noteroom.model.Note
 import com.softartdev.noteroom.ui.base.BasePresenter
+import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.functions.BiFunction
 import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 import javax.inject.Inject
@@ -64,15 +66,23 @@ constructor(private val dataManager: DataManager) : BasePresenter<NoteView>() {
     }
 
     fun checkSaveChange(title: String, text: String) {
-        val changed = dataManager.checkChanges(mNote!!.id, title, text)
-        if (changed) {
-            mvpView?.onCheckSaveChange()
-            return
-        }
-        val empty = dataManager.emptyNote(mNote!!.id)
-        if (empty) {
-            deleteNote()
-        }
-        mvpView?.onNavBack()
+        addDisposable(Single.zip(
+                dataManager.checkChanges(mNote!!.id, title, text),
+                dataManager.emptyNote(mNote!!.id),
+                BiFunction<Boolean, Boolean, Pair<Boolean, Boolean>> { changed, empty -> Pair(changed, empty) })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({ pair ->
+                    val changed = pair.first
+                    val empty = pair.second
+                    if (changed) {
+                        mvpView?.onCheckSaveChange()
+                    } else {
+                        if (empty) {
+                            deleteNote()
+                        }
+                        mvpView?.onNavBack()
+                    }
+                }, { it.printStackTrace() }))
     }
 }
