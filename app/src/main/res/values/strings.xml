@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name" translatable="false">Note Crypt</string>
+    <string name="app_name" translatable="false">Note Room</string>
 
     <string name="action_settings">Settings</string>
     <string name="action_delete_note">Delete note</string>

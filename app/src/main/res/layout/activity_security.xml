@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:background="@color/colorAccent"
-    tools:context="com.softartdev.notecrypt.ui.settings.security.SecurityActivity">
+    tools:context="com.softartdev.noteroom.ui.settings.security.SecurityActivity">
 
     <Switch
         android:id="@+id/enable_encryption_switch"
