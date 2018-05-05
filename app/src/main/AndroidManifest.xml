@@ -67,20 +67,6 @@
             android:label="@string/sign_in">
         </activity>
 
-        <activity android:name=".ui.storage.StorageActivity"
-                  android:label="@string/pref_header_storage"
-                  android:parentActivityName=".ui.settings.SettingsActivity"
-                  tools:targetApi="jelly_bean">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.softartdev.noteroom.ui.settings.SettingsActivity"/>
-
-            <intent-filter>
-                <action android:name="NoteCryptStorageActivity"/>
-
-                <category android:name="android.intent.category.DEFAULT"/>
-            </intent-filter>
-        </activity>
     </application>
 
 </manifest>

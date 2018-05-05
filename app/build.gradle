@@ -2,7 +2,6 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
-apply plugin: 'realm-android'
 
 android {
     compileSdkVersion 27
@@ -65,18 +64,11 @@ dependencies {
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.2'
 
     implementation "com.jakewharton.timber:timber:4.7.0"
-    implementation "com.facebook.stetho:stetho-okhttp3:1.5.0"
     implementation "com.squareup.leakcanary:leakcanary-android:1.5.4"
 
     implementation "com.google.dagger:dagger:$dagger_version"
     kapt "com.google.dagger:dagger-compiler:$dagger_version"
     compileOnly 'org.glassfish:javax.annotation:10.0-b28' //Required by Dagger2
-
-    debugImplementation ('com.github.jonasrottmann.realm-browser:realm-browser:0.0.13') {
-        exclude group: 'com.android.support'
-    }
-//    testCompile 'com.github.jonasrottmann.realm-browser:realm-browser-no-op:0.0.13'
-    releaseImplementation 'com.github.jonasrottmann.realm-browser:realm-browser-no-op:0.0.13'
 
     implementation 'io.github.tonnyl:spark:0.1.0-alpha'
 

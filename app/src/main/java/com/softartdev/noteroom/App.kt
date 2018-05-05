@@ -2,7 +2,6 @@ package com.softartdev.noteroom
 
 import android.app.Application
 import android.content.Context
-import com.facebook.stetho.Stetho
 import com.softartdev.noteroom.di.component.ApplicationComponent
 import com.softartdev.noteroom.di.component.DaggerApplicationComponent
 import com.softartdev.noteroom.di.module.ApplicationModule
@@ -11,14 +10,13 @@ import timber.log.Timber
 
 class App : Application() {
 
-    internal var mApplicationComponent: ApplicationComponent? = null
+    private var mApplicationComponent: ApplicationComponent? = null
 
     override fun onCreate() {
         super.onCreate()
 
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
-            Stetho.initializeWithDefaults(this)
             LeakCanary.install(this)
         }
     }
