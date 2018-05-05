@@ -9,18 +9,12 @@ import javax.inject.Inject
 class SignInPresenter @Inject
 constructor(private val dataManager: DataManager) : BasePresenter<SignInView>() {
 
-    override fun attachView(mvpView: SignInView) {
-        super.attachView(mvpView)
-    }
-
     fun signIn(pass: String) {
-        mvpView!!.hideError()
-        if (pass.isEmpty()) {
-            mvpView!!.showEmptyPassError()
-        } else if (checkPass(pass)) {
-            mvpView!!.navMain()
-        } else {
-            mvpView!!.showIncorrectPassError()
+        mvpView?.hideError()
+        when {
+            pass.isEmpty() -> mvpView?.showEmptyPassError()
+            checkPass(pass) -> mvpView?.navMain()
+            else -> mvpView?.showIncorrectPassError()
         }
     }
 

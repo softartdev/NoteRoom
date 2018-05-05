@@ -5,6 +5,8 @@ import com.softartdev.noteroom.data.DataManager
 import com.softartdev.noteroom.di.ConfigPersistent
 import com.softartdev.noteroom.model.Note
 import com.softartdev.noteroom.ui.base.BasePresenter
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -15,6 +17,8 @@ constructor(private val dataManager: DataManager) : BasePresenter<NoteView>() {
 
     fun createNote() {
         addDisposable(dataManager.createNote()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({note ->
                     mNote = note
                 }, {it.printStackTrace() }))
@@ -22,6 +26,8 @@ constructor(private val dataManager: DataManager) : BasePresenter<NoteView>() {
 
     fun loadNote(noteId: Long) {
         addDisposable(dataManager.loadNote(noteId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({note ->
                     mNote = note
                     mvpView?.onLoadNote(note.title, note.text)
@@ -37,6 +43,8 @@ constructor(private val dataManager: DataManager) : BasePresenter<NoteView>() {
             mvpView?.onEmptyNote()
         } else {
             addDisposable(dataManager.saveNote(mNote!!.id, title, text)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(
                             { mvpView?.onSaveNote(title) },
                             { it.printStackTrace() }))
@@ -45,6 +53,8 @@ constructor(private val dataManager: DataManager) : BasePresenter<NoteView>() {
 
     fun deleteNote() {
         addDisposable(dataManager.deleteNote(mNote!!.id)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         { Timber.d("Note deleted") }
                         , { it.printStackTrace() }))

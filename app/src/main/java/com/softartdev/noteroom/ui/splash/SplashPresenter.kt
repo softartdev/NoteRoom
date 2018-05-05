@@ -12,9 +12,9 @@ constructor(private val dataManager: DataManager) : BasePresenter<SplashView>() 
     fun checkEncryption() {
         checkViewAttached()
         if (dataManager.isEncryption()) {
-            mvpView!!.navSignIn()
+            mvpView?.navSignIn()
         } else {
-            mvpView!!.navMain()
+            mvpView?.navMain()
         }
     }
 }
