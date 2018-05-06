@@ -1,7 +1,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:app="http://schemas.android.com/apk/res-auto"
       xmlns:tools="http://schemas.android.com/tools"
-      tools:context="com.softartdev.notecrypt.ui.main.MainActivity">
+      tools:context="com.softartdev.noteroom.ui.main.MainActivity">
     <item
         android:id="@+id/action_delete_note"
         android:title="@string/action_delete_note"

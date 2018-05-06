@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:background="@color/colorAccent"
-    tools:context="com.softartdev.notecrypt.ui.signin.SignInActivity">
+    tools:context="com.softartdev.noteroom.ui.signin.SignInActivity">
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"

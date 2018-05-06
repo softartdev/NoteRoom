@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:tools="http://schemas.android.com/tools"
-          package="com.softartdev.notecrypt">
+          package="com.softartdev.noteroom">
 
     <uses-sdk tools:overrideLibrary="io.github.tonnyl.spark"/>
 
@@ -35,7 +35,7 @@
             tools:targetApi="jelly_bean">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.softartdev.notecrypt.ui.main.MainActivity"/>
+                android:value="com.softartdev.noteroom.ui.main.MainActivity"/>
         </activity>
         <activity
             android:name=".ui.settings.SettingsActivity"
@@ -44,7 +44,7 @@
             tools:targetApi="jelly_bean">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.softartdev.notecrypt.ui.main.MainActivity"/>
+                android:value="com.softartdev.noteroom.ui.main.MainActivity"/>
         </activity>
         <activity
             android:name=".ui.settings.security.SecurityActivity"
@@ -54,7 +54,7 @@
             tools:targetApi="jelly_bean">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.softartdev.notecrypt.ui.settings.SettingsActivity"/>
+                android:value="com.softartdev.noteroom.ui.settings.SettingsActivity"/>
 
             <intent-filter>
                 <action android:name="NoteCryptSecurityActivity"/>
@@ -67,20 +67,6 @@
             android:label="@string/sign_in">
         </activity>
 
-        <activity android:name=".ui.storage.StorageActivity"
-                  android:label="@string/pref_header_storage"
-                  android:parentActivityName=".ui.settings.SettingsActivity"
-                  tools:targetApi="jelly_bean">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.softartdev.notecrypt.ui.settings.SettingsActivity"/>
-
-            <intent-filter>
-                <action android:name="NoteCryptStorageActivity"/>
-
-                <category android:name="android.intent.category.DEFAULT"/>
-            </intent-filter>
-        </activity>
     </application>
 
 </manifest>
