@@ -15,7 +15,7 @@ internal constructor(private val dbStore: DbStore) {
         dbStore.notes
     }
 
-    fun createNote(): Single<Note> = Single.fromCallable {
+    fun createNote(): Single<Long> = Single.fromCallable {
         dbStore.createNote()
     }
 

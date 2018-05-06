@@ -26,7 +26,7 @@ interface NoteDao {
      *
      * @param note the note to be inserted.
      */
-    @Insert(onConflict = OnConflictStrategy.REPLACE) fun insertNote(note: Note)
+    @Insert(onConflict = OnConflictStrategy.REPLACE) fun insertNote(note: Note): Long //TODO return Single<Long>
 
     /**
      * Update a note.

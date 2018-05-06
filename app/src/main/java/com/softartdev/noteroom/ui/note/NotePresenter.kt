@@ -21,16 +21,18 @@ constructor(private val dataManager: DataManager) : BasePresenter<NoteView>() {
         addDisposable(dataManager.createNote()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({note ->
-                    mNote = note
-                }, {it.printStackTrace() }))
+                .subscribe({ noteId ->
+                    Timber.d("Created: $noteId")
+                    loadNote(noteId)
+                }, { it.printStackTrace() }))
     }
 
     fun loadNote(noteId: Long) {
         addDisposable(dataManager.loadNote(noteId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({note ->
+                .subscribe({ note ->
+                    Timber.d("Loaded: $note")
                     mNote = note
                     mvpView?.onLoadNote(note.title, note.text)
                 }, { it.printStackTrace() }))
@@ -47,9 +49,12 @@ constructor(private val dataManager: DataManager) : BasePresenter<NoteView>() {
             addDisposable(dataManager.saveNote(mNote!!.id, title, text)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(
-                            { mvpView?.onSaveNote(title) },
-                            { it.printStackTrace() }))
+                    .subscribe({
+                        mvpView?.onSaveNote(title)
+                        Timber.d("Saved: $mNote")
+                    }, {
+                        it.printStackTrace()
+                    }))
         }
     }
 

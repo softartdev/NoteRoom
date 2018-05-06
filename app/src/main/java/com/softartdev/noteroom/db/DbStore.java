@@ -9,7 +9,7 @@ import java.util.List;
 public interface DbStore {
     List<Note> getNotes();
 
-    Note createNote();
+    Long createNote();
 
     void saveNote(long id, String title, String text);
 

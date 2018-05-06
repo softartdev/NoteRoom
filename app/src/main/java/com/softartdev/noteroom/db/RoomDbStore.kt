@@ -10,11 +10,10 @@ class RoomDbStore(context: Context) : RoomDbRepository(context) {
         return noteDao.getNotes()
     }
 
-    override fun createNote(): Note {
+    override fun createNote(): Long {
         val date = Date()
         val note = Note(0, "", "", date, date)
-        noteDao.insertNote(note)
-        return note
+        return noteDao.insertNote(note)
     }
 
     override fun saveNote(id: Long, title: String, text: String) {
