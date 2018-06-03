@@ -20,26 +20,4 @@
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
 
-    <!-- Dark application theme. -->
-    <style name="DarkTheme" parent="Theme.AppCompat.Light.DarkActionBar"/>
-
-    <style name="DarkTheme.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-    </style>
-
-    <style name="DarkTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
-    <style name="DarkTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
-
-    <!-- Light application theme. -->
-    <style name="LightTheme" parent="Theme.AppCompat.Light"/>
-
-    <style name="LightTheme.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-    </style>
-
-    <style name="LightTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
-    <style name="LightTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
-
 </resources>
