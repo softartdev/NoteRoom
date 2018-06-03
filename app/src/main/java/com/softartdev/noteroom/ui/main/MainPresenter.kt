@@ -13,11 +13,24 @@ constructor(private val dataManager: DataManager) : BasePresenter<MainView>() {
 
     fun updateNotes() {
         checkViewAttached()
+        mvpView?.showProgress(true)
         addDisposable(dataManager.notes()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ notes ->
-                    mvpView?.onUpdateNotes(notes)
-                }, { it.printStackTrace() }))
+                    mvpView?.apply {
+                        showProgress(false)
+                        if (notes.isNotEmpty()) {
+                            onUpdateNotes(notes)
+                        } else {
+                            showEmpty()
+                        }
+                    }
+                }, { throwable ->
+                    mvpView?.apply {
+                        showProgress(false)
+                        showError(throwable)
+                    }
+                }))
     }
 }

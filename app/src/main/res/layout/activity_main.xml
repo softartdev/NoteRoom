@@ -8,20 +8,20 @@
     tools:background="@color/colorPrimaryDark"
     tools:context="com.softartdev.noteroom.ui.main.MainActivity">
 
-    <TextView
-        android:id="@+id/add_note_text_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="@string/press_add_note"
-        android:textAppearance="@style/TextAppearance.AppCompat"/>
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/notes_recycler_view"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/main_swipe_refresh"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scrollbars="vertical"
-        tools:listitem="@layout/item_note" />
+        android:layout_height="match_parent">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/notes_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="vertical"
+            tools:listitem="@layout/item_note"
+            tools:itemCount="3" />
+
+    </android.support.v4.widget.SwipeRefreshLayout>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/add_note_fab"
@@ -30,5 +30,23 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
         app:srcCompat="@drawable/ic_add_black_24dp" />
+
+    <com.softartdev.noteroom.ui.common.ProgressView
+        android:id="@+id/main_progress_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+
+    <com.softartdev.noteroom.ui.common.EmptyView
+        android:id="@+id/main_empty_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+
+    <com.softartdev.noteroom.ui.common.ErrorView
+        android:id="@+id/main_error_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
 
 </FrameLayout>

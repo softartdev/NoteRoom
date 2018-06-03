@@ -35,4 +35,12 @@
     <string name="empty_password">Password must not be empty</string>
     <string name="passwords_do_not_match">Passwords do not match</string>
 
+    <string name="label_empty_result">The list is empty</string>
+    <string name="loading">Loading</string>
+    <string name="please_wait">Please wait…</string>
+    <string name="error_title">Oops</string>
+    <string name="error_message">There was a problem loading the note, please try again!</string>
+    <string name="cancel">Cancel</string>
+    <string name="retry">Retry</string>
+
 </resources>
