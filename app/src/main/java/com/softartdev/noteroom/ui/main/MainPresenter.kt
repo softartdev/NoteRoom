@@ -20,9 +20,4 @@ constructor(private val dataManager: DataManager) : BasePresenter<MainView>() {
                     mvpView?.onUpdateNotes(notes)
                 }, { it.printStackTrace() }))
     }
-
-    fun addNote() {
-        checkViewAttached()
-        mvpView?.onAddNote()
-    }
 }

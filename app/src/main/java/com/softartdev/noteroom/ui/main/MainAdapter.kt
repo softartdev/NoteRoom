@@ -15,7 +15,7 @@ import javax.inject.Inject
 @ConfigPersistent
 class MainAdapter @Inject
 constructor() : RecyclerView.Adapter<MainAdapter.NotesViewHolder>() {
-    var mNotes: List<Note> = emptyList()
+    var notes: List<Note> = emptyList()
     var clickListener: ClickListener? = null
     val simpleDateFormat: SimpleDateFormat = SimpleDateFormat("HH:mm dd-MM-yyyy", Locale.getDefault())
 
@@ -25,15 +25,11 @@ constructor() : RecyclerView.Adapter<MainAdapter.NotesViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: NotesViewHolder, position: Int) {
-        val note = mNotes[position]
+        val note = notes[position]
         holder.bind(note)
     }
 
-    override fun getItemCount(): Int = mNotes.size
-
-    interface ClickListener {
-        fun onNoteClick(noteId: Long)
-    }
+    override fun getItemCount(): Int = notes.size
 
     inner class NotesViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(note: Note) {
@@ -41,5 +37,9 @@ constructor() : RecyclerView.Adapter<MainAdapter.NotesViewHolder>() {
             itemView.item_note_date_text_view.text = simpleDateFormat.format(note.dateModified)
             itemView.setOnClickListener { clickListener?.onNoteClick(note.id) }
         }
+    }
+
+    interface ClickListener {
+        fun onNoteClick(noteId: Long)
     }
 }

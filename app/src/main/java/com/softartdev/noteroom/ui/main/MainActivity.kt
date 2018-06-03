@@ -9,65 +9,62 @@ import com.softartdev.noteroom.ui.base.BaseActivity
 import com.softartdev.noteroom.ui.note.NoteActivity
 import io.github.tonnyl.spark.Spark
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.content_main.*
 import javax.inject.Inject
 
 class MainActivity : BaseActivity(), MainView, MainAdapter.ClickListener {
-    @Inject lateinit var mPresenter: MainPresenter
-    @Inject lateinit var mAdapter: MainAdapter
+    @Inject lateinit var mainPresenter: MainPresenter
+    @Inject lateinit var mainAdapter: MainAdapter
 
-    private lateinit var mSpark: Spark
+    private lateinit var mainSpark: Spark
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         activityComponent().inject(this)
-        mPresenter.attachView(this)
+        mainPresenter.attachView(this)
 
-        setSupportActionBar(main_toolbar)
+        add_note_fab.setOnClickListener { startActivity(NoteActivity.getStartIntent(this, 0L)) }
 
-        add_note_fab.setOnClickListener { mPresenter.addNote() }
-
-        mAdapter.clickListener = this
+        mainAdapter.clickListener = this
         notes_recycler_view.apply {
             layoutManager = LinearLayoutManager(context)
-            adapter = mAdapter
-        }
-        if (mAdapter.itemCount == 0) {
-            mPresenter.updateNotes()
+            adapter = mainAdapter
         }
 
-        mSpark = Spark.Builder()
-                .setView(main_coordinator) // View or view group
+        mainSpark = Spark.Builder()
+                .setView(main_frame) // View or view group
                 .setAnimList(Spark.ANIM_BLUE_PURPLE)
                 .build()
+
+        if (mainAdapter.itemCount == 0) {
+            mainPresenter.updateNotes()
+        }
     }
 
     override fun onResume() {
         super.onResume()
-        mSpark.startAnimation()
+        mainSpark.startAnimation()
     }
 
     override fun onPause() {
         super.onPause()
-        mSpark.stopAnimation()
+        mainSpark.stopAnimation()
     }
 
-    override fun onUpdateNotes(notes: List<Note>) {
-        add_note_text_view.visibility = if (notes.isEmpty()) View.VISIBLE else View.GONE
-        mAdapter.mNotes = notes
+    override fun onUpdateNotes(noteList: List<Note>) {
+        add_note_text_view.visibility = if (noteList.isEmpty()) View.VISIBLE else View.GONE
+        mainAdapter.apply {
+            notes = noteList
+            notifyDataSetChanged()
+        }
     }
 
     override fun onNoteClick(noteId: Long) {
         startActivity(NoteActivity.getStartIntent(this, noteId))
     }
 
-    override fun onAddNote() {
-        startActivity(NoteActivity.getStartIntent(this, 0L))
-    }
-
     override fun onDestroy() {
         super.onDestroy()
-        mPresenter.detachView()
+        mainPresenter.detachView()
     }
 }
