@@ -1,4 +1,4 @@
-package com.softartdev.noteroom.ui.settings.security
+package com.softartdev.noteroom.ui.security
 
 import android.text.TextUtils
 import com.softartdev.noteroom.data.DataManager

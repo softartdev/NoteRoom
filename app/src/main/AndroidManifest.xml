@@ -38,30 +38,9 @@
                 android:value="com.softartdev.noteroom.ui.main.MainActivity"/>
         </activity>
         <activity
-            android:name=".ui.settings.SettingsActivity"
-            android:label="@string/title_activity_settings"
-            android:parentActivityName=".ui.main.MainActivity"
-            tools:targetApi="jelly_bean">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.softartdev.noteroom.ui.main.MainActivity"/>
-        </activity>
-        <activity
-            android:name=".ui.settings.security.SecurityActivity"
+            android:name=".ui.security.SecurityActivity"
             android:label="@string/pref_header_security"
-            android:parentActivityName=".ui.settings.SettingsActivity"
-            android:theme="@style/AppTheme"
-            tools:targetApi="jelly_bean">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.softartdev.noteroom.ui.settings.SettingsActivity"/>
-
-            <intent-filter>
-                <action android:name="NoteCryptSecurityActivity"/>
-
-                <category android:name="android.intent.category.DEFAULT"/>
-            </intent-filter>
-        </activity>
+            android:theme="@style/AppTheme" />
         <activity
             android:name=".ui.signin.SignInActivity"
             android:label="@string/sign_in">

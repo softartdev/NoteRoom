@@ -1,4 +1,4 @@
-package com.softartdev.noteroom.ui.settings.security
+package com.softartdev.noteroom.ui.security
 
 import com.softartdev.noteroom.ui.base.MvpView
 

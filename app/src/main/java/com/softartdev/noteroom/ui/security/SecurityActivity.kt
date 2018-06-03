@@ -1,13 +1,10 @@
-package com.softartdev.noteroom.ui.settings.security
+package com.softartdev.noteroom.ui.security
 
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.support.design.widget.TextInputLayout
-import android.support.v4.app.NavUtils
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatDelegate
-import android.view.Menu
-import android.view.MenuItem
 import android.widget.CompoundButton
 import android.widget.EditText
 import com.softartdev.noteroom.R
@@ -36,6 +33,8 @@ class SecurityActivity : BaseActivity(), SecurityView, CompoundButton.OnCheckedC
         setContentView(R.layout.activity_security)
         activityComponent().inject(this)
         mPresenter.attachView(this)
+
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         enable_encryption_switch.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_lock_black_24dp, 0, 0, 0)
         enable_encryption_switch.isChecked = mPresenter.isEncryption
@@ -164,17 +163,8 @@ class SecurityActivity : BaseActivity(), SecurityView, CompoundButton.OnCheckedC
         }
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            android.R.id.home -> {
-                NavUtils.getParentActivityIntent(this)?.let { NavUtils.navigateUpTo(this@SecurityActivity, it) }
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        return true
+    override fun onDestroy() {
+        mPresenter.detachView()
+        super.onDestroy()
     }
 }
