@@ -7,5 +7,6 @@ interface MainView : MvpView {
     fun onUpdateNotes(noteList: List<Note>)
     fun showProgress(show: Boolean)
     fun showEmpty()
+    fun navSignIn()
     fun showError(error: Throwable)
 }

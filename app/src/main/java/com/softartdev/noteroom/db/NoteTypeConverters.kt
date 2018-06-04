@@ -1,8 +1,7 @@
 package com.softartdev.noteroom.db
 
 import android.arch.persistence.room.TypeConverter
-
-import java.util.Date
+import java.util.*
 
 object NoteTypeConverters {
     @TypeConverter

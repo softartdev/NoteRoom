@@ -5,6 +5,7 @@ import com.softartdev.noteroom.di.ConfigPersistent
 import com.softartdev.noteroom.ui.base.BasePresenter
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import net.sqlcipher.database.SQLiteException
 import javax.inject.Inject
 
 @ConfigPersistent
@@ -29,7 +30,11 @@ constructor(private val dataManager: DataManager) : BasePresenter<MainView>() {
                 }, { throwable ->
                     mvpView?.apply {
                         showProgress(false)
-                        showError(throwable)
+                        if (throwable is SQLiteException) {
+                            navSignIn()
+                        } else {
+                            showError(throwable)
+                        }
                     }
                 }))
     }

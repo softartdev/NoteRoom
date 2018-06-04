@@ -2,20 +2,21 @@ package com.softartdev.noteroom.ui.splash
 
 import android.content.Intent
 import android.os.Bundle
+import android.support.v7.app.AlertDialog
 import com.softartdev.noteroom.ui.base.BaseActivity
 import com.softartdev.noteroom.ui.main.MainActivity
 import com.softartdev.noteroom.ui.signin.SignInActivity
 import javax.inject.Inject
 
 class SplashActivity : BaseActivity(), SplashView {
-    @Inject lateinit var mPresenter: SplashPresenter
+    @Inject lateinit var splashPresenter: SplashPresenter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         activityComponent().inject(this)
-        mPresenter.attachView(this)
+        splashPresenter.attachView(this)
 
-        mPresenter.checkEncryption()
+        splashPresenter.checkEncryption()
     }
 
     override fun navSignIn() {
@@ -30,8 +31,17 @@ class SplashActivity : BaseActivity(), SplashView {
         finish()
     }
 
+    override fun showError(message: String?) {
+        with(AlertDialog.Builder(this)) {
+            setTitle(android.R.string.dialog_alert_title)
+            setMessage(message)
+            setNeutralButton(android.R.string.cancel) { dialog, _ -> dialog.cancel() }
+            show()
+        }
+    }
+
     override fun onDestroy() {
-        mPresenter.detachView()
+        splashPresenter.detachView()
         super.onDestroy()
     }
 }

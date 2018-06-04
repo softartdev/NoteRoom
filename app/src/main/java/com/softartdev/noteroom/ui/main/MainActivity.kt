@@ -1,5 +1,6 @@
 package com.softartdev.noteroom.ui.main
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import com.softartdev.noteroom.R
@@ -7,6 +8,7 @@ import com.softartdev.noteroom.model.Note
 import com.softartdev.noteroom.ui.base.BaseActivity
 import com.softartdev.noteroom.ui.common.OnReloadClickListener
 import com.softartdev.noteroom.ui.note.NoteActivity
+import com.softartdev.noteroom.ui.signin.SignInActivity
 import com.softartdev.noteroom.util.gone
 import com.softartdev.noteroom.util.visible
 import io.github.tonnyl.spark.Spark
@@ -96,6 +98,12 @@ class MainActivity : BaseActivity(), MainView, MainAdapter.ClickListener, OnRelo
         main_empty_view.gone()
         main_error_view.gone()
         mainPresenter.updateNotes()
+    }
+
+    override fun navSignIn() {
+        val intent = Intent(this, SignInActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 
     override fun onDestroy() {

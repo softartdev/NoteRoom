@@ -11,7 +11,8 @@ interface NoteDao {
      *
      * @return all notes.
      */
-    @Query("SELECT * FROM note") fun getNotes(): List<Note> //TODO return Single<List<Note>>
+    @Query("SELECT * FROM note")
+    fun getNotes(): List<Note> //TODO return Single<List<Note>>
 
     /**
      * Select a note by id.
@@ -19,14 +20,16 @@ interface NoteDao {
      * @param noteId the note id.
      * @return the note with noteId.
      */
-    @Query("SELECT * FROM note WHERE id = :noteId") fun getNoteById(noteId: Long): Note? //TODO return Single<Note>
+    @Query("SELECT * FROM note WHERE id = :noteId")
+    fun getNoteById(noteId: Long): Note? //TODO return Single<Note>
 
     /**
      * Insert a note in the database. If the note already exists, replace it.
      *
      * @param note the note to be inserted.
      */
-    @Insert(onConflict = OnConflictStrategy.REPLACE) fun insertNote(note: Note): Long //TODO return Single<Long>
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertNote(note: Note): Long //TODO return Single<Long>
 
     /**
      * Update a note.
@@ -42,11 +45,13 @@ interface NoteDao {
      *
      * @return the number of notes deleted. This should always be 1.
      */
-    @Query("DELETE FROM note WHERE id = :noteId") fun deleteNoteById(noteId: Long): Int //TODO return Single<Int>
+    @Query("DELETE FROM note WHERE id = :noteId")
+    fun deleteNoteById(noteId: Long): Int //TODO return Single<Int>
 
     /**
      * Delete all notes.
      */
-    @Query("DELETE FROM note") fun deleteNotes()
+    @Query("DELETE FROM note")
+    fun deleteNotes()
 
 }

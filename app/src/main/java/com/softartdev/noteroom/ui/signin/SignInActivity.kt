@@ -2,48 +2,59 @@ package com.softartdev.noteroom.ui.signin
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
 import com.softartdev.noteroom.R
 import com.softartdev.noteroom.ui.base.BaseActivity
+import com.softartdev.noteroom.ui.common.OnReloadClickListener
 import com.softartdev.noteroom.ui.main.MainActivity
+import com.softartdev.noteroom.util.gone
+import com.softartdev.noteroom.util.hideKeyboard
+import com.softartdev.noteroom.util.visible
 import io.github.tonnyl.spark.Spark
 import kotlinx.android.synthetic.main.activity_sign_in.*
+import kotlinx.android.synthetic.main.view_error.*
+import timber.log.Timber
 import javax.inject.Inject
 
-class SignInActivity : BaseActivity(), SignInView {
-    @Inject lateinit var mPresenter: SignInPresenter
+class SignInActivity : BaseActivity(), SignInView, OnReloadClickListener {
+    @Inject lateinit var signInPresenter: SignInPresenter
 
-    private lateinit var mSpark: Spark
+    private lateinit var signInSpark: Spark
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sign_in)
         activityComponent().inject(this)
-        mPresenter.attachView(this)
+        signInPresenter.attachView(this)
+
+        signInSpark = Spark.Builder()
+                .setView(sign_in_layout) // View or view group
+                .setAnimList(Spark.ANIM_GREEN_PURPLE)
+                .build()
+
+        sign_in_error_view.reloadClickListener = this
 
         password_edit_text.setOnEditorActionListener { _, _, _ ->
             attemptSignIn()
             true
         }
         sign_in_button.setOnClickListener { attemptSignIn() }
-
-        mSpark = Spark.Builder()
-                .setView(sign_in_layout) // View or view group
-                .setAnimList(Spark.ANIM_GREEN_PURPLE)
-                .build()
     }
 
     override fun onResume() {
         super.onResume()
-        mSpark.startAnimation()
+        signInSpark.startAnimation()
     }
 
     override fun onPause() {
         super.onPause()
-        mSpark.stopAnimation()
+        signInSpark.stopAnimation()
     }
 
     private fun attemptSignIn() {
-        mPresenter.signIn(password_edit_text?.text.toString())
+        hideKeyboard()
+        val passphrase: Editable = password_edit_text.editableText
+        signInPresenter.signIn(passphrase)
     }
 
     override fun navMain() {
@@ -64,8 +75,22 @@ class SignInActivity : BaseActivity(), SignInView {
         password_text_input_layout?.error = getString(R.string.incorrect_password)
     }
 
+    override fun showProgress(show: Boolean) {
+        sign_in_progress_view.apply { if (show) visible() else gone() }
+    }
+
+    override fun showError(error: Throwable) {
+        sign_in_error_view.apply {
+            visible()
+            text_error_message.text = error.message
+        }
+        Timber.e(error, "There was an error sign in")
+    }
+
+    override fun onReloadClick() = attemptSignIn()
+
     override fun onDestroy() {
-        mPresenter.detachView()
+        signInPresenter.detachView()
         super.onDestroy()
     }
 }
