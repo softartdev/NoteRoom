@@ -1,6 +1,5 @@
 package com.softartdev.noteroom.ui.note
 
-import android.text.TextUtils
 import com.softartdev.noteroom.data.DataManager
 import com.softartdev.noteroom.di.ConfigPersistent
 import com.softartdev.noteroom.model.Note
@@ -18,7 +17,8 @@ constructor(private val dataManager: DataManager) : BasePresenter<NoteView>() {
     private var mNote: Note? = null
 
     fun createNote() {
-        addDisposable(dataManager.createNote()
+        checkViewAttached()
+        addDisposable(dataManager.createNote("", "")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ noteId ->
@@ -28,6 +28,7 @@ constructor(private val dataManager: DataManager) : BasePresenter<NoteView>() {
     }
 
     fun loadNote(noteId: Long) {
+        checkViewAttached()
         addDisposable(dataManager.loadNote(noteId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -39,14 +40,12 @@ constructor(private val dataManager: DataManager) : BasePresenter<NoteView>() {
     }
 
     fun saveNote(title: String, text: String) {
-        if (mNote == null) {
-            createNote()
-        }
-
-        if (TextUtils.isEmpty(title) && TextUtils.isEmpty(text)) {
+        checkViewAttached()
+        if (title.isEmpty() && text.isEmpty()) {
             mvpView?.onEmptyNote()
         } else {
-            addDisposable(dataManager.saveNote(mNote!!.id, title, text)
+            val saveSingle = mNote?.id?.let { dataManager.saveNote(it, title, text) } ?: dataManager.createNote(title, text)
+            addDisposable(saveSingle
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({
@@ -59,6 +58,7 @@ constructor(private val dataManager: DataManager) : BasePresenter<NoteView>() {
     }
 
     fun deleteNote() {
+        checkViewAttached()
         addDisposable(dataManager.deleteNote(mNote!!.id)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -71,23 +71,26 @@ constructor(private val dataManager: DataManager) : BasePresenter<NoteView>() {
     }
 
     fun checkSaveChange(title: String, text: String) {
-        addDisposable(Single.zip(
-                dataManager.checkChanges(mNote!!.id, title, text),
-                dataManager.emptyNote(mNote!!.id),
-                BiFunction<Boolean, Boolean, Pair<Boolean, Boolean>> { changed, empty -> Pair(changed, empty) })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ pair ->
-                    val changed = pair.first
-                    val empty = pair.second
-                    if (changed) {
-                        mvpView?.onCheckSaveChange()
-                    } else {
-                        if (empty) {
-                            deleteNote()
+        checkViewAttached()
+        mNote?.let {
+            addDisposable(Single.zip(
+                    dataManager.checkChanges(it.id, title, text),
+                    dataManager.emptyNote(it.id),
+                    BiFunction<Boolean, Boolean, Pair<Boolean, Boolean>> { changed, empty -> Pair(changed, empty) })
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe({ pair ->
+                        val changed = pair.first
+                        val empty = pair.second
+                        if (changed) {
+                            mvpView?.onCheckSaveChange()
+                        } else {
+                            if (empty) {
+                                deleteNote()
+                            }
+                            mvpView?.onNavBack()
                         }
-                        mvpView?.onNavBack()
-                    }
-                }, { it.printStackTrace() }))
+                    }, { it.printStackTrace() }))
+        } ?: mvpView?.onCheckSaveChange()
     }
 }

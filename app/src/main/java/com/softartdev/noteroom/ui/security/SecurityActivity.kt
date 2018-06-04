@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.support.design.widget.TextInputLayout
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatDelegate
+import android.text.Editable
 import android.widget.CompoundButton
 import android.widget.EditText
 import com.softartdev.noteroom.R
@@ -24,39 +25,38 @@ class SecurityActivity : BaseActivity(), SecurityView, CompoundButton.OnCheckedC
         }
     }
 
-    @Inject lateinit var mPresenter: SecurityPresenter
+    @Inject lateinit var securityPresenter: SecurityPresenter
 
-    private lateinit var mSpark: Spark
+    private lateinit var securitySpark: Spark
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_security)
         activityComponent().inject(this)
-        mPresenter.attachView(this)
+        securityPresenter.attachView(this)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        enable_encryption_switch.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_lock_black_24dp, 0, 0, 0)
-        enable_encryption_switch.isChecked = mPresenter.isEncryption
-        enable_encryption_switch.setOnCheckedChangeListener(this)
-
-        set_password_button.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_password_black_24dp, 0, 0, 0)
-        set_password_button.setOnClickListener { mPresenter.changePassword() }
-
-        mSpark = Spark.Builder()
-                .setView(security_layout) // View or view group
+        securitySpark = Spark.Builder()
+                .setView(security_layout)
                 .setAnimList(Spark.ANIM_RED_PURPLE)
                 .build()
+
+        enable_encryption_switch.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_lock_black_24dp, 0, 0, 0)
+        securityPresenter.checkEncryption()
+
+        set_password_button.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_password_black_24dp, 0, 0, 0)
+        set_password_button.setOnClickListener { securityPresenter.changePassword() }
     }
 
     override fun onResume() {
         super.onResume()
-        mSpark.startAnimation()
+        securitySpark.startAnimation()
     }
 
     override fun onPause() {
         super.onPause()
-        mSpark.stopAnimation()
+        securitySpark.stopAnimation()
     }
 
     override fun showEncryptEnable(encryption: Boolean) {
@@ -65,9 +65,8 @@ class SecurityActivity : BaseActivity(), SecurityView, CompoundButton.OnCheckedC
         enable_encryption_switch.setOnCheckedChangeListener(this)
     }
 
-    override fun onCheckedChanged(buttonView: CompoundButton?, isChecked: Boolean) {
-        mPresenter.changeEncryption(isChecked)
-    }
+    override fun onCheckedChanged(buttonView: CompoundButton?, isChecked: Boolean) =
+            securityPresenter.changeEncryption(isChecked)
 
     override fun showPasswordDialog() {
         @SuppressLint("InflateParams") val dialogPasswordView = layoutInflater.inflate(R.layout.dialog_password, null)
@@ -81,9 +80,7 @@ class SecurityActivity : BaseActivity(), SecurityView, CompoundButton.OnCheckedC
             val okButton = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)
             okButton.setOnClickListener {
                 val pass = PassMediator(dialogPasswordView.enter_password_text_input_layout, dialogPasswordView.enter_password_edit_text)
-                if (mPresenter.enterPassCorrect(pass)) {
-                    alertDialog.dismiss()
-                }
+                securityPresenter.enterPassCorrect(pass, { alertDialog.dismiss() })
             }
         }
         alertDialog.show()
@@ -102,9 +99,7 @@ class SecurityActivity : BaseActivity(), SecurityView, CompoundButton.OnCheckedC
             okButton.setOnClickListener {
                 val pass = PassMediator(dialogPasswordView.set_password_text_input_layout, dialogPasswordView.set_password_edit_text)
                 val repeatPass = PassMediator(dialogPasswordView.repeat_set_password_text_input_layout, dialogPasswordView.repeat_set_password_edit_text)
-                if (mPresenter.setPassCorrect(pass, repeatPass)) {
-                    alertDialog.dismiss()
-                }
+                securityPresenter.setPassCorrect(pass, repeatPass, { alertDialog.dismiss() })
             }
         }
         alertDialog.show()
@@ -124,9 +119,7 @@ class SecurityActivity : BaseActivity(), SecurityView, CompoundButton.OnCheckedC
                 val oldPass = PassMediator(dialogPasswordView.old_password_text_input_layout, dialogPasswordView.old_password_edit_text)
                 val newPass = PassMediator(dialogPasswordView.new_password_text_input_layout, dialogPasswordView.new_password_edit_text)
                 val repeatNewPass = PassMediator(dialogPasswordView.repeat_new_password_text_input_layout, dialogPasswordView.repeat_new_password_edit_text)
-                if (mPresenter.changePassCorrect(oldPass, newPass, repeatNewPass)) {
-                    alertDialog.dismiss()
-                }
+                securityPresenter.changePassCorrect(oldPass, newPass, repeatNewPass, { alertDialog.dismiss() })
             }
         }
         alertDialog.show()
@@ -134,8 +127,8 @@ class SecurityActivity : BaseActivity(), SecurityView, CompoundButton.OnCheckedC
 
     private inner class PassMediator internal constructor(internal var mTextInputLayout: TextInputLayout, internal var mEditText: EditText) : SecurityView.DialogDirector {
 
-        override val textString: String?
-            get() = mEditText.text.toString()
+        override val textString: Editable
+            get() = mEditText.text
 
         override fun showIncorrectPasswordError() {
             mTextInputLayout.error = getString(R.string.incorrect_password)
@@ -164,7 +157,7 @@ class SecurityActivity : BaseActivity(), SecurityView, CompoundButton.OnCheckedC
     }
 
     override fun onDestroy() {
-        mPresenter.detachView()
+        securityPresenter.detachView()
         super.onDestroy()
     }
 }

@@ -1,5 +1,6 @@
 package com.softartdev.noteroom.ui.security
 
+import android.text.Editable
 import com.softartdev.noteroom.ui.base.MvpView
 
 interface SecurityView : MvpView {
@@ -11,7 +12,7 @@ interface SecurityView : MvpView {
     fun showError(message: String?)
 
     interface DialogDirector {
-        val textString: String?
+        val textString: Editable
         fun showIncorrectPasswordError()
         fun showEmptyPasswordError()
         fun showPasswordsNoMatchError()

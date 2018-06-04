@@ -1,6 +1,6 @@
 package com.softartdev.noteroom.data
 
-import android.support.annotation.Nullable
+import android.text.Editable
 import com.softartdev.noteroom.db.DbStore
 import com.softartdev.noteroom.model.Note
 import io.reactivex.Single
@@ -15,8 +15,8 @@ internal constructor(private val dbStore: DbStore) {
         dbStore.notes
     }
 
-    fun createNote(): Single<Long> = Single.fromCallable {
-        dbStore.createNote()
+    fun createNote(title: String, text: String): Single<Long> = Single.fromCallable {
+        dbStore.createNote(title, text)
     }
 
     fun saveNote(id: Long, title: String, text: String): Single<Unit> = Single.fromCallable {
@@ -31,15 +31,15 @@ internal constructor(private val dbStore: DbStore) {
         dbStore.deleteNote(id)
     }
 
-    fun checkPass(pass: String?): Boolean {
-        return dbStore.checkPass(pass)
+    fun checkPass(pass: Editable): Single<Boolean> = Single.fromCallable {
+        dbStore.checkPass(pass)
     }
 
-    fun isEncryption(): Boolean {
-        return dbStore.isEncryption
+    fun isEncryption(): Single<Boolean> = Single.fromCallable {
+        dbStore.isEncryption
     }
 
-    fun changePass(@Nullable odlPass: String?, @Nullable newPass: String?): Single<Unit> = Single.fromCallable {
+    fun changePass(odlPass: Editable?, newPass: Editable?): Single<Unit> = Single.fromCallable {
         dbStore.changePass(odlPass, newPass)
     }
 
