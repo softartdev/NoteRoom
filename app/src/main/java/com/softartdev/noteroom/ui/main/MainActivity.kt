@@ -1,73 +1,113 @@
 package com.softartdev.noteroom.ui.main
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
-import android.view.View
 import com.softartdev.noteroom.R
 import com.softartdev.noteroom.model.Note
 import com.softartdev.noteroom.ui.base.BaseActivity
+import com.softartdev.noteroom.ui.common.OnReloadClickListener
 import com.softartdev.noteroom.ui.note.NoteActivity
+import com.softartdev.noteroom.ui.signin.SignInActivity
+import com.softartdev.noteroom.util.gone
+import com.softartdev.noteroom.util.visible
 import io.github.tonnyl.spark.Spark
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.content_main.*
+import kotlinx.android.synthetic.main.view_error.*
+import timber.log.Timber
 import javax.inject.Inject
 
-class MainActivity : BaseActivity(), MainView, MainAdapter.ClickListener {
-    @Inject lateinit var mPresenter: MainPresenter
-    @Inject lateinit var mAdapter: MainAdapter
+class MainActivity : BaseActivity(), MainView, MainAdapter.ClickListener, OnReloadClickListener {
+    @Inject lateinit var mainPresenter: MainPresenter
+    @Inject lateinit var mainAdapter: MainAdapter
 
-    private lateinit var mSpark: Spark
+    private lateinit var mainSpark: Spark
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         activityComponent().inject(this)
-        mPresenter.attachView(this)
+        mainPresenter.attachView(this)
 
-        setSupportActionBar(main_toolbar)
-
-        add_note_fab.setOnClickListener { mPresenter.addNote() }
-
-        mAdapter.clickListener = this
-        notes_recycler_view.apply {
-            layoutManager = LinearLayoutManager(context)
-            adapter = mAdapter
-        }
-        if (mAdapter.itemCount == 0) {
-            mPresenter.updateNotes()
-        }
-
-        mSpark = Spark.Builder()
-                .setView(main_coordinator) // View or view group
+        mainSpark = Spark.Builder()
+                .setView(main_frame)
                 .setAnimList(Spark.ANIM_BLUE_PURPLE)
                 .build()
+        
+        main_swipe_refresh.apply {
+            setProgressBackgroundColorSchemeResource(R.color.colorPrimary)
+            setColorSchemeResources(R.color.white)
+            setOnRefreshListener { mainPresenter.updateNotes() }
+        }
+
+        mainAdapter.clickListener = this
+        notes_recycler_view.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = mainAdapter
+        }
+
+        add_note_fab.setOnClickListener { startActivity(NoteActivity.getStartIntent(this, 0L)) }
+
+        main_error_view.reloadClickListener = this
+
+        if (mainAdapter.itemCount == 0) {
+            mainPresenter.updateNotes()
+        }
     }
 
     override fun onResume() {
         super.onResume()
-        mSpark.startAnimation()
+        mainSpark.startAnimation()
     }
 
     override fun onPause() {
         super.onPause()
-        mSpark.stopAnimation()
+        mainSpark.stopAnimation()
     }
 
-    override fun onUpdateNotes(notes: List<Note>) {
-        add_note_text_view.visibility = if (notes.isEmpty()) View.VISIBLE else View.GONE
-        mAdapter.mNotes = notes
+    override fun onUpdateNotes(noteList: List<Note>) {
+        mainAdapter.apply {
+            notes = noteList
+            notifyDataSetChanged()
+        }
     }
 
     override fun onNoteClick(noteId: Long) {
         startActivity(NoteActivity.getStartIntent(this, noteId))
     }
 
-    override fun onAddNote() {
-        startActivity(NoteActivity.getStartIntent(this, 0L))
+    override fun showProgress(show: Boolean) {
+        if (main_swipe_refresh.isRefreshing) {
+            main_swipe_refresh.isRefreshing = show
+        } else {
+            main_progress_view.apply { if (show) visible() else gone() }
+        }
+    }
+
+    override fun showEmpty() = main_empty_view.visible()
+
+    override fun showError(error: Throwable) {
+        main_error_view.apply {
+            visible()
+            text_error_message.text = error.message
+        }
+        Timber.e(error, "There was an error main")
+    }
+
+    override fun onReloadClick() {
+        main_empty_view.gone()
+        main_error_view.gone()
+        mainPresenter.updateNotes()
+    }
+
+    override fun navSignIn() {
+        val intent = Intent(this, SignInActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        mPresenter.detachView()
+        mainPresenter.detachView()
     }
 }

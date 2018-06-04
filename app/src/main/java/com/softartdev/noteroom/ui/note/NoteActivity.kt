@@ -10,12 +10,15 @@ import android.view.Menu
 import android.view.MenuItem
 import com.softartdev.noteroom.R
 import com.softartdev.noteroom.ui.base.BaseActivity
+import com.softartdev.noteroom.util.hideKeyboard
+import io.github.tonnyl.spark.Spark
 import kotlinx.android.synthetic.main.activity_note.*
 import kotlinx.android.synthetic.main.content_note.*
 import javax.inject.Inject
 
 class NoteActivity : BaseActivity(), NoteView {
-    @Inject lateinit var mPresenter: NotePresenter
+    @Inject lateinit var notePresenter: NotePresenter
+    private lateinit var noteSpark: Spark
 
     companion object {
         const val NOTE_ID = "note_id"
@@ -31,7 +34,12 @@ class NoteActivity : BaseActivity(), NoteView {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_note)
         activityComponent().inject(this)
-        mPresenter.attachView(this)
+        notePresenter.attachView(this)
+
+        noteSpark = Spark.Builder()
+                .setView(note_coordinator)
+                .setAnimList(Spark.ANIM_GREEN_PURPLE)
+                .build()
 
         setSupportActionBar(note_toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -40,15 +48,27 @@ class NoteActivity : BaseActivity(), NoteView {
 
         val noteId = intent.getLongExtra(NOTE_ID, 0L)
         if (noteId != 0L) {
-            mPresenter.loadNote(noteId)
+            notePresenter.loadNote(noteId)
         } else {
-            mPresenter.createNote()
+            notePresenter.createNote()
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        noteSpark.startAnimation()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        noteSpark.stopAnimation()
+    }
+
     override fun onLoadNote(title: String, text: String) {
-        note_title_edit_text.setText(title)
-        supportActionBar?.title = title
+        if (title.isNotEmpty()) {
+            note_title_edit_text.setText(title)
+            supportActionBar?.title = title
+        }
         note_edit_text.setText(text)
     }
 
@@ -91,20 +111,21 @@ class NoteActivity : BaseActivity(), NoteView {
     }
 
     private fun checkSaveChange() {
-        mPresenter.checkSaveChange(note_title_edit_text.text.toString(), note_edit_text.text.toString())
+        notePresenter.checkSaveChange(note_title_edit_text.text.toString(), note_edit_text.text.toString())
     }
 
     private fun showDeleteDialog() {
         with(AlertDialog.Builder(this)) {
             setTitle(R.string.action_delete_note)
             setMessage(R.string.note_delete_dialog_message)
-            setPositiveButton(android.R.string.yes) { _, _ -> mPresenter.deleteNote() }
+            setPositiveButton(android.R.string.yes) { _, _ -> notePresenter.deleteNote() }
             setNegativeButton(android.R.string.cancel) { dialog, _ -> dialog.cancel() }
             show()
         }
     }
 
     override fun onCheckSaveChange() {
+        hideKeyboard()
         with(AlertDialog.Builder(this)) {
             setTitle(R.string.note_changes_not_saved_dialog_title)
             setMessage(R.string.note_save_change_dialog_message)
@@ -121,7 +142,7 @@ class NoteActivity : BaseActivity(), NoteView {
     private fun saveNote() {
         val title: String = note_title_edit_text.text.toString()
         val text: String = note_edit_text.text.toString()
-        mPresenter.saveNote(title, text)
+        notePresenter.saveNote(title, text)
     }
 
     override fun onNavBack() {
@@ -129,7 +150,7 @@ class NoteActivity : BaseActivity(), NoteView {
     }
 
     override fun onDestroy() {
-        mPresenter.detachView()
+        notePresenter.detachView()
         super.onDestroy()
     }
 }

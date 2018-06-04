@@ -7,4 +7,6 @@ interface SignInView : MvpView {
     fun showEmptyPassError()
     fun showIncorrectPassError()
     fun hideError()
+    fun showProgress(show: Boolean)
+    fun showError(error: Throwable)
 }

@@ -5,6 +5,7 @@ import com.softartdev.noteroom.di.ConfigPersistent
 import com.softartdev.noteroom.ui.base.BasePresenter
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import net.sqlcipher.database.SQLiteException
 import javax.inject.Inject
 
 @ConfigPersistent
@@ -13,16 +14,28 @@ constructor(private val dataManager: DataManager) : BasePresenter<MainView>() {
 
     fun updateNotes() {
         checkViewAttached()
+        mvpView?.showProgress(true)
         addDisposable(dataManager.notes()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ notes ->
-                    mvpView?.onUpdateNotes(notes)
-                }, { it.printStackTrace() }))
-    }
-
-    fun addNote() {
-        checkViewAttached()
-        mvpView?.onAddNote()
+                    mvpView?.apply {
+                        showProgress(false)
+                        if (notes.isNotEmpty()) {
+                            onUpdateNotes(notes)
+                        } else {
+                            showEmpty()
+                        }
+                    }
+                }, { throwable ->
+                    mvpView?.apply {
+                        showProgress(false)
+                        if (throwable is SQLiteException) {
+                            navSignIn()
+                        } else {
+                            showError(throwable)
+                        }
+                    }
+                }))
     }
 }

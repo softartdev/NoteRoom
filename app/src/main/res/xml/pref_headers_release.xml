@@ -1,9 +1,0 @@
-<preference-headers xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <header android:title="@string/pref_header_security"
-            android:icon="@drawable/ic_security_black_24dp">
-        <intent android:action="NoteCryptSecurityActivity"
-                android:targetClass="com.softartdev.notecrypt.ui.settings.SettingsActivity" />
-    </header>
-
-</preference-headers>

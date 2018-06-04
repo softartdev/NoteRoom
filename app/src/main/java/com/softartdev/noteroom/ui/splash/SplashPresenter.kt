@@ -3,6 +3,8 @@ package com.softartdev.noteroom.ui.splash
 import com.softartdev.noteroom.data.DataManager
 import com.softartdev.noteroom.di.ConfigPersistent
 import com.softartdev.noteroom.ui.base.BasePresenter
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 @ConfigPersistent
@@ -11,10 +13,18 @@ constructor(private val dataManager: DataManager) : BasePresenter<SplashView>() 
 
     fun checkEncryption() {
         checkViewAttached()
-        if (dataManager.isEncryption()) {
-            mvpView?.navSignIn()
-        } else {
-            mvpView?.navMain()
-        }
+        addDisposable(dataManager.isEncryption()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({ isEncrypted ->
+                    if (isEncrypted) {
+                        mvpView?.navSignIn()
+                    } else {
+                        mvpView?.navMain()
+                    }
+                }, { throwable ->
+                    throwable.printStackTrace()
+                    mvpView?.showError(throwable.message)
+                }))
     }
 }

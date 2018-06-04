@@ -1,24 +1,42 @@
 package com.softartdev.noteroom.ui.signin
 
+import android.text.Editable
 import com.softartdev.noteroom.data.DataManager
 import com.softartdev.noteroom.di.ConfigPersistent
 import com.softartdev.noteroom.ui.base.BasePresenter
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 @ConfigPersistent
 class SignInPresenter @Inject
 constructor(private val dataManager: DataManager) : BasePresenter<SignInView>() {
 
-    fun signIn(pass: String) {
+    fun signIn(pass: Editable) {
+        checkViewAttached()
         mvpView?.hideError()
-        when {
-            pass.isEmpty() -> mvpView?.showEmptyPassError()
-            checkPass(pass) -> mvpView?.navMain()
-            else -> mvpView?.showIncorrectPassError()
+        if (pass.isEmpty()) {
+            mvpView?.showEmptyPassError()
+        } else {
+            mvpView?.showProgress(true)
+            addDisposable(dataManager.checkPass(pass)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe({ checked ->
+                        mvpView?.apply {
+                            showProgress(false)
+                            if (checked) {
+                                navMain()
+                            } else {
+                                showIncorrectPassError()
+                            }
+                        }
+                    }, { throwable ->
+                        mvpView?.apply {
+                            showProgress(false)
+                            showError(throwable)
+                        }
+                    }))
         }
-    }
-
-    private fun checkPass(pass: String): Boolean {
-        return dataManager.checkPass(pass)
     }
 }

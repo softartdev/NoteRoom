@@ -4,6 +4,9 @@ import com.softartdev.noteroom.model.Note
 import com.softartdev.noteroom.ui.base.MvpView
 
 interface MainView : MvpView {
-    fun onAddNote()
-    fun onUpdateNotes(notes: List<Note>)
+    fun onUpdateNotes(noteList: List<Note>)
+    fun showProgress(show: Boolean)
+    fun showEmpty()
+    fun navSignIn()
+    fun showError(error: Throwable)
 }
