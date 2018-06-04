@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="action_settings">Настройки</string>
-    <string name="pref_header_appearance">Внешний вид</string>
-    <string name="pref_title_language">Язык</string>
-    <string name="title_activity_settings">Настройки</string>
     <string name="press_add_note">Нажмите \"+\", чтобы добавить заметку.</string>
     <string name="title_activity_note">Новая заметка</string>
     <string name="enter_the_title">Введите заголовок</string>
@@ -12,10 +9,6 @@
     <string name="note_deleted">Заметка удалена</string>
     <string name="note_saved">Заметка сохранена</string>
     <string name="type_text">Введите текст</string>
-    <string name="pref_title_theme">Цветовая схема</string>
-    <string name="pref_dark_theme">Тёмная</string>
-    <string name="pref_default_theme">По-умолчанию</string>
-    <string name="pref_light_theme">Светлая</string>
     <string name="note_save_change_dialog_message">Сохранить изменения?</string>
     <string name="no">Нет</string>
     <string name="yes">Да</string>
@@ -33,9 +26,4 @@
     <string name="incorrect_password">Неверный пароль</string>
     <string name="passwords_do_not_match">Пароли не совпадают</string>
     <string name="sign_in">Войти</string>
-    <string-array name="pref_language_titles">
-        <item>Английский</item>
-        <item>Русский</item>
-    </string-array>
-    <string name="pref_header_storage">Хранилище</string>
 </resources>
