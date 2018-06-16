@@ -3,6 +3,7 @@ package com.softartdev.noteroom.ui.main
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
+import android.view.Menu
 import com.softartdev.noteroom.R
 import com.softartdev.noteroom.model.Note
 import com.softartdev.noteroom.ui.base.BaseActivity
@@ -106,8 +107,15 @@ class MainActivity : BaseActivity(), MainView, MainAdapter.ClickListener, OnRelo
         finish()
     }
 
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu_main, menu)
+        return true
+    }
+
     override fun onDestroy() {
-        super.onDestroy()
         mainPresenter.detachView()
+        mainAdapter.clickListener = null
+        notes_recycler_view.adapter = null
+        super.onDestroy()
     }
 }
