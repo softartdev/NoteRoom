@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v4.util.LongSparseArray
 import android.support.v7.app.AppCompatActivity
-import android.view.Menu
 import android.view.MenuItem
 import com.softartdev.noteroom.App
 import com.softartdev.noteroom.R
@@ -51,8 +50,8 @@ abstract class BaseActivity : AppCompatActivity() {
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
         outState.putLong(KEY_ACTIVITY_ID, mActivityId)
+        super.onSaveInstanceState(outState)
     }
 
     override fun onDestroy() {
@@ -63,18 +62,13 @@ abstract class BaseActivity : AppCompatActivity() {
         super.onDestroy()
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.menu_main, menu)
-        return true
-    }
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             android.R.id.home -> {
                 finish()
                 true
             }
-            R.id.action_settings -> {
+            R.id.action_security -> {
                 startActivity(Intent(this, SecurityActivity::class.java))
                 true
             }
@@ -82,9 +76,7 @@ abstract class BaseActivity : AppCompatActivity() {
         }
     }
 
-    fun activityComponent(): ActivityComponent {
-        return mActivityComponent as ActivityComponent
-    }
+    fun activityComponent(): ActivityComponent = mActivityComponent as ActivityComponent
 
     companion object {
         private const val KEY_ACTIVITY_ID = "KEY_ACTIVITY_ID"
