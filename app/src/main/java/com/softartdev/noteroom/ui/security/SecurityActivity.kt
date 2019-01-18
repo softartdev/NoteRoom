@@ -2,9 +2,9 @@ package com.softartdev.noteroom.ui.security
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.support.design.widget.TextInputLayout
-import android.support.v7.app.AlertDialog
-import android.support.v7.app.AppCompatDelegate
+import com.google.android.material.textfield.TextInputLayout
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatDelegate
 import android.text.Editable
 import android.widget.CompoundButton
 import android.widget.EditText

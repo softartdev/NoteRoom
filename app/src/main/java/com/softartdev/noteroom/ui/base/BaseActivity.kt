@@ -2,8 +2,8 @@ package com.softartdev.noteroom.ui.base
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.util.LongSparseArray
-import android.support.v7.app.AppCompatActivity
+import androidx.collection.LongSparseArray
+import androidx.appcompat.app.AppCompatActivity
 import android.view.MenuItem
 import com.softartdev.noteroom.App
 import com.softartdev.noteroom.R
@@ -43,7 +43,7 @@ abstract class BaseActivity : AppCompatActivity() {
             sComponentsArray.put(mActivityId, configPersistentComponent)
         } else {
             Timber.i("Reusing ConfigPersistentComponent id=%d", mActivityId)
-            configPersistentComponent = sComponentsArray.get(mActivityId)
+            configPersistentComponent = sComponentsArray.get(mActivityId) as ConfigPersistentComponent
         }
         mActivityComponent = configPersistentComponent.activityComponent(ActivityModule(this))
         mActivityComponent?.inject(this)

@@ -8,12 +8,12 @@
     tools:background="@color/colorPrimaryDark"
     tools:context="com.softartdev.noteroom.ui.main.MainActivity">
 
-    <android.support.v4.widget.SwipeRefreshLayout
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/main_swipe_refresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <android.support.v7.widget.RecyclerView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/notes_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -21,9 +21,9 @@
             tools:listitem="@layout/item_note"
             tools:itemCount="3" />
 
-    </android.support.v4.widget.SwipeRefreshLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-    <android.support.design.widget.FloatingActionButton
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/add_note_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
