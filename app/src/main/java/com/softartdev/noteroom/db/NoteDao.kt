@@ -1,6 +1,6 @@
 package com.softartdev.noteroom.db
 
-import android.arch.persistence.room.*
+import androidx.room.*
 import com.softartdev.noteroom.model.Note
 
 @Dao

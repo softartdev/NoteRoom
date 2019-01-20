@@ -2,8 +2,8 @@ package com.softartdev.noteroom.ui.base
 
 import android.content.Context
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v4.util.LongSparseArray
+import androidx.fragment.app.Fragment
+import androidx.collection.LongSparseArray
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -40,7 +40,7 @@ abstract class BaseFragment : Fragment() {
             sComponentsArray.put(mFragmentId, configPersistentComponent)
         } else {
             Timber.i("Reusing ConfigPersistentComponent id=%d", mFragmentId)
-            configPersistentComponent = sComponentsArray.get(mFragmentId)
+            configPersistentComponent = sComponentsArray.get(mFragmentId) as ConfigPersistentComponent
         }
         mFragmentComponent = configPersistentComponent.fragmentComponent(FragmentModule(this))
     }

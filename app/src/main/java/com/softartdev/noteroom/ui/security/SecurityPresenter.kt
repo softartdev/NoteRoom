@@ -1,5 +1,6 @@
 package com.softartdev.noteroom.ui.security
 
+import com.crashlytics.android.Crashlytics
 import com.softartdev.noteroom.data.DataManager
 import com.softartdev.noteroom.di.ConfigPersistent
 import com.softartdev.noteroom.ui.base.BasePresenter
@@ -10,8 +11,9 @@ import timber.log.Timber
 import javax.inject.Inject
 
 @ConfigPersistent
-class SecurityPresenter @Inject
-constructor(private val dataManager: DataManager) : BasePresenter<SecurityView>() {
+class SecurityPresenter @Inject constructor(
+        private val dataManager: DataManager
+) : BasePresenter<SecurityView>() {
 
     fun checkEncryption() {
         checkViewAttached()
@@ -21,6 +23,7 @@ constructor(private val dataManager: DataManager) : BasePresenter<SecurityView>(
                 .subscribe({ isEncrypted ->
                     mvpView?.showEncryptEnable(isEncrypted)
                 }, { throwable ->
+                    Crashlytics.logException(throwable)
                     throwable.printStackTrace()
                     mvpView?.showError(throwable.message)
                 }))
@@ -41,6 +44,7 @@ constructor(private val dataManager: DataManager) : BasePresenter<SecurityView>(
                             mvpView?.showEncryptEnable(false)
                         }
                     }, { throwable ->
+                        Crashlytics.logException(throwable)
                         throwable.printStackTrace()
                         mvpView?.showError(throwable.message)
                     }))
@@ -59,6 +63,7 @@ constructor(private val dataManager: DataManager) : BasePresenter<SecurityView>(
                         mvpView?.showSetPasswordDialog()
                     }
                 }, { throwable ->
+                    Crashlytics.logException(throwable)
                     throwable.printStackTrace()
                     mvpView?.showError(throwable.message)
                 }))
@@ -91,6 +96,7 @@ constructor(private val dataManager: DataManager) : BasePresenter<SecurityView>(
                     .subscribe({
                         Timber.d("The password should have been changed")
                     }, { throwable ->
+                        Crashlytics.logException(throwable)
                         throwable.printStackTrace()
                         mvpView?.showError(throwable.message)
                     }))
@@ -116,6 +122,7 @@ constructor(private val dataManager: DataManager) : BasePresenter<SecurityView>(
                             Timber.d("The password should have been changed")
                             mvpView?.showEncryptEnable(true)
                         }, { throwable ->
+                            Crashlytics.logException(throwable)
                             throwable.printStackTrace()
                             mvpView?.showError(throwable.message)
                         }))
@@ -153,6 +160,7 @@ constructor(private val dataManager: DataManager) : BasePresenter<SecurityView>(
                     .subscribe({
                         Timber.d("The password should have been changed")
                     }, { throwable ->
+                        Crashlytics.logException(throwable)
                         throwable.printStackTrace()
                         mvpView?.showError(throwable.message)
                     }))

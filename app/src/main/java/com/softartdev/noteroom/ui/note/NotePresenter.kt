@@ -1,5 +1,6 @@
 package com.softartdev.noteroom.ui.note
 
+import com.crashlytics.android.Crashlytics
 import com.softartdev.noteroom.data.DataManager
 import com.softartdev.noteroom.di.ConfigPersistent
 import com.softartdev.noteroom.model.Note
@@ -12,8 +13,10 @@ import timber.log.Timber
 import javax.inject.Inject
 
 @ConfigPersistent
-class NotePresenter @Inject
-constructor(private val dataManager: DataManager) : BasePresenter<NoteView>() {
+class NotePresenter @Inject constructor(
+        private val dataManager: DataManager
+) : BasePresenter<NoteView>() {
+
     private var mNote: Note? = null
 
     fun createNote() {
@@ -24,7 +27,10 @@ constructor(private val dataManager: DataManager) : BasePresenter<NoteView>() {
                 .subscribe({ noteId ->
                     Timber.d("Created: $noteId")
                     loadNote(noteId)
-                }, { it.printStackTrace() }))
+                }, { throwable ->
+                    Crashlytics.logException(throwable)
+                    throwable.printStackTrace()
+                }))
     }
 
     fun loadNote(noteId: Long) {
@@ -36,7 +42,10 @@ constructor(private val dataManager: DataManager) : BasePresenter<NoteView>() {
                     Timber.d("Loaded: $note")
                     mNote = note
                     mvpView?.onLoadNote(note.title, note.text)
-                }, { it.printStackTrace() }))
+                }, { throwable ->
+                    Crashlytics.logException(throwable)
+                    throwable.printStackTrace()
+                }))
     }
 
     fun saveNote(title: String, text: String) {
@@ -51,8 +60,9 @@ constructor(private val dataManager: DataManager) : BasePresenter<NoteView>() {
                     .subscribe({
                         mvpView?.onSaveNote(title)
                         Timber.d("Saved: $mNote")
-                    }, {
-                        it.printStackTrace()
+                    }, { throwable ->
+                        Crashlytics.logException(throwable)
+                        throwable.printStackTrace()
                     }))
         }
     }
@@ -62,9 +72,12 @@ constructor(private val dataManager: DataManager) : BasePresenter<NoteView>() {
         addDisposable(dataManager.deleteNote(mNote!!.id)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        { Timber.d("Note deleted") }
-                        , { it.printStackTrace() }))
+                .subscribe({
+                    Timber.d("Note deleted")
+                }, { throwable ->
+                    Crashlytics.logException(throwable)
+                    throwable.printStackTrace()
+                }))
         mNote = null
         mvpView?.onDeleteNote()
         mvpView?.onNavBack()
@@ -90,7 +103,10 @@ constructor(private val dataManager: DataManager) : BasePresenter<NoteView>() {
                             }
                             mvpView?.onNavBack()
                         }
-                    }, { it.printStackTrace() }))
+                    }, { throwable ->
+                        Crashlytics.logException(throwable)
+                        throwable.printStackTrace()
+                    }))
         } ?: mvpView?.onCheckSaveChange()
     }
 }

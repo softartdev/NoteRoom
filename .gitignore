@@ -53,3 +53,6 @@ freeline/
 freeline_project_description.json
 Будет удалено 1.alloc
 Будет удалено app/libs/
+
+/fastlane/
+/Gemfile

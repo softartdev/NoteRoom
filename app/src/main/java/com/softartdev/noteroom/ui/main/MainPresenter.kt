@@ -1,5 +1,6 @@
 package com.softartdev.noteroom.ui.main
 
+import com.crashlytics.android.Crashlytics
 import com.softartdev.noteroom.data.DataManager
 import com.softartdev.noteroom.di.ConfigPersistent
 import com.softartdev.noteroom.ui.base.BasePresenter
@@ -9,8 +10,9 @@ import net.sqlcipher.database.SQLiteException
 import javax.inject.Inject
 
 @ConfigPersistent
-class MainPresenter @Inject
-constructor(private val dataManager: DataManager) : BasePresenter<MainView>() {
+class MainPresenter @Inject constructor(
+        private val dataManager: DataManager
+) : BasePresenter<MainView>() {
 
     fun updateNotes() {
         checkViewAttached()
@@ -28,6 +30,7 @@ constructor(private val dataManager: DataManager) : BasePresenter<MainView>() {
                         }
                     }
                 }, { throwable ->
+                    Crashlytics.logException(throwable)
                     mvpView?.apply {
                         showProgress(false)
                         if (throwable is SQLiteException) {

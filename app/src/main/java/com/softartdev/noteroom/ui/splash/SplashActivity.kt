@@ -2,7 +2,7 @@ package com.softartdev.noteroom.ui.splash
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.app.AlertDialog
+import androidx.appcompat.app.AlertDialog
 import com.softartdev.noteroom.ui.base.BaseActivity
 import com.softartdev.noteroom.ui.main.MainActivity
 import com.softartdev.noteroom.ui.signin.SignInActivity
