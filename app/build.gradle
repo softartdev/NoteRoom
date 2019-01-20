@@ -79,5 +79,5 @@ dependencies {
         exclude group: 'com.android.support', module: 'recyclerview-v7'
     }
     kaptAndroidTest "com.google.dagger:dagger-compiler:$dagger_version"
-    //    androidTestImplementation "android.arch.core:core-testing:$room_version"
+    androidTestImplementation "androidx.arch.core:core-testing:$room_version"
 }
