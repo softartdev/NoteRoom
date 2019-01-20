@@ -2,8 +2,8 @@ package com.softartdev.noteroom.ui.main
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.Menu
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.softartdev.noteroom.R
 import com.softartdev.noteroom.model.Note
 import com.softartdev.noteroom.ui.base.BaseActivity
@@ -40,17 +40,15 @@ class MainActivity : BaseActivity(), MainView, MainAdapter.ClickListener, OnRelo
             setColorSchemeResources(R.color.white)
             setOnRefreshListener { mainPresenter.updateNotes() }
         }
-
         mainAdapter.clickListener = this
         notes_recycler_view.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = mainAdapter
         }
-
-        add_note_fab.setOnClickListener { startActivity(NoteActivity.getStartIntent(this, 0L)) }
-
+        add_note_fab.setOnClickListener {
+            startActivity(NoteActivity.getStartIntent(this, 0L))
+        }
         main_error_view.reloadClickListener = this
-
         if (mainAdapter.itemCount == 0) {
             mainPresenter.updateNotes()
         }
