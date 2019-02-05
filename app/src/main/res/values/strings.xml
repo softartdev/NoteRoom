@@ -42,5 +42,6 @@
     <string name="cancel">Cancel</string>
     <string name="retry">Retry</string>
     <string name="unknown">Unknown</string>
+    <string name="open_source_licenses">Open source licenses</string>
 
 </resources>

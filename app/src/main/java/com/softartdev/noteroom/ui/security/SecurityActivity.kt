@@ -1,13 +1,17 @@
 package com.softartdev.noteroom.ui.security
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
-import com.google.android.material.textfield.TextInputLayout
-import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatDelegate
 import android.text.Editable
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.CompoundButton
 import android.widget.EditText
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatDelegate
+import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
+import com.google.android.material.textfield.TextInputLayout
 import com.softartdev.noteroom.R
 import com.softartdev.noteroom.ui.base.BaseActivity
 import io.github.tonnyl.spark.Spark
@@ -80,7 +84,7 @@ class SecurityActivity : BaseActivity(), SecurityView, CompoundButton.OnCheckedC
             val okButton = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)
             okButton.setOnClickListener {
                 val pass = PassMediator(dialogPasswordView.enter_password_text_input_layout, dialogPasswordView.enter_password_edit_text)
-                securityPresenter.enterPassCorrect(pass, { alertDialog.dismiss() })
+                securityPresenter.enterPassCorrect(pass) { alertDialog.dismiss() }
             }
         }
         alertDialog.show()
@@ -99,7 +103,7 @@ class SecurityActivity : BaseActivity(), SecurityView, CompoundButton.OnCheckedC
             okButton.setOnClickListener {
                 val pass = PassMediator(dialogPasswordView.set_password_text_input_layout, dialogPasswordView.set_password_edit_text)
                 val repeatPass = PassMediator(dialogPasswordView.repeat_set_password_text_input_layout, dialogPasswordView.repeat_set_password_edit_text)
-                securityPresenter.setPassCorrect(pass, repeatPass, { alertDialog.dismiss() })
+                securityPresenter.setPassCorrect(pass, repeatPass) { alertDialog.dismiss() }
             }
         }
         alertDialog.show()
@@ -119,7 +123,7 @@ class SecurityActivity : BaseActivity(), SecurityView, CompoundButton.OnCheckedC
                 val oldPass = PassMediator(dialogPasswordView.old_password_text_input_layout, dialogPasswordView.old_password_edit_text)
                 val newPass = PassMediator(dialogPasswordView.new_password_text_input_layout, dialogPasswordView.new_password_edit_text)
                 val repeatNewPass = PassMediator(dialogPasswordView.repeat_new_password_text_input_layout, dialogPasswordView.repeat_new_password_edit_text)
-                securityPresenter.changePassCorrect(oldPass, newPass, repeatNewPass, { alertDialog.dismiss() })
+                securityPresenter.changePassCorrect(oldPass, newPass, repeatNewPass) { alertDialog.dismiss() }
             }
         }
         alertDialog.show()
@@ -154,6 +158,19 @@ class SecurityActivity : BaseActivity(), SecurityView, CompoundButton.OnCheckedC
             setNeutralButton(android.R.string.cancel) { dialog, _ -> dialog.cancel() }
             show()
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu_oss, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
+        R.id.action_oss -> {
+            startActivity(Intent(this, OssLicensesMenuActivity::class.java))
+            true
+        }
+        else -> super.onOptionsItemSelected(item)
     }
 
     override fun onDestroy() {
