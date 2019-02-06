@@ -34,4 +34,5 @@
     <string name="error_title">Ошибка</string>
     <string name="unknown">Без названия</string>
     <string name="open_source_licenses">Лицензии открытого ПО</string>
+    <string name="backup">Резервное копирование</string>
 </resources>

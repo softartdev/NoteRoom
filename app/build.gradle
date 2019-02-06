@@ -10,7 +10,7 @@ def hasReleaseStore = project.hasProperty("RELEASE_STORE_FILE")
 
 android {
     compileSdkVersion 28
-    if(hasReleaseStore) {
+    if (hasReleaseStore) {
         signingConfigs {
             config {
                 storeFile file(RELEASE_STORE_FILE)
@@ -71,6 +71,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-core:16.0.7'
     implementation 'com.crashlytics.sdk.android:crashlytics:2.9.8'
     implementation 'com.google.android.gms:play-services-oss-licenses:16.0.2'
+    implementation 'com.google.android.gms:play-services-drive:16.0.0'
+    implementation 'com.google.android.gms:play-services-auth:16.0.1'
     testImplementation 'junit:junit:4.12'
     kaptTest "com.google.dagger:dagger-compiler:$dagger_version"
     androidTestImplementation 'androidx.test.ext:junit:1.1.0'

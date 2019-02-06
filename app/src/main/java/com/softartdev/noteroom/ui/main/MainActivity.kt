@@ -3,9 +3,11 @@ package com.softartdev.noteroom.ui.main
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
+import android.view.MenuItem
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.softartdev.noteroom.R
 import com.softartdev.noteroom.model.Note
+import com.softartdev.noteroom.ui.backup.BackupActivity
 import com.softartdev.noteroom.ui.base.BaseActivity
 import com.softartdev.noteroom.ui.common.OnReloadClickListener
 import com.softartdev.noteroom.ui.note.NoteActivity
@@ -108,6 +110,14 @@ class MainActivity : BaseActivity(), MainView, MainAdapter.ClickListener, OnRelo
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
         return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
+        R.id.action_backup -> {
+            startActivity(Intent(this, BackupActivity::class.java))
+            true
+        }
+        else -> super.onOptionsItemSelected(item)
     }
 
     override fun onDestroy() {

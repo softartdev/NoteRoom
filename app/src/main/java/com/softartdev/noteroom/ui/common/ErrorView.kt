@@ -46,4 +46,12 @@ class ErrorView : LinearLayout {
         button_reload.setOnClickListener { reloadClickListener?.onReloadClick() }
         button_cancel.setOnClickListener { this@ErrorView.visibility = View.GONE }
     }
+
+    fun setOnReloadClickListener(reloadListener: () -> Unit) {
+        reloadClickListener = object : OnReloadClickListener {
+            override fun onReloadClick() {
+                reloadListener()
+            }
+        }
+    }
 }

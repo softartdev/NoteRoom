@@ -1,11 +1,19 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-      xmlns:app="http://schemas.android.com/apk/res-auto"
-      xmlns:tools="http://schemas.android.com/tools"
-      tools:context="com.softartdev.noteroom.ui.main.MainActivity">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.softartdev.noteroom.ui.main.MainActivity">
+
     <item
         android:id="@+id/action_security"
         android:icon="@drawable/ic_security_white_24dp"
         android:orderInCategory="100"
         android:title="@string/security"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_backup"
+        android:icon="@drawable/ic_google_drive_white_24dp"
+        android:orderInCategory="100"
+        android:title="@string/backup"
         app:showAsAction="ifRoom" />
 </menu>
