@@ -41,8 +41,6 @@ class App : Application() {
         }
 
     companion object {
-        operator fun get(context: Context): App {
-            return context.applicationContext as App
-        }
+        operator fun get(context: Context): App = context.applicationContext as App
     }
 }
