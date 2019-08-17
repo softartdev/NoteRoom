@@ -23,7 +23,7 @@ class BackupPresenter @Inject constructor(
                 .doOnSubscribe { mvpView?.showProgress(true) }
                 .doAfterTerminate { mvpView?.showProgress(false) }
                 .subscribe({ isEncryption ->
-                    mvpView?.showBackup()
+                    mvpView?.showBackup(isEncryption)
                 }, { throwable ->
                     Crashlytics.logException(throwable)
                     mvpView?.showError(throwable)

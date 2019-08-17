@@ -1,7 +1,7 @@
 package com.softartdev.noteroom
 
-import android.app.Application
 import android.content.Context
+import androidx.multidex.MultiDexApplication
 import com.crashlytics.android.Crashlytics
 import com.crashlytics.android.core.CrashlyticsCore
 import com.softartdev.noteroom.di.component.ApplicationComponent
@@ -11,7 +11,7 @@ import com.squareup.leakcanary.LeakCanary
 import io.fabric.sdk.android.Fabric
 import timber.log.Timber
 
-class App : Application() {
+class App : MultiDexApplication() {
 
     private var mApplicationComponent: ApplicationComponent? = null
 

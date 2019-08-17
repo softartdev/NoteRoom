@@ -22,9 +22,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/fab_margin"
-                android:drawableStart="@drawable/ic_google_drive_white_24dp"
                 android:drawableLeft="@drawable/ic_google_drive_white_24dp"
-                android:text="@string/backup" />
+                android:text="@string/backup"
+                tools:ignore="RtlHardcoded" />
 
         </LinearLayout>
 

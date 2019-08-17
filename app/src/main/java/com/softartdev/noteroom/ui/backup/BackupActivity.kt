@@ -52,8 +52,9 @@ class BackupActivity : BaseActivity(), BackupView {
         }
     }
 
-    override fun showBackup() {
-        Snackbar.make(backup_frame, R.string.backup, Snackbar.LENGTH_LONG).show()
+    override fun showBackup(encryption: Boolean) {
+        val text = "is encryption = $encryption"
+        Snackbar.make(backup_frame, text, Snackbar.LENGTH_LONG).show()
     }
 
     override fun showError(error: Throwable) {
