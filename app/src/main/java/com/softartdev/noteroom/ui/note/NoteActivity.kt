@@ -12,25 +12,18 @@ import com.softartdev.noteroom.R
 import com.softartdev.noteroom.ui.base.BaseActivity
 import com.softartdev.noteroom.util.hideKeyboard
 import com.softartdev.noteroom.util.showKeyboard
-import io.github.tonnyl.spark.Spark
 import kotlinx.android.synthetic.main.activity_note.*
 import kotlinx.android.synthetic.main.content_note.*
 import javax.inject.Inject
 
 class NoteActivity : BaseActivity(), NoteView {
     @Inject lateinit var notePresenter: NotePresenter
-    private lateinit var noteSpark: Spark
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_note)
         activityComponent().inject(this)
         notePresenter.attachView(this)
-
-        noteSpark = Spark.Builder()
-                .setView(note_coordinator)
-                .setAnimList(Spark.ANIM_GREEN_PURPLE)
-                .build()
 
         setSupportActionBar(note_toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -46,16 +39,6 @@ class NoteActivity : BaseActivity(), NoteView {
         } else {
             notePresenter.loadNote(noteId)
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        noteSpark.startAnimation()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        noteSpark.stopAnimation()
     }
 
     override fun onLoadNote(title: String, text: String) {

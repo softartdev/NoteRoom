@@ -10,7 +10,6 @@ import com.softartdev.noteroom.ui.main.MainActivity
 import com.softartdev.noteroom.util.gone
 import com.softartdev.noteroom.util.hideKeyboard
 import com.softartdev.noteroom.util.visible
-import io.github.tonnyl.spark.Spark
 import kotlinx.android.synthetic.main.activity_sign_in.*
 import kotlinx.android.synthetic.main.view_error.*
 import timber.log.Timber
@@ -19,18 +18,11 @@ import javax.inject.Inject
 class SignInActivity : BaseActivity(), SignInView, OnReloadClickListener {
     @Inject lateinit var signInPresenter: SignInPresenter
 
-    private lateinit var signInSpark: Spark
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sign_in)
         activityComponent().inject(this)
         signInPresenter.attachView(this)
-
-        signInSpark = Spark.Builder()
-                .setView(sign_in_layout) // View or view group
-                .setAnimList(Spark.ANIM_GREEN_PURPLE)
-                .build()
 
         sign_in_error_view.reloadClickListener = this
 
@@ -39,16 +31,6 @@ class SignInActivity : BaseActivity(), SignInView, OnReloadClickListener {
             true
         }
         sign_in_button.setOnClickListener { attemptSignIn() }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        signInSpark.startAnimation()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        signInSpark.stopAnimation()
     }
 
     private fun attemptSignIn() {

@@ -14,7 +14,6 @@ import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.google.android.material.textfield.TextInputLayout
 import com.softartdev.noteroom.R
 import com.softartdev.noteroom.ui.base.BaseActivity
-import io.github.tonnyl.spark.Spark
 import kotlinx.android.synthetic.main.activity_security.*
 import kotlinx.android.synthetic.main.dialog_change_password.view.*
 import kotlinx.android.synthetic.main.dialog_password.view.*
@@ -31,8 +30,6 @@ class SecurityActivity : BaseActivity(), SecurityView, CompoundButton.OnCheckedC
 
     @Inject lateinit var securityPresenter: SecurityPresenter
 
-    private lateinit var securitySpark: Spark
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_security)
@@ -41,26 +38,11 @@ class SecurityActivity : BaseActivity(), SecurityView, CompoundButton.OnCheckedC
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        securitySpark = Spark.Builder()
-                .setView(security_layout)
-                .setAnimList(Spark.ANIM_RED_PURPLE)
-                .build()
-
         enable_encryption_switch.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_lock_black_24dp, 0, 0, 0)
         securityPresenter.checkEncryption()
 
         set_password_button.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_password_black_24dp, 0, 0, 0)
         set_password_button.setOnClickListener { securityPresenter.changePassword() }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        securitySpark.startAnimation()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        securitySpark.stopAnimation()
     }
 
     override fun showEncryptEnable(encryption: Boolean) {
