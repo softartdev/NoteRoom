@@ -5,7 +5,6 @@
     android:id="@+id/note_coordinator"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/translucent"
     android:fitsSystemWindows="true"
     tools:context="com.softartdev.noteroom.ui.note.NoteActivity">
 
