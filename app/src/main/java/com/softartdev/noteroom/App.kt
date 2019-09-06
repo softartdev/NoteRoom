@@ -7,7 +7,6 @@ import com.crashlytics.android.core.CrashlyticsCore
 import com.softartdev.noteroom.di.component.ApplicationComponent
 import com.softartdev.noteroom.di.component.DaggerApplicationComponent
 import com.softartdev.noteroom.di.module.ApplicationModule
-import com.squareup.leakcanary.LeakCanary
 import io.fabric.sdk.android.Fabric
 import timber.log.Timber
 
@@ -19,7 +18,6 @@ class App : MultiDexApplication() {
         super.onCreate()
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
-            LeakCanary.install(this)
         }
         val crashlyticsCore = CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build()
         val crashlytics = Crashlytics.Builder().core(crashlyticsCore).build()
