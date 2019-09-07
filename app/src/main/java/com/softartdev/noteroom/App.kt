@@ -1,17 +1,16 @@
 package com.softartdev.noteroom
 
-import android.app.Application
 import android.content.Context
+import androidx.multidex.MultiDexApplication
 import com.crashlytics.android.Crashlytics
 import com.crashlytics.android.core.CrashlyticsCore
 import com.softartdev.noteroom.di.component.ApplicationComponent
 import com.softartdev.noteroom.di.component.DaggerApplicationComponent
 import com.softartdev.noteroom.di.module.ApplicationModule
-import com.squareup.leakcanary.LeakCanary
 import io.fabric.sdk.android.Fabric
 import timber.log.Timber
 
-class App : Application() {
+class App : MultiDexApplication() {
 
     private var mApplicationComponent: ApplicationComponent? = null
 
@@ -19,7 +18,6 @@ class App : Application() {
         super.onCreate()
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
-            LeakCanary.install(this)
         }
         val crashlyticsCore = CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build()
         val crashlytics = Crashlytics.Builder().core(crashlyticsCore).build()
@@ -41,8 +39,6 @@ class App : Application() {
         }
 
     companion object {
-        operator fun get(context: Context): App {
-            return context.applicationContext as App
-        }
+        operator fun get(context: Context): App = context.applicationContext as App
     }
 }

@@ -11,8 +11,8 @@ import com.softartdev.noteroom.ui.common.OnReloadClickListener
 import com.softartdev.noteroom.ui.note.NoteActivity
 import com.softartdev.noteroom.ui.signin.SignInActivity
 import com.softartdev.noteroom.util.gone
+import com.softartdev.noteroom.util.tintIcon
 import com.softartdev.noteroom.util.visible
-import io.github.tonnyl.spark.Spark
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.view_error.*
 import timber.log.Timber
@@ -22,22 +22,15 @@ class MainActivity : BaseActivity(), MainView, MainAdapter.ClickListener, OnRelo
     @Inject lateinit var mainPresenter: MainPresenter
     @Inject lateinit var mainAdapter: MainAdapter
 
-    private lateinit var mainSpark: Spark
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         activityComponent().inject(this)
         mainPresenter.attachView(this)
 
-        mainSpark = Spark.Builder()
-                .setView(main_frame)
-                .setAnimList(Spark.ANIM_BLUE_PURPLE)
-                .build()
-        
         main_swipe_refresh.apply {
             setProgressBackgroundColorSchemeResource(R.color.colorPrimary)
-            setColorSchemeResources(R.color.white)
+            setColorSchemeResources(R.color.on_primary)
             setOnRefreshListener { mainPresenter.updateNotes() }
         }
         mainAdapter.clickListener = this
@@ -52,16 +45,6 @@ class MainActivity : BaseActivity(), MainView, MainAdapter.ClickListener, OnRelo
         if (mainAdapter.itemCount == 0) {
             mainPresenter.updateNotes()
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        mainSpark.startAnimation()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        mainSpark.stopAnimation()
     }
 
     override fun onUpdateNotes(noteList: List<Note>) {
@@ -107,6 +90,7 @@ class MainActivity : BaseActivity(), MainView, MainAdapter.ClickListener, OnRelo
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
+        menu.findItem(R.id.action_security).tintIcon(this)
         return true
     }
 

@@ -2,22 +2,23 @@ package com.softartdev.noteroom.db
 
 import android.content.Context
 import com.softartdev.noteroom.model.Note
+import io.reactivex.Maybe
+import io.reactivex.Single
 import java.util.*
 
 class RoomDbStore(context: Context) : RoomDbRepository(context) {
 
-    override fun getNotes(): List<Note> {
-        return noteDao.getNotes()
-    }
+    override val notes: Single<List<Note>>
+        get() = noteDao.getNotes()
 
-    override fun createNote(title: String, text: String): Long {
+    override fun createNote(title: String, text: String): Single<Long> {
         val date = Date()
         val note = Note(0, title, text, date, date)
         return noteDao.insertNote(note)
     }
 
-    override fun saveNote(id: Long, title: String, text: String) {
-        noteDao.getNoteById(id)?.let {
+    override fun saveNote(id: Long, title: String, text: String): Single<Int> {
+        return noteDao.getNoteById(id).toSingle().flatMap {
             it.title = title
             it.text = text
             it.dateModified = Date()
@@ -25,22 +26,15 @@ class RoomDbStore(context: Context) : RoomDbRepository(context) {
         }
     }
 
-    override fun loadNote(noteId: Long): Note? {
-        return noteDao.getNoteById(noteId)
-    }
+    override fun loadNote(noteId: Long): Maybe<Note> = noteDao.getNoteById(noteId)
 
-    override fun deleteNote(id: Long) {
-        val result: Int = noteDao.deleteNoteById(id)
-        if (result != 1) throw RuntimeException("Note with id=$id wasn't delete^ result=$result")
-    }
+    override fun deleteNote(id: Long): Single<Int> = noteDao.deleteNoteById(id)
 
-    override fun isChanged(id: Long, title: String, text: String): Boolean {
-        val note = noteDao.getNoteById(id)
-        return note?.title != title || note.text != text
-    }
+    override fun isChanged(id: Long, title: String, text: String): Single<Boolean> = noteDao.getNoteById(id)
+                .map { it.title != title || it.text != text }
+                .toSingle(false)
 
-    override fun isEmpty(id: Long): Boolean {
-        val note = noteDao.getNoteById(id)
-        return note?.title.isNullOrEmpty() && note?.text.isNullOrEmpty()
-    }
+    override fun isEmpty(id: Long): Single<Boolean> = noteDao.getNoteById(id)
+                .map { it.title.isEmpty() && it.text.isEmpty() }
+                .toSingle(true)
 }

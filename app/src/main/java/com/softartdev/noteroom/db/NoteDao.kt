@@ -2,6 +2,9 @@ package com.softartdev.noteroom.db
 
 import androidx.room.*
 import com.softartdev.noteroom.model.Note
+import io.reactivex.Completable
+import io.reactivex.Maybe
+import io.reactivex.Single
 
 @Dao
 interface NoteDao {
@@ -12,7 +15,7 @@ interface NoteDao {
      * @return all notes.
      */
     @Query("SELECT * FROM note")
-    fun getNotes(): List<Note> //TODO return Single<List<Note>>
+    fun getNotes(): Single<List<Note>>
 
     /**
      * Select a note by id.
@@ -21,7 +24,7 @@ interface NoteDao {
      * @return the note with noteId.
      */
     @Query("SELECT * FROM note WHERE id = :noteId")
-    fun getNoteById(noteId: Long): Note? //TODO return Single<Note>
+    fun getNoteById(noteId: Long): Maybe<Note>
 
     /**
      * Insert a note in the database. If the note already exists, replace it.
@@ -29,7 +32,7 @@ interface NoteDao {
      * @param note the note to be inserted.
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertNote(note: Note): Long //TODO return Single<Long>
+    fun insertNote(note: Note): Single<Long>
 
     /**
      * Update a note.
@@ -38,7 +41,7 @@ interface NoteDao {
      * @return the number of notes updated. This should always be 1.
      */
     @Update
-    fun updateNote(note: Note): Int //TODO return Single<Int>
+    fun updateNote(note: Note): Single<Int>
 
     /**
      * Delete a note by id.
@@ -46,12 +49,12 @@ interface NoteDao {
      * @return the number of notes deleted. This should always be 1.
      */
     @Query("DELETE FROM note WHERE id = :noteId")
-    fun deleteNoteById(noteId: Long): Int //TODO return Single<Int>
+    fun deleteNoteById(noteId: Long): Single<Int>
 
     /**
      * Delete all notes.
      */
     @Query("DELETE FROM note")
-    fun deleteNotes()
+    fun deleteNotes(): Completable
 
 }

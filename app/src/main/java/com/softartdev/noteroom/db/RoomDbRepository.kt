@@ -7,6 +7,7 @@ import android.text.Editable
 import android.text.SpannableStringBuilder
 import com.commonsware.cwac.saferoom.SQLCipherUtils
 import com.commonsware.cwac.saferoom.SafeHelperFactory
+import io.reactivex.Single
 
 abstract class RoomDbRepository(private val context: Context) : DbStore {
 
@@ -22,24 +23,25 @@ abstract class RoomDbRepository(private val context: Context) : DbStore {
             .openHelperFactory(SafeHelperFactory.fromUser(passphrase))
             .build()
 
-    override fun isEncryption(): Boolean = when(SQLCipherUtils.getDatabaseState(context, dbName)) {
-        SQLCipherUtils.State.ENCRYPTED -> true
-        SQLCipherUtils.State.UNENCRYPTED -> false
-        SQLCipherUtils.State.DOES_NOT_EXIST -> false
-        else -> throw RuntimeException("Cannot check encryption state")
-    }
+    override val isEncryption: Boolean
+        get() = when (SQLCipherUtils.getDatabaseState(context, dbName)) {
+            SQLCipherUtils.State.ENCRYPTED -> true
+            SQLCipherUtils.State.UNENCRYPTED -> false
+            SQLCipherUtils.State.DOES_NOT_EXIST -> false
+            else -> throw RuntimeException("Cannot check encryption state")
+        }
 
-    override fun checkPass(pass: Editable): Boolean =
-            try {
-                noteDatabase.close()
-                val passphrase = Editable.Factory.getInstance().newEditable(pass) // threadsafe
-                noteDatabase = db(passphrase)
-                noteDao.getNotes()
-                true
-            } catch (e: Exception) {
-                e.printStackTrace()
-                false
-            }
+    override fun checkPass(pass: Editable): Single<Boolean> = try {
+        noteDatabase.close()
+        val passphrase = Editable.Factory.getInstance().newEditable(pass) // threadsafe
+        noteDatabase = db(passphrase)
+        noteDao.getNotes()
+                .map { true }
+                .onErrorReturn { false }
+    } catch (e: Exception) {
+        e.printStackTrace()
+        Single.just(false)
+    }
 
     override fun changePass(oldPass: Editable?, newPass: Editable?) {
         if (isEncryption) {
