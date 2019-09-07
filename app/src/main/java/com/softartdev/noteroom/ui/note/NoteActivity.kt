@@ -10,8 +10,10 @@ import android.view.Menu
 import android.view.MenuItem
 import com.softartdev.noteroom.R
 import com.softartdev.noteroom.ui.base.BaseActivity
+import com.softartdev.noteroom.util.getThemeColor
 import com.softartdev.noteroom.util.hideKeyboard
 import com.softartdev.noteroom.util.showKeyboard
+import com.softartdev.noteroom.util.tintIcon
 import kotlinx.android.synthetic.main.activity_note.*
 import kotlinx.android.synthetic.main.content_note.*
 import javax.inject.Inject
@@ -68,6 +70,9 @@ class NoteActivity : BaseActivity(), NoteView {
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_note, menu)
+        val menuIconColor = getThemeColor(app_bar.context, android.R.attr.textColorPrimary)
+        menu.findItem(R.id.action_delete_note).tintIcon(this, menuIconColor)
+        menu.findItem(R.id.action_security).tintIcon(this, menuIconColor)
         return true
     }
 

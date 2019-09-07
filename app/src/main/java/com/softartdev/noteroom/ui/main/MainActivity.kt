@@ -11,6 +11,7 @@ import com.softartdev.noteroom.ui.common.OnReloadClickListener
 import com.softartdev.noteroom.ui.note.NoteActivity
 import com.softartdev.noteroom.ui.signin.SignInActivity
 import com.softartdev.noteroom.util.gone
+import com.softartdev.noteroom.util.tintIcon
 import com.softartdev.noteroom.util.visible
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.view_error.*
@@ -29,7 +30,7 @@ class MainActivity : BaseActivity(), MainView, MainAdapter.ClickListener, OnRelo
 
         main_swipe_refresh.apply {
             setProgressBackgroundColorSchemeResource(R.color.colorPrimary)
-            setColorSchemeResources(R.color.white)
+            setColorSchemeResources(R.color.on_primary)
             setOnRefreshListener { mainPresenter.updateNotes() }
         }
         mainAdapter.clickListener = this
@@ -89,6 +90,7 @@ class MainActivity : BaseActivity(), MainView, MainAdapter.ClickListener, OnRelo
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
+        menu.findItem(R.id.action_security).tintIcon(this)
         return true
     }
 
