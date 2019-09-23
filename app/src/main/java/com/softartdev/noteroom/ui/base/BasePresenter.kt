@@ -14,7 +14,7 @@ open class BasePresenter<T : MvpView> : Presenter<T> {
         private set
     private val mCompositeDisposable = CompositeDisposable()
 
-    override fun attachView(mvpView: T) {
+    override fun attachView(mvpView: T?) {
         this.mvpView = mvpView
     }
 

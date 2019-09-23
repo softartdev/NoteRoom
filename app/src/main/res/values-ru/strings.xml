@@ -34,4 +34,11 @@
     <string name="error_title">Ошибка</string>
     <string name="unknown">Без названия</string>
     <string name="open_source_licenses">Лицензии открытого ПО</string>
+    <string name="choose_theme">Выбор темы</string>
+    <string name="dark">Тёмная</string>
+    <string name="light">Светлая</string>
+    <string name="settings">Настройки</string>
+    <string name="theme">Тема</string>
+    <string name="system_default">Системная</string>
+    <string name="set_by_byttery_saver">Автоматически</string>
 </resources>

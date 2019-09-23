@@ -90,7 +90,7 @@ class MainActivity : BaseActivity(), MainView, MainAdapter.ClickListener, OnRelo
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
-        menu.findItem(R.id.action_security).tintIcon(this)
+        menu.findItem(R.id.action_settings).tintIcon(this)
         return true
     }
 

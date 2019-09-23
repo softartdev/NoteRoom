@@ -25,10 +25,11 @@ android {
         minSdkVersion 16
         targetSdkVersion 29
         multiDexEnabled true
-        versionCode 10
-        versionName "2.4"
+        versionCode 11
+        versionName "2.5"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
+        resConfigs 'en', 'ru'
     }
     buildTypes {
         release {
@@ -58,6 +59,7 @@ dependencies {
     def room_version = '2.1.0'
     implementation "androidx.room:room-runtime:$room_version"
     implementation "androidx.room:room-rxjava2:$room_version"
+    implementation 'androidx.preference:preference:1.1.0'
     kapt "androidx.room:room-compiler:$room_version"
     implementation 'com.commonsware.cwac:saferoom:0.4.1'
     implementation 'net.zetetic:android-database-sqlcipher:3.5.9@aar'

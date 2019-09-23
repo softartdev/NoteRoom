@@ -3,8 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.softartdev.noteroom">
 
-    <uses-sdk tools:overrideLibrary="io.github.tonnyl.spark" />
-
     <application
         android:name=".App"
         android:allowBackup="false"
@@ -14,6 +12,9 @@
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning">
 
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
         <meta-data
             android:name="firebase_crashlytics_collection_enabled"
             android:value="false" />
@@ -40,10 +41,8 @@
                 android:value="com.softartdev.noteroom.ui.main.MainActivity" />
         </activity>
         <activity
-            android:name=".ui.security.SecurityActivity"
-            android:label="@string/security"
-            android:theme="@style/AppTheme" />
-
+            android:name=".ui.settings.SettingsActivity"
+            android:label="@string/settings" />
     </application>
 
 </manifest>

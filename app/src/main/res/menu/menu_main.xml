@@ -3,9 +3,9 @@
       xmlns:tools="http://schemas.android.com/tools"
       tools:context="com.softartdev.noteroom.ui.main.MainActivity">
     <item
-        android:id="@+id/action_security"
-        android:icon="@drawable/ic_security_white_24dp"
-        android:orderInCategory="100"
-        android:title="@string/security"
-        app:showAsAction="ifRoom" />
+        android:id="@+id/action_settings"
+        android:icon="@drawable/ic_settings_white_24dp"
+        android:title="@string/settings"
+        app:showAsAction="ifRoom"
+        android:orderInCategory="100" />
 </menu>
