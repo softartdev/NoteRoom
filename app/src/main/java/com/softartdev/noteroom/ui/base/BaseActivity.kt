@@ -2,16 +2,15 @@ package com.softartdev.noteroom.ui.base
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.collection.LongSparseArray
-import androidx.appcompat.app.AppCompatActivity
 import android.view.MenuItem
+import androidx.appcompat.app.AppCompatActivity
+import androidx.collection.LongSparseArray
 import com.softartdev.noteroom.App
 import com.softartdev.noteroom.R
 import com.softartdev.noteroom.di.component.ActivityComponent
 import com.softartdev.noteroom.di.component.ConfigPersistentComponent
 import com.softartdev.noteroom.di.component.DaggerConfigPersistentComponent
 import com.softartdev.noteroom.di.module.ActivityModule
-import com.softartdev.noteroom.ui.security.SecurityActivity
 import com.softartdev.noteroom.ui.settings.SettingsActivity
 import timber.log.Timber
 import java.util.concurrent.atomic.AtomicLong
@@ -63,22 +62,16 @@ abstract class BaseActivity : AppCompatActivity() {
         super.onDestroy()
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            android.R.id.home -> {
-                finish()
-                true
-            }
-            R.id.action_security -> {
-                startActivity(Intent(this, SecurityActivity::class.java))
-                true
-            }
-            R.id.action_settings -> {
-                startActivity(Intent(this, SettingsActivity::class.java))
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
+    override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
+        android.R.id.home -> {
+            finish()
+            true
         }
+        R.id.action_settings -> {
+            startActivity(Intent(this, SettingsActivity::class.java))
+            true
+        }
+        else -> super.onOptionsItemSelected(item)
     }
 
     fun activityComponent(): ActivityComponent = mActivityComponent as ActivityComponent

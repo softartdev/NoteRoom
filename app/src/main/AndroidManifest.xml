@@ -11,6 +11,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning">
+
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
@@ -28,7 +29,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.signin.SignInActivity" />
-
         <activity android:name=".ui.main.MainActivity" />
         <activity
             android:name=".ui.note.NoteActivity"
@@ -40,10 +40,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.softartdev.noteroom.ui.main.MainActivity" />
         </activity>
-        <activity
-            android:name=".ui.security.SecurityActivity"
-            android:label="@string/security"
-            android:theme="@style/AppTheme" />
         <activity
             android:name=".ui.settings.SettingsActivity"
             android:label="@string/settings" />

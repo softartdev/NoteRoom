@@ -6,12 +6,10 @@ import android.graphics.Color
 import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import android.widget.TextView
 import androidx.annotation.AttrRes
 import androidx.annotation.ColorInt
-import androidx.annotation.DrawableRes
-import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
+import androidx.preference.Preference
 
 fun Activity.hideKeyboard() {
     val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -54,13 +52,11 @@ fun MenuItem.tintIcon(
     icon = drawableWrap
 }
 
-fun TextView.tintLeftDrawable(@DrawableRes drawableRes: Int) {
-    val drawable = ContextCompat.getDrawable(context, drawableRes)
-    val tint = getThemeColor(context, android.R.attr.textColorPrimary)
-    if (drawable != null) {
-        DrawableCompat.setTint(drawable, tint)
-    }
-    setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null)
+fun Preference.tintIcon() {
+    val drawableWrap = DrawableCompat.wrap(icon).mutate()
+    val color = getThemeColor(context, android.R.attr.textColorPrimary)
+    DrawableCompat.setTint(drawableWrap, color)
+    icon = drawableWrap
 }
 
 /**

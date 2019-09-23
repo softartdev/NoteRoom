@@ -2,12 +2,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <PreferenceCategory
-        app:icon="@drawable/ic_settings_brightness_black_24dp"
-        app:title="@string/theme">
+        app:key="@string/theme"
+        android:icon="@drawable/ic_brightness_black_24dp"
+        android:title="@string/theme">
 
         <ListPreference
-            android:dialogIcon="@drawable/ic_settings_brightness_black_24dp"
-            android:icon="@drawable/ic_brightness_black_24dp"
+            app:icon="@drawable/ic_settings_brightness_black_24dp"
+            app:dialogIcon="@drawable/ic_settings_brightness_black_24dp"
             app:defaultValue="@string/default_theme_entry"
             app:dialogTitle="@string/choose_theme"
             app:entries="@array/themeListArray"
@@ -17,5 +18,23 @@
             app:useSimpleSummaryProvider="true" />
 
     </PreferenceCategory>
+
+    <PreferenceCategory
+        app:key="@string/security"
+        android:icon="@drawable/ic_security_black_24dp"
+        android:title="@string/security">
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:icon="@drawable/ic_lock_black_24dp"
+            android:key="@string/security_key"
+            android:title="@string/pref_title_enable_encryption" />
+
+        <Preference
+            android:key="@string/password_key"
+            android:icon="@drawable/ic_password_black_24dp"
+            android:title="@string/pref_title_set_password"/>
+    </PreferenceCategory>
+
 
 </PreferenceScreen>

@@ -72,7 +72,7 @@ class NoteActivity : BaseActivity(), NoteView {
         menuInflater.inflate(R.menu.menu_note, menu)
         val menuIconColor = getThemeColor(app_bar.context, android.R.attr.textColorPrimary)
         menu.findItem(R.id.action_delete_note).tintIcon(this, menuIconColor)
-        menu.findItem(R.id.action_security).tintIcon(this, menuIconColor)
+        menu.findItem(R.id.action_settings).tintIcon(this, menuIconColor)
         return true
     }
 

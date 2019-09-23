@@ -45,5 +45,7 @@
     <string name="dark_theme_entry" translatable="false">dark</string>
     <string name="default_theme_entry" translatable="false">default</string>
     <string name="theme_key" translatable="false">theme_key</string>
+    <string name="security_key" translatable="false">security_key</string>
+    <string name="password_key" translatable="false">password_key</string>
 
 </resources>
