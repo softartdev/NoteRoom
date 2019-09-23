@@ -5,7 +5,6 @@
     android:id="@+id/main_frame"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:background="@color/colorPrimaryDark"
     tools:context="com.softartdev.noteroom.ui.main.MainActivity">
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -18,8 +17,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scrollbars="vertical"
-            tools:listitem="@layout/item_note"
-            tools:itemCount="3" />
+            tools:itemCount="3"
+            tools:listitem="@layout/item_note" />
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
@@ -29,7 +28,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
-        app:srcCompat="@drawable/ic_add_black_24dp" />
+        app:srcCompat="@drawable/ic_add_black_24dp"
+        android:tint="@color/on_accent" />
 
     <com.softartdev.noteroom.ui.common.ProgressView
         android:id="@+id/main_progress_view"

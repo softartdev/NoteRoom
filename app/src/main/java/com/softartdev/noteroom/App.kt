@@ -7,6 +7,7 @@ import com.crashlytics.android.core.CrashlyticsCore
 import com.softartdev.noteroom.di.component.ApplicationComponent
 import com.softartdev.noteroom.di.component.DaggerApplicationComponent
 import com.softartdev.noteroom.di.module.ApplicationModule
+import com.softartdev.noteroom.util.ThemeHelper
 import io.fabric.sdk.android.Fabric
 import timber.log.Timber
 
@@ -14,17 +15,6 @@ class App : MultiDexApplication() {
 
     private var mApplicationComponent: ApplicationComponent? = null
 
-    override fun onCreate() {
-        super.onCreate()
-        if (BuildConfig.DEBUG) {
-            Timber.plant(Timber.DebugTree())
-        }
-        val crashlyticsCore = CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build()
-        val crashlytics = Crashlytics.Builder().core(crashlyticsCore).build()
-        Fabric.with(this, crashlytics)
-    }
-
-    // Needed to replace the component with a test specific one
     var component: ApplicationComponent
         get() {
             if (mApplicationComponent == null) {
@@ -37,6 +27,19 @@ class App : MultiDexApplication() {
         set(applicationComponent) {
             mApplicationComponent = applicationComponent
         }
+
+    override fun onCreate() {
+        super.onCreate()
+        if (BuildConfig.DEBUG) {
+            Timber.plant(Timber.DebugTree())
+        }
+        val crashlyticsCore = CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build()
+        val crashlytics = Crashlytics.Builder().core(crashlyticsCore).build()
+        Fabric.with(this, crashlytics)
+
+        val preferencesHelper = component.preferencesHelper()
+        ThemeHelper.applyTheme(preferencesHelper.themeEntry, this)
+    }
 
     companion object {
         operator fun get(context: Context): App = context.applicationContext as App

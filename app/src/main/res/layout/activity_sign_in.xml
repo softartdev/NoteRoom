@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:background="@color/colorAccent"
     tools:context="com.softartdev.noteroom.ui.signin.SignInActivity">
     
     <ScrollView
@@ -26,8 +25,6 @@
                 android:layout_marginRight="16dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="32dp"
-                android:alpha="0.3"
-                android:background="@android:color/white"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -56,8 +53,6 @@
                 android:layout_marginRight="16dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="32dp"
-                android:alpha="0.3"
-                android:background="@android:color/white"
                 android:text="@string/sign_in"
                 android:textAppearance="@style/TextAppearance.AppCompat.Large"
                 app:layout_constraintBottom_toBottomOf="parent"

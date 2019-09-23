@@ -1,0 +1,21 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory
+        app:icon="@drawable/ic_settings_brightness_black_24dp"
+        app:title="@string/theme">
+
+        <ListPreference
+            android:dialogIcon="@drawable/ic_settings_brightness_black_24dp"
+            android:icon="@drawable/ic_brightness_black_24dp"
+            app:defaultValue="@string/default_theme_entry"
+            app:dialogTitle="@string/choose_theme"
+            app:entries="@array/themeListArray"
+            app:entryValues="@array/themeEntryArray"
+            app:key="@string/theme_key"
+            app:title="@string/choose_theme"
+            app:useSimpleSummaryProvider="true" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

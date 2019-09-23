@@ -5,7 +5,6 @@
     android:id="@+id/note_coordinator"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/translucent"
     android:fitsSystemWindows="true"
     tools:context="com.softartdev.noteroom.ui.note.NoteActivity">
 
@@ -67,6 +66,7 @@
         android:layout_margin="@dimen/fab_margin"
         app:layout_anchor="@id/app_bar"
         app:layout_anchorGravity="bottom|end"
-        app:srcCompat="@drawable/ic_save_black_24dp" />
+        app:srcCompat="@drawable/ic_save_black_24dp"
+        android:tint="@color/on_accent" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

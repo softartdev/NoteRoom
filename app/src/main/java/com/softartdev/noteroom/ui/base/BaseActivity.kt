@@ -12,6 +12,7 @@ import com.softartdev.noteroom.di.component.ConfigPersistentComponent
 import com.softartdev.noteroom.di.component.DaggerConfigPersistentComponent
 import com.softartdev.noteroom.di.module.ActivityModule
 import com.softartdev.noteroom.ui.security.SecurityActivity
+import com.softartdev.noteroom.ui.settings.SettingsActivity
 import timber.log.Timber
 import java.util.concurrent.atomic.AtomicLong
 
@@ -70,6 +71,10 @@ abstract class BaseActivity : AppCompatActivity() {
             }
             R.id.action_security -> {
                 startActivity(Intent(this, SecurityActivity::class.java))
+                true
+            }
+            R.id.action_settings -> {
+                startActivity(Intent(this, SettingsActivity::class.java))
                 true
             }
             else -> super.onOptionsItemSelected(item)
