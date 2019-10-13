@@ -3,6 +3,7 @@ package com.softartdev.noteroom.ui.base
 import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
+import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.collection.LongSparseArray
 import com.softartdev.noteroom.App
@@ -47,6 +48,12 @@ abstract class BaseActivity : AppCompatActivity() {
         }
         mActivityComponent = configPersistentComponent.activityComponent(ActivityModule(this))
         mActivityComponent?.inject(this)
+
+        // Hide task snapshot if enable in settings
+        val preferencesHelper = App[this].component.preferencesHelper()
+        if (preferencesHelper.hideScreenContentsEntry) {
+            window.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE)
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
