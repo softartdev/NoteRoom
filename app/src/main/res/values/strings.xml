@@ -47,5 +47,7 @@
     <string name="theme_key" translatable="false">theme_key</string>
     <string name="security_key" translatable="false">security_key</string>
     <string name="password_key" translatable="false">password_key</string>
-
+    <string name="hide_screen_contents_key" translatable="false">hide_screen_contents_key</string>
+    <string name="hide_screen_contents">Hide screen contents</string>
+    <string name="hide_screen_contents_summary">Turn on to hide the contents of the screen when switching between applications. Also, the ability to take a screenshot will be disabled.</string>
 </resources>
