@@ -4,10 +4,7 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AlertDialog
-import androidx.preference.ListPreference
-import androidx.preference.Preference
-import androidx.preference.PreferenceCategory
-import androidx.preference.SwitchPreference
+import androidx.preference.*
 import com.softartdev.noteroom.R
 import com.softartdev.noteroom.ui.base.BasePrefFragment
 import com.softartdev.noteroom.ui.security.PassMediator
@@ -58,6 +55,8 @@ class SettingsFragment : BasePrefFragment(), SecurityView, Preference.OnPreferen
             true
         }
         passwordPreference?.tintIcon()
+
+        findPreference<CheckBoxPreference>(getString(R.string.hide_screen_contents_key))?.tintIcon()
     }
 
     override fun onPreferenceChange(preference: Preference?, newValue: Any?): Boolean = when (preference?.key) {

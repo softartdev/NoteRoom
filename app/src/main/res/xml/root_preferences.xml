@@ -8,7 +8,6 @@
 
         <ListPreference
             app:defaultValue="@string/default_theme_entry"
-            app:dialogIcon="@drawable/ic_settings_brightness_black_24dp"
             app:dialogTitle="@string/choose_theme"
             app:entries="@array/themeListArray"
             app:entryValues="@array/themeEntryArray"
