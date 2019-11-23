@@ -8,7 +8,7 @@ import com.softartdev.noteroom.R
 class PassMediator (
         private val textInputLayout: TextInputLayout,
         private val editText: EditText
-) : SecurityView.DialogDirector {
+) : DialogDirector {
 
     override val textString: Editable
         get() = editText.text

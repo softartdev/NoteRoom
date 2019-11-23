@@ -5,12 +5,8 @@ import com.softartdev.noteroom.db.DbStore
 import com.softartdev.noteroom.model.Note
 import io.reactivex.Maybe
 import io.reactivex.Single
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-class DataManager @Inject
-internal constructor(private val dbStore: DbStore) {
+class DataManager(private val dbStore: DbStore) {
 
     fun notes(): Single<List<Note>> = dbStore.notes
 

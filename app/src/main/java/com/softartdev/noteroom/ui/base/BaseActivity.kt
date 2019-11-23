@@ -4,69 +4,35 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.WindowManager
-import androidx.appcompat.app.AppCompatActivity
-import androidx.collection.LongSparseArray
-import com.softartdev.noteroom.App
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import com.softartdev.noteroom.R
-import com.softartdev.noteroom.di.component.ActivityComponent
-import com.softartdev.noteroom.di.component.ConfigPersistentComponent
-import com.softartdev.noteroom.di.component.DaggerConfigPersistentComponent
-import com.softartdev.noteroom.di.module.ActivityModule
 import com.softartdev.noteroom.ui.settings.SettingsActivity
-import timber.log.Timber
-import java.util.concurrent.atomic.AtomicLong
+import com.softartdev.noteroom.util.PreferencesHelper
+import dagger.android.AndroidInjector
+import dagger.android.DispatchingAndroidInjector
+import dagger.android.support.DaggerAppCompatActivity
+import javax.inject.Inject
 
-/**
- * Abstract activity that every other Activity in this application must implement. It provides the
- * following functionality:
- * - Handles creation of Dagger components and makes sure that instances of
- * ConfigPersistentComponent are kept across configuration changes.
- * - Set up and handles a GoogleApiClient instance that can be used to access the Google sign in
- * api.
- * - Handles signing out when an authentication error event is received.
- */
-abstract class BaseActivity : AppCompatActivity() {
+abstract class BaseActivity : DaggerAppCompatActivity() {
 
-    private var mActivityComponent: ActivityComponent? = null
-    private var mActivityId: Long = 0
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+
+    @Inject
+    lateinit var preferencesHelper: PreferencesHelper
+
+    @Inject
+    lateinit var dispatchingAndroidInjector: DispatchingAndroidInjector<Fragment>
+
+    override fun supportFragmentInjector(): AndroidInjector<Fragment> = dispatchingAndroidInjector
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // Create the ActivityComponent and reuses cached ConfigPersistentComponent if this is
-        // being called after a configuration change.
-        mActivityId = savedInstanceState?.getLong(KEY_ACTIVITY_ID) ?: NEXT_ID.getAndIncrement()
-        val configPersistentComponent: ConfigPersistentComponent
-        if (sComponentsArray.get(mActivityId) == null) {
-            Timber.i("Creating new ConfigPersistentComponent id=%d", mActivityId)
-            configPersistentComponent = DaggerConfigPersistentComponent.builder()
-                    .applicationComponent(App[this].component)
-                    .build()
-            sComponentsArray.put(mActivityId, configPersistentComponent)
-        } else {
-            Timber.i("Reusing ConfigPersistentComponent id=%d", mActivityId)
-            configPersistentComponent = sComponentsArray.get(mActivityId) as ConfigPersistentComponent
-        }
-        mActivityComponent = configPersistentComponent.activityComponent(ActivityModule(this))
-        mActivityComponent?.inject(this)
-
         // Hide task snapshot if enable in settings
-        val preferencesHelper = App[this].component.preferencesHelper()
         if (preferencesHelper.hideScreenContentsEntry) {
             window.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE)
         }
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        outState.putLong(KEY_ACTIVITY_ID, mActivityId)
-        super.onSaveInstanceState(outState)
-    }
-
-    override fun onDestroy() {
-        if (!isChangingConfigurations) {
-            Timber.i("Clearing ConfigPersistentComponent id=%d", mActivityId)
-            sComponentsArray.remove(mActivityId)
-        }
-        super.onDestroy()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
@@ -80,13 +46,4 @@ abstract class BaseActivity : AppCompatActivity() {
         }
         else -> super.onOptionsItemSelected(item)
     }
-
-    fun activityComponent(): ActivityComponent = mActivityComponent as ActivityComponent
-
-    companion object {
-        private const val KEY_ACTIVITY_ID = "KEY_ACTIVITY_ID"
-        private val NEXT_ID = AtomicLong(0)
-        private val sComponentsArray = LongSparseArray<ConfigPersistentComponent>()
-    }
-
 }

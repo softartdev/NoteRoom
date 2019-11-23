@@ -3,12 +3,15 @@ package com.softartdev.noteroom.ui.note
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import com.google.android.material.snackbar.Snackbar
-import androidx.core.app.NavUtils
-import androidx.appcompat.app.AlertDialog
 import android.view.Menu
 import android.view.MenuItem
+import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
+import androidx.core.app.NavUtils
+import androidx.lifecycle.Observer
+import com.google.android.material.snackbar.Snackbar
 import com.softartdev.noteroom.R
+import com.softartdev.noteroom.model.NoteResult
 import com.softartdev.noteroom.ui.base.BaseActivity
 import com.softartdev.noteroom.util.getThemeColor
 import com.softartdev.noteroom.util.hideKeyboard
@@ -16,34 +19,42 @@ import com.softartdev.noteroom.util.showKeyboard
 import com.softartdev.noteroom.util.tintIcon
 import kotlinx.android.synthetic.main.activity_note.*
 import kotlinx.android.synthetic.main.content_note.*
-import javax.inject.Inject
 
-class NoteActivity : BaseActivity(), NoteView {
-    @Inject lateinit var notePresenter: NotePresenter
+class NoteActivity : BaseActivity(), Observer<NoteResult> {
+
+    private val noteViewModel by viewModels<NoteViewModel> { viewModelFactory }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_note)
-        activityComponent().inject(this)
-        notePresenter.attachView(this)
-
         setSupportActionBar(note_toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         save_note_fab.setOnClickListener { saveNote() }
+
+        noteViewModel.noteLiveData.observe(this, this)
 
         val noteId = intent.getLongExtra(NOTE_ID, 0L)
         savedInstanceState?.let {
             note_title_edit_text.setText(it.getString(KEY_TITLE))
             note_edit_text.setText(it.getString(KEY_TEXT))
         } ?: if (noteId == 0L) {
-            notePresenter.createNote()
+            noteViewModel.createNote()
         } else {
-            notePresenter.loadNote(noteId)
+            noteViewModel.loadNote(noteId)
         }
     }
 
-    override fun onLoadNote(title: String, text: String) {
+    override fun onChanged(noteResult: NoteResult) = when (noteResult) {
+        is NoteResult.Success -> onLoadNote(noteResult.result.title, noteResult.result.text)
+        is NoteResult.SaveNote -> onSaveNote(noteResult.title)
+        NoteResult.EmptyNote -> onEmptyNote()
+        NoteResult.DeleteNote -> onDeleteNote()
+        NoteResult.CheckSaveChange -> onCheckSaveChange()
+        NoteResult.NavBack -> onNavBack()
+    }
+
+    private fun onLoadNote(title: String, text: String) {
         if (title.isNotEmpty()) {
             note_title_edit_text.setText(title)
             supportActionBar?.title = title
@@ -53,17 +64,17 @@ class NoteActivity : BaseActivity(), NoteView {
         note_edit_text.setText(text)
     }
 
-    override fun onSaveNote(title: String) {
+    private fun onSaveNote(title: String) {
         val noteSaved = getString(R.string.note_saved) + ": " + title
         Snackbar.make(save_note_fab, noteSaved, Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show()
     }
 
-    override fun onEmptyNote() = Snackbar
+    private fun onEmptyNote() = Snackbar
             .make(save_note_fab, R.string.note_empty, Snackbar.LENGTH_LONG)
             .show()
 
-    override fun onDeleteNote() = Snackbar
+    private fun onDeleteNote() = Snackbar
             .make(save_note_fab, R.string.note_deleted, Snackbar.LENGTH_LONG)
             .setAction("Action", null)
             .show()
@@ -92,19 +103,19 @@ class NoteActivity : BaseActivity(), NoteView {
 
     override fun onBackPressed() = checkSaveChange()
 
-    private fun checkSaveChange() = notePresenter.checkSaveChange(
+    private fun checkSaveChange() = noteViewModel.checkSaveChange(
             title = note_title_edit_text.text.toString(),
             text = note_edit_text.text.toString())
 
     private fun showDeleteDialog() = with(AlertDialog.Builder(this)) {
         setTitle(R.string.action_delete_note)
         setMessage(R.string.note_delete_dialog_message)
-        setPositiveButton(android.R.string.yes) { _, _ -> notePresenter.deleteNote() }
+        setPositiveButton(android.R.string.yes) { _, _ -> noteViewModel.deleteNote() }
         setNegativeButton(android.R.string.cancel) { dialog, _ -> dialog.cancel() }
         show()
     }
 
-    override fun onCheckSaveChange() {
+    private fun onCheckSaveChange() {
         hideKeyboard()
         with(AlertDialog.Builder(this)) {
             setTitle(R.string.note_changes_not_saved_dialog_title)
@@ -119,21 +130,16 @@ class NoteActivity : BaseActivity(), NoteView {
         }
     }
 
-    private fun saveNote() = notePresenter.saveNote(
+    private fun saveNote() = noteViewModel.saveNote(
             title = note_title_edit_text.text.toString(),
             text = note_edit_text.text.toString())
 
-    override fun onNavBack() = NavUtils.navigateUpFromSameTask(this)
+    private fun onNavBack() = NavUtils.navigateUpFromSameTask(this)
 
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putString(KEY_TITLE, note_title_edit_text.text.toString())
         outState.putString(KEY_TEXT, note_edit_text.text.toString())
         super.onSaveInstanceState(outState)
-    }
-
-    override fun onDestroy() {
-        notePresenter.detachView()
-        super.onDestroy()
     }
 
     companion object {

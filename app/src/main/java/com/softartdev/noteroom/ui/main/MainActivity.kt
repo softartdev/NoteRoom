@@ -3,36 +3,37 @@ package com.softartdev.noteroom.ui.main
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
+import androidx.activity.viewModels
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.softartdev.noteroom.R
 import com.softartdev.noteroom.model.Note
+import com.softartdev.noteroom.model.NoteListResult
 import com.softartdev.noteroom.ui.base.BaseActivity
-import com.softartdev.noteroom.ui.common.OnReloadClickListener
 import com.softartdev.noteroom.ui.note.NoteActivity
 import com.softartdev.noteroom.ui.signin.SignInActivity
+import com.softartdev.noteroom.util.autoCleared
 import com.softartdev.noteroom.util.gone
 import com.softartdev.noteroom.util.tintIcon
 import com.softartdev.noteroom.util.visible
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.view_error.*
-import timber.log.Timber
-import javax.inject.Inject
+import kotlinx.android.synthetic.main.view_error.view.*
 
-class MainActivity : BaseActivity(), MainView, MainAdapter.ClickListener, OnReloadClickListener {
-    @Inject lateinit var mainPresenter: MainPresenter
-    @Inject lateinit var mainAdapter: MainAdapter
+class MainActivity : BaseActivity(), MainAdapter.ClickListener, Observer<NoteListResult> {
+
+    private val mainViewModel by viewModels<MainViewModel> { viewModelFactory }
+    private var mainAdapter by autoCleared<MainAdapter>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        activityComponent().inject(this)
-        mainPresenter.attachView(this)
 
         main_swipe_refresh.apply {
             setProgressBackgroundColorSchemeResource(R.color.colorPrimary)
             setColorSchemeResources(R.color.on_primary)
-            setOnRefreshListener { mainPresenter.updateNotes() }
+            setOnRefreshListener { mainViewModel.updateNotes() }
         }
+        mainAdapter = MainAdapter()
         mainAdapter.clickListener = this
         notes_recycler_view.apply {
             layoutManager = LinearLayoutManager(context)
@@ -41,13 +42,29 @@ class MainActivity : BaseActivity(), MainView, MainAdapter.ClickListener, OnRelo
         add_note_fab.setOnClickListener {
             startActivity(NoteActivity.getStartIntent(this, 0L))
         }
-        main_error_view.reloadClickListener = this
-        if (mainAdapter.itemCount == 0) {
-            mainPresenter.updateNotes()
-        }
+        main_error_view.button_reload.setOnClickListener { mainViewModel.updateNotes() }
+
+        mainViewModel.notesLiveData.observe(this, this)
     }
 
-    override fun onUpdateNotes(noteList: List<Note>) {
+    override fun onChanged(noteListResult: NoteListResult) = when (noteListResult) {
+        NoteListResult.Loading -> showProgress(true)
+        is NoteListResult.Success -> {
+            showProgress(false)
+            if (noteListResult.result.isNotEmpty()) {
+                onUpdateNotes(noteListResult.result)
+            } else {
+                showEmpty()
+            }
+        }
+        is NoteListResult.Error -> {
+            showProgress(false)
+            showError(noteListResult.error)
+        }
+        NoteListResult.NavMain -> navSignIn()
+    }
+
+    private fun onUpdateNotes(noteList: List<Note>) {
         mainAdapter.apply {
             notes = noteList
             notifyDataSetChanged()
@@ -58,7 +75,7 @@ class MainActivity : BaseActivity(), MainView, MainAdapter.ClickListener, OnRelo
         startActivity(NoteActivity.getStartIntent(this, noteId))
     }
 
-    override fun showProgress(show: Boolean) {
+    private fun showProgress(show: Boolean) {
         if (main_swipe_refresh.isRefreshing) {
             main_swipe_refresh.isRefreshing = show
         } else {
@@ -66,23 +83,16 @@ class MainActivity : BaseActivity(), MainView, MainAdapter.ClickListener, OnRelo
         }
     }
 
-    override fun showEmpty() = main_empty_view.visible()
+    private fun showEmpty() = main_empty_view.visible()
 
-    override fun showError(error: Throwable) {
+    private fun showError(message: String?) {
         main_error_view.apply {
             visible()
-            text_error_message.text = error.message
+            text_error_message.text = message
         }
-        Timber.e(error, "There was an error main")
     }
 
-    override fun onReloadClick() {
-        main_empty_view.gone()
-        main_error_view.gone()
-        mainPresenter.updateNotes()
-    }
-
-    override fun navSignIn() {
+    private fun navSignIn() {
         val intent = Intent(this, SignInActivity::class.java)
         startActivity(intent)
         finish()
@@ -94,10 +104,4 @@ class MainActivity : BaseActivity(), MainView, MainAdapter.ClickListener, OnRelo
         return true
     }
 
-    override fun onDestroy() {
-        mainPresenter.detachView()
-        mainAdapter.clickListener = null
-        notes_recycler_view.adapter = null
-        super.onDestroy()
-    }
 }

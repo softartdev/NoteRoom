@@ -1,94 +1,95 @@
 package com.softartdev.noteroom.ui.security
 
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import com.crashlytics.android.Crashlytics
 import com.softartdev.noteroom.data.DataManager
-import com.softartdev.noteroom.di.ConfigPersistent
-import com.softartdev.noteroom.ui.base.BasePresenter
+import com.softartdev.noteroom.model.SecurityResult
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 import javax.inject.Inject
 
-@ConfigPersistent
-class SecurityPresenter @Inject constructor(
+class SecurityViewModel @Inject constructor(
         private val dataManager: DataManager
-) : BasePresenter<SecurityView>() {
+) : ViewModel() {
+
+    val securityLiveData = MutableLiveData<SecurityResult>()
+
+    private val compositeDisposable = CompositeDisposable()
 
     fun checkEncryption() {
-        checkViewAttached()
-        addDisposable(dataManager.isEncryption()
+        compositeDisposable.add(dataManager.isEncryption()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ isEncrypted ->
-                    mvpView?.showEncryptEnable(isEncrypted)
+                    securityLiveData.postValue(SecurityResult.EncryptEnable(isEncrypted))
                 }, { throwable ->
                     Crashlytics.logException(throwable)
                     throwable.printStackTrace()
-                    mvpView?.showError(throwable.message)
+                    securityLiveData.postValue(SecurityResult.Error(throwable.message))
                 }))
     }
 
     fun changeEncryption(checked: Boolean) {
-        checkViewAttached()
         if (checked) {
-            mvpView?.showSetPasswordDialog()
+            securityLiveData.postValue(SecurityResult.SetPasswordDialog)
         } else {
-            addDisposable(dataManager.isEncryption()
+            compositeDisposable.add(dataManager.isEncryption()
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({ isEncrypted ->
                         if (isEncrypted) {
-                            mvpView?.showPasswordDialog()
+                            securityLiveData.postValue(SecurityResult.PasswordDialog)
                         } else {
-                            mvpView?.showEncryptEnable(false)
+                            securityLiveData.postValue(SecurityResult.EncryptEnable(false))
                         }
                     }, { throwable ->
                         Crashlytics.logException(throwable)
                         throwable.printStackTrace()
-                        mvpView?.showError(throwable.message)
+                        securityLiveData.postValue(SecurityResult.Error(throwable.message))
                     }))
         }
     }
 
     fun changePassword() {
-        checkViewAttached()
-        addDisposable(dataManager.isEncryption()
+        compositeDisposable.add(dataManager.isEncryption()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ isEncrypted ->
                     if (isEncrypted) {
-                        mvpView?.showChangePasswordDialog()
+                        securityLiveData.postValue(SecurityResult.ChangePasswordDialog)
                     } else {
-                        mvpView?.showSetPasswordDialog()
+                        securityLiveData.postValue(SecurityResult.SetPasswordDialog)
                     }
                 }, { throwable ->
                     Crashlytics.logException(throwable)
                     throwable.printStackTrace()
-                    mvpView?.showError(throwable.message)
+                    securityLiveData.postValue(SecurityResult.Error(throwable.message))
                 }))
     }
 
     // only to disable encryption
-    fun enterPassCorrect(pass: SecurityView.DialogDirector, completeDismissDialog: () -> Unit) {
-        checkViewAttached()
+    fun enterPassCorrect(pass: DialogDirector, completeDismissDialog: () -> Unit) {
         pass.hideError()
         val password = pass.textString
         if (password.isEmpty()) {
             pass.showEmptyPasswordError()
-            mvpView?.showEncryptEnable(true)
+            securityLiveData.postValue(SecurityResult.EncryptEnable(true))
         } else {
-            addDisposable(dataManager.checkPass(password)
+            compositeDisposable.add(dataManager.checkPass(password)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .flatMap { checked ->
                         if (checked) {
                             completeDismissDialog()
-                            mvpView?.showEncryptEnable(false)
+                            securityLiveData.postValue(SecurityResult.EncryptEnable(false))
                             dataManager.changePass(password, null)
                         } else {
                             Single.fromCallable {
-                                mvpView?.showEncryptEnable(true)
+                                securityLiveData.postValue(SecurityResult.EncryptEnable(true))
                                 pass.showIncorrectPasswordError()
                             }
                         }
@@ -98,14 +99,13 @@ class SecurityPresenter @Inject constructor(
                     }, { throwable ->
                         Crashlytics.logException(throwable)
                         throwable.printStackTrace()
-                        mvpView?.showError(throwable.message)
+                        securityLiveData.postValue(SecurityResult.Error(throwable.message))
                     }))
         }
     }
 
     // only to enable encryption
-    fun setPassCorrect(pass: SecurityView.DialogDirector, repeatPass: SecurityView.DialogDirector, completeDismissDialog: () -> Unit) {
-        checkViewAttached()
+    fun setPassCorrect(pass: DialogDirector, repeatPass: DialogDirector, completeDismissDialog: () -> Unit) {
         pass.hideError()
         repeatPass.hideError()
         val password = pass.textString
@@ -114,17 +114,17 @@ class SecurityPresenter @Inject constructor(
             if (password.isEmpty()) {
                 pass.showEmptyPasswordError()
             } else {
-                addDisposable(dataManager.changePass(null, password)
+                compositeDisposable.add(dataManager.changePass(null, password)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe({
                             completeDismissDialog()
                             Timber.d("The password should have been changed")
-                            mvpView?.showEncryptEnable(true)
+                            securityLiveData.postValue(SecurityResult.EncryptEnable(true))
                         }, { throwable ->
                             Crashlytics.logException(throwable)
                             throwable.printStackTrace()
-                            mvpView?.showError(throwable.message)
+                            securityLiveData.postValue(SecurityResult.Error(throwable.message))
                         }))
             }
         } else {
@@ -133,7 +133,7 @@ class SecurityPresenter @Inject constructor(
     }
 
     // only when encryption is enabled
-    fun changePassCorrect(oldPass: SecurityView.DialogDirector, newPass: SecurityView.DialogDirector, repeatNewPass: SecurityView.DialogDirector, completeDismissDialog: () -> Unit) {
+    fun changePassCorrect(oldPass: DialogDirector, newPass: DialogDirector, repeatNewPass: DialogDirector, completeDismissDialog: () -> Unit) {
         oldPass.hideError()
         newPass.hideError()
         repeatNewPass.hideError()
@@ -144,7 +144,7 @@ class SecurityPresenter @Inject constructor(
             oldPassword.isEmpty() -> oldPass.showEmptyPasswordError()
             newPassword.isEmpty() -> newPass.showEmptyPasswordError()
             newPassword.toString() != repeatNewPassword.toString() -> repeatNewPass.showPasswordsNoMatchError()
-            else -> addDisposable(dataManager.checkPass(oldPassword)
+            else -> compositeDisposable.add(dataManager.checkPass(oldPassword)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .flatMap { checked ->
@@ -162,8 +162,10 @@ class SecurityPresenter @Inject constructor(
                     }, { throwable ->
                         Crashlytics.logException(throwable)
                         throwable.printStackTrace()
-                        mvpView?.showError(throwable.message)
+                        securityLiveData.postValue(SecurityResult.Error(throwable.message))
                     }))
         }
     }
+
+    override fun onCleared() = compositeDisposable.clear()
 }
