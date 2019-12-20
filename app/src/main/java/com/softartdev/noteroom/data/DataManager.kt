@@ -10,7 +10,7 @@ class DataManager(private val dbStore: DbStore) {
 
     fun notes(): Single<List<Note>> = dbStore.notes
 
-    fun createNote(title: String, text: String): Single<Long> = dbStore.createNote(title, text)
+    fun createNote(title: String = "", text: String = ""): Single<Long> = dbStore.createNote(title, text)
 
     fun saveNote(id: Long, title: String, text: String): Single<Int> = dbStore.saveNote(id, title, text)
 

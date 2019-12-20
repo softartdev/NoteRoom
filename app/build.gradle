@@ -25,8 +25,8 @@ android {
         minSdkVersion 16
         targetSdkVersion 29
         multiDexEnabled true
-        versionCode 28
-        versionName "2.8"
+        versionCode 29
+        versionName "2.9"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         resConfigs 'en', 'ru'
@@ -62,9 +62,9 @@ dependencies {
     implementation 'androidx.multidex:multidex:2.0.1'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.1.0'
     implementation 'androidx.core:core-ktx:1.1.0'
-    implementation 'androidx.activity:activity-ktx:1.1.0-rc02'
-    implementation 'androidx.fragment:fragment-ktx:1.2.0-rc02'
-    def room_version = '2.2.2'
+    implementation 'androidx.activity:activity-ktx:1.1.0-rc03'
+    implementation 'androidx.fragment:fragment-ktx:1.2.0-rc04'
+    def room_version = '2.2.3'
     implementation "androidx.room:room-runtime:$room_version"
     implementation "androidx.room:room-rxjava2:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
@@ -88,10 +88,10 @@ dependencies {
     kaptTest "com.google.dagger:dagger-compiler:$dagger_version"
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test:rules:1.2.0'
-    androidTestImplementation('androidx.test.espresso:espresso-core:3.1.0-alpha4', {
+    androidTestImplementation('androidx.test.espresso:espresso-core:3.1.0', {
         exclude group: "com.android.support", module: "support-annotations"
     })
-    androidTestImplementation 'androidx.test.espresso:espresso-contrib:3.1.0-alpha4', {
+    androidTestImplementation 'androidx.test.espresso:espresso-contrib:3.1.0', {
         exclude group: 'com.android.support', module: 'support-annotations'
         exclude group: 'com.android.support', module: 'support-v4'
         exclude group: 'com.android.support', module: 'design'

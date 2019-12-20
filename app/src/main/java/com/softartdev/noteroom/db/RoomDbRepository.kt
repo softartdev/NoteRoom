@@ -11,20 +11,18 @@ import io.reactivex.Single
 
 abstract class RoomDbRepository(private val context: Context) : DbStore {
 
-    private val dbName = "notes.db"
-
     private var noteDatabase: NoteDatabase = db()
 
     val noteDao: NoteDao
         get() = noteDatabase.noteDao()
 
     private fun db(passphrase: Editable = SpannableStringBuilder()): NoteDatabase = Room
-            .databaseBuilder(context, NoteDatabase::class.java, dbName)
+            .databaseBuilder(context, NoteDatabase::class.java, DB_NAME)
             .openHelperFactory(SafeHelperFactory.fromUser(passphrase))
             .build()
 
     override val isEncryption: Boolean
-        get() = when (SQLCipherUtils.getDatabaseState(context, dbName)) {
+        get() = when (SQLCipherUtils.getDatabaseState(context, DB_NAME)) {
             SQLCipherUtils.State.ENCRYPTED -> true
             SQLCipherUtils.State.UNENCRYPTED -> false
             SQLCipherUtils.State.DOES_NOT_EXIST -> false
@@ -46,7 +44,7 @@ abstract class RoomDbRepository(private val context: Context) : DbStore {
     override fun changePass(oldPass: Editable?, newPass: Editable?) {
         if (isEncryption) {
             if (newPass.isNullOrEmpty()) {
-                val originalFile = context.getDatabasePath(dbName)
+                val originalFile = context.getDatabasePath(DB_NAME)
 
                 val oldCopy = Editable.Factory.getInstance().newEditable(oldPass) // threadsafe
                 val passphrase = CharArray(oldCopy.length)
@@ -68,9 +66,13 @@ abstract class RoomDbRepository(private val context: Context) : DbStore {
             val passphrase = Editable.Factory.getInstance().newEditable(newPass) // threadsafe
 
             noteDatabase.close()
-            SQLCipherUtils.encrypt(context, dbName, passphrase)
+            SQLCipherUtils.encrypt(context, DB_NAME, passphrase)
 
             passphrase?.let { noteDatabase = db(it) }
         }
+    }
+
+    companion object {
+        const val DB_NAME = "notes.db"
     }
 }

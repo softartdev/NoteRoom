@@ -1,17 +1,20 @@
 package com.softartdev.noteroom.ui
 
 
+import android.content.Context
 import android.view.View
 import android.view.ViewGroup
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.Espresso.pressBack
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.rule.ActivityTestRule
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.softartdev.noteroom.R
+import com.softartdev.noteroom.db.RoomDbRepository
 import com.softartdev.noteroom.ui.splash.SplashActivity
 import org.hamcrest.Description
 import org.hamcrest.Matcher
@@ -27,7 +30,13 @@ class CreateRemove {
 
     @Rule
     @JvmField
-    var mActivityTestRule = ActivityTestRule(SplashActivity::class.java)
+    var activityTestRule = object : ActivityTestRule<SplashActivity>(SplashActivity::class.java) {
+        override fun beforeActivityLaunched() {
+            super.beforeActivityLaunched()
+            val context = ApplicationProvider.getApplicationContext<Context>()
+            context.deleteDatabase(RoomDbRepository.DB_NAME)
+        }
+    }
 
     @Test
     fun createRemove() {

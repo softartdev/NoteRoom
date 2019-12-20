@@ -19,10 +19,11 @@ class RoomDbStore(context: Context) : RoomDbRepository(context) {
 
     override fun saveNote(id: Long, title: String, text: String): Single<Int> {
         return noteDao.getNoteById(id).toSingle().flatMap {
-            it.title = title
-            it.text = text
-            it.dateModified = Date()
-            noteDao.updateNote(it)
+            noteDao.updateNote(note = it.copy(
+                    title = title,
+                    text = text,
+                    dateModified = Date()
+            ))
         }
     }
 
@@ -31,10 +32,10 @@ class RoomDbStore(context: Context) : RoomDbRepository(context) {
     override fun deleteNote(id: Long): Single<Int> = noteDao.deleteNoteById(id)
 
     override fun isChanged(id: Long, title: String, text: String): Single<Boolean> = noteDao.getNoteById(id)
-                .map { it.title != title || it.text != text }
-                .toSingle(false)
+            .map { it.title != title || it.text != text }
+            .toSingle(false)
 
     override fun isEmpty(id: Long): Single<Boolean> = noteDao.getNoteById(id)
-                .map { it.title.isEmpty() && it.text.isEmpty() }
-                .toSingle(true)
+            .map { it.title.isEmpty() && it.text.isEmpty() }
+            .toSingle(true)
 }

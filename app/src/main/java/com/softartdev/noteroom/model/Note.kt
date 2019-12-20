@@ -10,8 +10,8 @@ import java.util.*
 @TypeConverters(NoteTypeConverters::class)
 data class Note(
         @PrimaryKey(autoGenerate = true) val id: Long,
-        var title: String,
-        var text: String,
+        val title: String,
+        val text: String,
         val dateCreated: Date,
         var dateModified: Date
 )
