@@ -2,8 +2,6 @@ package com.softartdev.noteroom.ui
 
 
 import android.content.Context
-import android.view.View
-import android.view.ViewGroup
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.Espresso.pressBack
@@ -16,10 +14,6 @@ import androidx.test.rule.ActivityTestRule
 import com.softartdev.noteroom.R
 import com.softartdev.noteroom.db.RoomDbRepository
 import com.softartdev.noteroom.ui.splash.SplashActivity
-import org.hamcrest.Description
-import org.hamcrest.Matcher
-import org.hamcrest.Matchers.allOf
-import org.hamcrest.TypeSafeMatcher
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -40,98 +34,39 @@ class CreateRemove {
 
     @Test
     fun createRemove() {
-        val floatingActionButton = onView(
-                allOf(withId(R.id.add_note_fab),
-                        childAtPosition(
-                                allOf(withId(R.id.main_frame),
-                                        childAtPosition(
-                                                withId(android.R.id.content),
-                                                0)),
-                                1),
-                        isDisplayed()))
+        val floatingActionButton = onView(withId(R.id.add_note_fab))
         floatingActionButton.perform(click())
 
         Thread.sleep(500)
 
-        val textInputEditText = onView(
-                allOf(withId(R.id.note_title_edit_text),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.note_title_text_input_layout),
-                                        0),
-                                0),
-                        isDisplayed()))
-        textInputEditText.perform(replaceText("Lorem"))
+        val textInputEditText = onView(withId(R.id.note_title_edit_text))
+        val titleText = "Lorem"
+        textInputEditText.perform(replaceText(titleText))
         textInputEditText.perform(closeSoftKeyboard())
 
         pressBack()
 
         Thread.sleep(500)
 
-        val appCompatButton = onView(
-                allOf(withId(android.R.id.button1), withText("Yes"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.buttonPanel),
-                                        0),
-                                3)))
-        appCompatButton.perform(scrollTo(), click())
+        val alertDialogPositiveButton = onView(withId(android.R.id.button1))
+        alertDialogPositiveButton.perform(click())
 
         Thread.sleep(500)
 
-        val textView = onView(
-                allOf(withId(R.id.item_note_title_text_view),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.item_note_card_view),
-                                        0),
-                                0),
-                        isDisplayed()))
-        textView.check(matches(withText("Lorem")))
+        val textView = onView(withId(R.id.item_note_title_text_view))
+        textView.check(matches(withText(titleText)))
 
         textView.perform(click())
 
-        val actionMenuItemView = onView(
-                allOf(withId(R.id.action_delete_note), withContentDescription("Delete note"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.note_toolbar),
-                                        2),
-                                0),
-                        isDisplayed()))
+        val actionMenuItemView = onView(withId(R.id.action_delete_note))
         actionMenuItemView.perform(click())
 
-        val appCompatButton2 = onView(
-                allOf(withId(android.R.id.button1), withText("OK"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.buttonPanel),
-                                        0),
-                                3)))
-        appCompatButton2.perform(scrollTo(), click())
+        alertDialogPositiveButton.perform(click())
 
         Thread.sleep(500)
 
-        val textView2 = onView(
-                allOf(withId(R.id.text_message),
-                        isDisplayed()))
-        textView2.check(matches(withText("The list is empty")))
+        val textView2 = onView(withId(R.id.text_message))
+        textView2.check(matches(withText(R.string.label_empty_result)))
     }
 
-    private fun childAtPosition(
-            parentMatcher: Matcher<View>, position: Int): Matcher<View> {
-
-        return object : TypeSafeMatcher<View>() {
-            override fun describeTo(description: Description) {
-                description.appendText("Child at position $position in parent ")
-                parentMatcher.describeTo(description)
-            }
-
-            public override fun matchesSafely(view: View): Boolean {
-                val parent = view.parent
-                return parent is ViewGroup && parentMatcher.matches(parent)
-                        && view == parent.getChildAt(position)
-            }
-        }
-    }
 }
