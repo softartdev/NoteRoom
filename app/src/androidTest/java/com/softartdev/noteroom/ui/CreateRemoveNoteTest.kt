@@ -1,6 +1,5 @@
 package com.softartdev.noteroom.ui
 
-
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
@@ -20,7 +19,7 @@ import org.junit.runner.RunWith
 
 @LargeTest
 @RunWith(AndroidJUnit4::class)
-class CreateRemove {
+class CreateRemoveNoteTest {
 
     @Rule
     @JvmField

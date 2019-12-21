@@ -11,7 +11,12 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class MainAdapter : RecyclerView.Adapter<MainAdapter.NotesViewHolder>() {
+
     var notes: List<Note> = emptyList()
+        set(value) {
+            field = value
+            notifyDataSetChanged()
+        }
     var clickListener: ClickListener? = null
     private val simpleDateFormat = SimpleDateFormat("HH:mm dd-MM-yyyy", Locale.getDefault())
 

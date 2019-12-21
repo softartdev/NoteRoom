@@ -51,11 +51,8 @@ class MainActivity : BaseActivity(), MainAdapter.ClickListener, Observer<NoteLis
         NoteListResult.Loading -> showProgress(true)
         is NoteListResult.Success -> {
             showProgress(false)
-            if (noteListResult.result.isNotEmpty()) {
-                onUpdateNotes(noteListResult.result)
-            } else {
-                showEmpty()
-            }
+            onUpdateNotes(noteListResult.result)
+            showEmpty(noteListResult.result.isEmpty())
         }
         is NoteListResult.Error -> {
             showProgress(false)
@@ -65,10 +62,7 @@ class MainActivity : BaseActivity(), MainAdapter.ClickListener, Observer<NoteLis
     }
 
     private fun onUpdateNotes(noteList: List<Note>) {
-        mainAdapter.apply {
-            notes = noteList
-            notifyDataSetChanged()
-        }
+        mainAdapter.notes = noteList
     }
 
     override fun onNoteClick(noteId: Long) {
@@ -83,7 +77,9 @@ class MainActivity : BaseActivity(), MainAdapter.ClickListener, Observer<NoteLis
         }
     }
 
-    private fun showEmpty() = main_empty_view.visible()
+    private fun showEmpty(show: Boolean) {
+        main_empty_view.apply { if (show) visible() else gone() }
+    }
 
     private fun showError(message: String?) {
         main_error_view.apply {
