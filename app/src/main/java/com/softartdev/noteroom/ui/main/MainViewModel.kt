@@ -31,7 +31,7 @@ class MainViewModel @Inject constructor(
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe { notesLiveData.postValue(NoteListResult.Loading) }
-                .subscribeBy(onSuccess = { notes ->
+                .subscribeBy(onNext = { notes ->
                     notesLiveData.postValue(NoteListResult.Success(notes))
                 }, onError = { throwable ->
                     when (throwable) {

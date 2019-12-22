@@ -1,15 +1,20 @@
 package com.softartdev.noteroom.db
 
 import android.content.Context
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import com.softartdev.noteroom.db.RoomDbRepository.Companion.DB_NAME
 import org.junit.After
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import java.io.IOException
 
 class NoteDatabaseTest {
+
+    @get:Rule var instantTaskExecutorRule = InstantTaskExecutorRule()
+
     private lateinit var db: NoteDatabase
     private lateinit var noteDao: NoteDao
 
@@ -33,5 +38,6 @@ class NoteDatabaseTest {
                 .test()
                 .assertValue(emptyList())
                 .assertNoErrors()
+                .assertNotComplete()
     }
 }

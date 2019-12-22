@@ -3,6 +3,7 @@ package com.softartdev.noteroom.db
 import androidx.room.*
 import com.softartdev.noteroom.model.Note
 import io.reactivex.Completable
+import io.reactivex.Flowable
 import io.reactivex.Maybe
 import io.reactivex.Single
 
@@ -15,7 +16,7 @@ interface NoteDao {
      * @return all notes.
      */
     @Query("SELECT * FROM note")
-    fun getNotes(): Single<List<Note>>
+    fun getNotes(): Flowable<List<Note>>
 
     /**
      * Select a note by id.

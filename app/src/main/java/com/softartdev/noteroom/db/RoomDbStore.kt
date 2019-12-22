@@ -2,13 +2,14 @@ package com.softartdev.noteroom.db
 
 import android.content.Context
 import com.softartdev.noteroom.model.Note
+import io.reactivex.Flowable
 import io.reactivex.Maybe
 import io.reactivex.Single
 import java.util.*
 
 class RoomDbStore(context: Context) : RoomDbRepository(context) {
 
-    override val notes: Single<List<Note>>
+    override val notes: Flowable<List<Note>>
         get() = noteDao.getNotes()
 
     override fun createNote(title: String, text: String): Single<Long> {

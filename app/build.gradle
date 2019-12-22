@@ -64,6 +64,9 @@ dependencies {
     implementation 'androidx.core:core-ktx:1.1.0'
     implementation 'androidx.activity:activity-ktx:1.1.0-rc03'
     implementation 'androidx.fragment:fragment-ktx:1.2.0-rc04'
+    def arch_version = "2.1.0"
+    implementation "androidx.arch.core:core-common:$arch_version"
+    implementation "androidx.arch.core:core-runtime:$arch_version"
     def room_version = '2.2.3'
     implementation "androidx.room:room-runtime:$room_version"
     implementation "androidx.room:room-rxjava2:$room_version"
@@ -92,4 +95,6 @@ dependencies {
     androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_version"
     androidTestImplementation "androidx.test.espresso:espresso-contrib:$espresso_version"
     kaptAndroidTest "com.google.dagger:dagger-compiler:$dagger_version"
+    androidTestImplementation "androidx.room:room-testing:$room_version"
+    androidTestImplementation "androidx.arch.core:core-testing:$arch_version"
 }

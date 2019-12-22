@@ -3,12 +3,13 @@ package com.softartdev.noteroom.data
 import android.text.Editable
 import com.softartdev.noteroom.db.DbStore
 import com.softartdev.noteroom.model.Note
+import io.reactivex.Flowable
 import io.reactivex.Maybe
 import io.reactivex.Single
 
 class DataManager(private val dbStore: DbStore) {
 
-    fun notes(): Single<List<Note>> = dbStore.notes
+    fun notes(): Flowable<List<Note>> = dbStore.notes
 
     fun createNote(title: String = "", text: String = ""): Single<Long> = dbStore.createNote(title, text)
 
