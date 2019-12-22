@@ -72,12 +72,12 @@ dependencies {
     implementation "androidx.room:room-rxjava2:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
     implementation 'com.commonsware.cwac:saferoom:0.4.1'
-    implementation 'net.zetetic:android-database-sqlcipher:3.5.9@aar'
+    implementation 'net.zetetic:android-database-sqlcipher:4.3.0@aar'
     implementation 'io.reactivex.rxjava2:rxkotlin:2.4.0'
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
     implementation 'com.jakewharton.timber:timber:4.7.1'
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.0-beta-3'
-    def dagger_version = "2.21"
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.0'
+    def dagger_version = '2.25.3'
     implementation "com.google.dagger:dagger:$dagger_version"
     implementation "com.google.dagger:dagger-android:$dagger_version"
     implementation "com.google.dagger:dagger-android-support:$dagger_version"
