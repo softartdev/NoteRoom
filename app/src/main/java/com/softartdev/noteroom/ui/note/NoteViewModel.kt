@@ -2,7 +2,6 @@ package com.softartdev.noteroom.ui.note
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.crashlytics.android.Crashlytics
 import com.softartdev.noteroom.data.DataManager
 import com.softartdev.noteroom.model.NoteResult
 import io.reactivex.Single
@@ -36,7 +35,7 @@ class NoteViewModel @Inject constructor(
                     noteId = it
                     noteLiveData.value = NoteResult.Created(it)
                     Timber.d("Created note with id=$noteId")
-                }, onError = this::onError))
+                }, onError = Timber::e))
     }
 
     fun loadNote(id: Long) {
@@ -47,7 +46,7 @@ class NoteViewModel @Inject constructor(
                     noteId = it.id
                     noteLiveData.value = (NoteResult.Loaded(it))
                     Timber.d("Loaded note with id=$noteId")
-                }, onError = this::onError))
+                }, onError = Timber::e))
     }
 
     fun saveNote(title: String, text: String) {
@@ -59,7 +58,7 @@ class NoteViewModel @Inject constructor(
                 .subscribeBy(onSuccess = {
                     noteLiveData.value = (NoteResult.Saved(title))
                     Timber.d("Saved note with id=$noteId")
-                }, onError = this::onError))
+                }, onError = Timber::e))
     }
 
     fun deleteNote() {
@@ -69,7 +68,7 @@ class NoteViewModel @Inject constructor(
                 .subscribeBy(onSuccess = {
                     noteLiveData.value = (NoteResult.Deleted)
                     Timber.d("Deleted note with id=$noteId")
-                }, onError = this::onError))
+                }, onError = Timber::e))
     }
 
     fun checkSaveChange(title: String, text: String) {
@@ -86,7 +85,7 @@ class NoteViewModel @Inject constructor(
                         empty -> deleteNote()
                         else -> noteLiveData.value = (NoteResult.NavBack)
                     }
-                }, onError = this::onError))
+                }, onError = Timber::e))
     }
 
     fun saveNoteAndNavBack(title: String, text: String) {
@@ -97,7 +96,7 @@ class NoteViewModel @Inject constructor(
                 .subscribeBy(onSuccess = {
                     noteLiveData.value = (NoteResult.NavBack)
                     Timber.d("Saved and nav back")
-                }, onError = this::onError))
+                }, onError = Timber::e))
     }
 
     fun doNotSaveAndNavBack() {
@@ -111,12 +110,7 @@ class NoteViewModel @Inject constructor(
                         noteLiveData.value = (NoteResult.NavBack)
                         Timber.d("Don't save and nav back")
                     }
-                }, onError = this::onError))
-    }
-
-    private fun onError(throwable: Throwable) {
-        Timber.e(throwable)
-        Crashlytics.logException(throwable)
+                }, onError = Timber::e))
     }
 
     override fun onCleared() = compositeDisposable.clear()

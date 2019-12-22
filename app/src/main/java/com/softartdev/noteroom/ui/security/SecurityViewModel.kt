@@ -2,7 +2,6 @@ package com.softartdev.noteroom.ui.security
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.crashlytics.android.Crashlytics
 import com.softartdev.noteroom.data.DataManager
 import com.softartdev.noteroom.model.SecurityResult
 import io.reactivex.Single
@@ -27,8 +26,7 @@ class SecurityViewModel @Inject constructor(
                 .subscribe({ isEncrypted ->
                     securityLiveData.postValue(SecurityResult.EncryptEnable(isEncrypted))
                 }, { throwable ->
-                    Crashlytics.logException(throwable)
-                    throwable.printStackTrace()
+                    Timber.e(throwable)
                     securityLiveData.postValue(SecurityResult.Error(throwable.message))
                 }))
     }
@@ -47,8 +45,7 @@ class SecurityViewModel @Inject constructor(
                             securityLiveData.postValue(SecurityResult.EncryptEnable(false))
                         }
                     }, { throwable ->
-                        Crashlytics.logException(throwable)
-                        throwable.printStackTrace()
+                        Timber.e(throwable)
                         securityLiveData.postValue(SecurityResult.Error(throwable.message))
                     }))
         }
@@ -65,8 +62,7 @@ class SecurityViewModel @Inject constructor(
                         securityLiveData.postValue(SecurityResult.SetPasswordDialog)
                     }
                 }, { throwable ->
-                    Crashlytics.logException(throwable)
-                    throwable.printStackTrace()
+                    Timber.e(throwable)
                     securityLiveData.postValue(SecurityResult.Error(throwable.message))
                 }))
     }
@@ -97,8 +93,7 @@ class SecurityViewModel @Inject constructor(
                     .subscribe({
                         Timber.d("The password should have been changed")
                     }, { throwable ->
-                        Crashlytics.logException(throwable)
-                        throwable.printStackTrace()
+                        Timber.e(throwable)
                         securityLiveData.postValue(SecurityResult.Error(throwable.message))
                     }))
         }
@@ -122,8 +117,7 @@ class SecurityViewModel @Inject constructor(
                             Timber.d("The password should have been changed")
                             securityLiveData.postValue(SecurityResult.EncryptEnable(true))
                         }, { throwable ->
-                            Crashlytics.logException(throwable)
-                            throwable.printStackTrace()
+                            Timber.e(throwable)
                             securityLiveData.postValue(SecurityResult.Error(throwable.message))
                         }))
             }
@@ -160,8 +154,7 @@ class SecurityViewModel @Inject constructor(
                     .subscribe({
                         Timber.d("The password should have been changed")
                     }, { throwable ->
-                        Crashlytics.logException(throwable)
-                        throwable.printStackTrace()
+                        Timber.e(throwable)
                         securityLiveData.postValue(SecurityResult.Error(throwable.message))
                     }))
         }

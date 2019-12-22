@@ -2,7 +2,6 @@ package com.softartdev.noteroom.ui.main
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.crashlytics.android.Crashlytics
 import com.softartdev.noteroom.data.DataManager
 import com.softartdev.noteroom.model.NoteListResult
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -38,7 +37,6 @@ class MainViewModel @Inject constructor(
                         is SQLiteException -> notesLiveData.postValue(NoteListResult.NavMain)
                         else -> notesLiveData.postValue(NoteListResult.Error(throwable.message))
                     }
-                    Crashlytics.logException(throwable)
                     Timber.e(throwable)
                 })
     }

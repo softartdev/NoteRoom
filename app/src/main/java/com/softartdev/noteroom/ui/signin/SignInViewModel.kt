@@ -3,12 +3,12 @@ package com.softartdev.noteroom.ui.signin
 import android.text.Editable
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.crashlytics.android.Crashlytics
 import com.softartdev.noteroom.data.DataManager
 import com.softartdev.noteroom.model.SignInResult
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+import timber.log.Timber
 import javax.inject.Inject
 
 class SignInViewModel @Inject constructor(
@@ -37,7 +37,7 @@ class SignInViewModel @Inject constructor(
                             signInLiveData.postValue(SignInResult.ShowIncorrectPassError)
                         }
                     }, { throwable ->
-                        Crashlytics.logException(throwable)
+                        Timber.e(throwable)
                         signInLiveData.postValue(SignInResult.ShowProgress(false))
                         signInLiveData.postValue(SignInResult.ShowError(throwable))
                     })

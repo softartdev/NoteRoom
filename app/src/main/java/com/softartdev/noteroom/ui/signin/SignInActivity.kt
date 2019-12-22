@@ -14,7 +14,6 @@ import com.softartdev.noteroom.util.hideKeyboard
 import com.softartdev.noteroom.util.visible
 import kotlinx.android.synthetic.main.activity_sign_in.*
 import kotlinx.android.synthetic.main.view_error.view.*
-import timber.log.Timber
 
 class SignInActivity : BaseActivity(), Observer<SignInResult> {
     private val signInViewModel by viewModels<SignInViewModel> { viewModelFactory }
@@ -76,7 +75,6 @@ class SignInActivity : BaseActivity(), Observer<SignInResult> {
             visible()
             text_error_message.text = error.message
         }
-        Timber.e(error, "There was an error sign in")
     }
 }
 

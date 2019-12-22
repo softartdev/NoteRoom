@@ -2,12 +2,12 @@ package com.softartdev.noteroom.ui.splash
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.crashlytics.android.Crashlytics
 import com.softartdev.noteroom.data.DataManager
 import com.softartdev.noteroom.model.SplashResult
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+import timber.log.Timber
 import javax.inject.Inject
 
 class SplashViewModel @Inject constructor(
@@ -34,8 +34,7 @@ class SplashViewModel @Inject constructor(
                         splashLiveData.postValue(SplashResult.NavMain)
                     }
                 }, { throwable ->
-                    Crashlytics.logException(throwable)
-                    throwable.printStackTrace()
+                    Timber.e(throwable)
                     splashLiveData.postValue(SplashResult.ShowError(throwable.message))
                 })
     }
