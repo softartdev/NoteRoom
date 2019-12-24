@@ -2,7 +2,6 @@ package com.softartdev.noteroom.ui.settings
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -10,13 +9,12 @@ import androidx.preference.*
 import com.softartdev.noteroom.R
 import com.softartdev.noteroom.model.SecurityResult
 import com.softartdev.noteroom.ui.base.BasePrefFragment
-import com.softartdev.noteroom.ui.security.PassMediator
 import com.softartdev.noteroom.ui.security.SecurityViewModel
+import com.softartdev.noteroom.ui.security.change.ChangePasswordDialog
+import com.softartdev.noteroom.ui.security.confirm.ConfirmPasswordDialog
+import com.softartdev.noteroom.ui.security.enter.EnterPasswordDialog
 import com.softartdev.noteroom.util.ThemeHelper
 import com.softartdev.noteroom.util.tintIcon
-import kotlinx.android.synthetic.main.dialog_change_password.view.*
-import kotlinx.android.synthetic.main.dialog_password.view.*
-import kotlinx.android.synthetic.main.dialog_set_password.view.*
 import timber.log.Timber
 
 @SuppressLint("InflateParams")
@@ -85,51 +83,18 @@ class SettingsFragment : BasePrefFragment(), Preference.OnPreferenceChangeListen
     }
 
     private fun showPasswordDialog() {
-        val dialogPasswordView = layoutInflater.inflate(R.layout.dialog_password, null)
-        val alertDialog = createDialog(dialogPasswordView)
-        dialogPositiveClickListener(alertDialog, View.OnClickListener {
-            val pass = PassMediator(dialogPasswordView.enter_password_text_input_layout, dialogPasswordView.enter_password_edit_text)
-            securityViewModel.enterPassCorrect(pass) { alertDialog.dismiss() }
-        })
-        alertDialog.show()
+        val dialog = EnterPasswordDialog()
+        dialog.show(parentFragmentManager, null)
     }
 
     private fun showSetPasswordDialog() {
-        val dialogPasswordView = layoutInflater.inflate(R.layout.dialog_set_password, null)
-        val alertDialog = createDialog(dialogPasswordView)
-        dialogPositiveClickListener(alertDialog, View.OnClickListener {
-            val pass = PassMediator(dialogPasswordView.set_password_text_input_layout, dialogPasswordView.set_password_edit_text)
-            val repeatPass = PassMediator(dialogPasswordView.repeat_set_password_text_input_layout, dialogPasswordView.repeat_set_password_edit_text)
-            securityViewModel.setPassCorrect(pass, repeatPass) { alertDialog.dismiss() }
-        })
-        alertDialog.show()
+        val dialog = ConfirmPasswordDialog()
+        dialog.show(parentFragmentManager, null)
     }
 
     private fun showChangePasswordDialog() {
-        val dialogPasswordView = layoutInflater.inflate(R.layout.dialog_change_password, null)
-        val alertDialog = createDialog(dialogPasswordView)
-        dialogPositiveClickListener(alertDialog, View.OnClickListener {
-            val oldPass = PassMediator(dialogPasswordView.old_password_text_input_layout, dialogPasswordView.old_password_edit_text)
-            val newPass = PassMediator(dialogPasswordView.new_password_text_input_layout, dialogPasswordView.new_password_edit_text)
-            val repeatNewPass = PassMediator(dialogPasswordView.repeat_new_password_text_input_layout, dialogPasswordView.repeat_new_password_edit_text)
-            securityViewModel.changePassCorrect(oldPass, newPass, repeatNewPass) { alertDialog.dismiss() }
-        })
-        alertDialog.show()
-    }
-
-    private fun createDialog(dialogView: View?): AlertDialog = with(AlertDialog.Builder(requireContext())) {
-        setView(dialogView)
-        setPositiveButton(android.R.string.ok, null)
-        setNegativeButton(android.R.string.cancel) { dialog, _ -> dialog.cancel() }
-        create()
-    }
-
-    private fun dialogPositiveClickListener(
-            alertDialog: AlertDialog,
-            clickListener: View.OnClickListener
-    ) = alertDialog.setOnShowListener {
-        val okButton = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)
-        okButton.setOnClickListener(clickListener)
+        val dialog = ChangePasswordDialog()
+        dialog.show(parentFragmentManager, null)
     }
 
     private fun showError(message: String?) = with(AlertDialog.Builder(requireContext())) {
