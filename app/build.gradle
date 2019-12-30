@@ -5,6 +5,7 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'io.fabric'
 apply plugin: 'com.google.android.gms.oss-licenses-plugin'
+apply plugin: "scabbard.gradle"
 
 def hasReleaseStore = project.hasProperty("RELEASE_STORE_FILE")
 
@@ -44,6 +45,9 @@ android {
     }
     kotlinOptions {
         jvmTarget = "1.8"
+    }
+    scabbard {
+        enabled true
     }
 }
 
