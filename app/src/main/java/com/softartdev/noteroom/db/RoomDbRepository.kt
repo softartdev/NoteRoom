@@ -34,7 +34,7 @@ abstract class RoomDbRepository(private val context: Context) : DbStore {
         val passphrase = Editable.Factory.getInstance().newEditable(pass) // threadsafe
         noteDatabase = db(passphrase)
         noteDao.getNotes()
-                .singleOrError()
+                .firstOrError()
                 .map { true }
                 .onErrorReturn { false }
     } catch (e: Exception) {

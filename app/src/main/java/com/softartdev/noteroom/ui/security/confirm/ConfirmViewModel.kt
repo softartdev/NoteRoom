@@ -4,8 +4,9 @@ import android.text.Editable
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.softartdev.noteroom.data.DataManager
+import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
@@ -17,29 +18,31 @@ class ConfirmViewModel @Inject constructor(
 
     val confirmLiveData = MutableLiveData<ConfirmResult>()
 
-    private val compositeDisposable = CompositeDisposable()
+    private var disposable: Disposable? = null
 
-    fun conformCheck(password: Editable?, repeatPassword: Editable?) = when {
-        password.toString() != repeatPassword.toString() -> {
-            confirmLiveData.value = ConfirmResult.PasswordsNoMatchError
-        }
-        password.isNullOrEmpty() -> {
-            confirmLiveData.value = ConfirmResult.EmptyPasswordError
-        }
-        else -> {
-            compositeDisposable.add(dataManager.changePass(null, password)
-                    .ignoreElement()
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeBy(onComplete = {
-                        Timber.d("The password should have been changed")
-                        confirmLiveData.value = ConfirmResult.Success
-                    }, onError =  { throwable ->
-                        Timber.e(throwable)
-                        confirmLiveData.value = ConfirmResult.Error(throwable.message)
-                    })); Unit
-        }
+    fun conformCheck(password: Editable, repeatPassword: Editable) {
+        disposable?.dispose()
+        disposable = Single.just(password to repeatPassword)
+                .flatMap { pair ->
+                    val (passEditable, repeatPassEditable) = pair
+                    when {
+                        passEditable.toString() != repeatPassEditable.toString() ->
+                            Single.just(ConfirmResult.PasswordsNoMatchError)
+                        passEditable.isEmpty() ->
+                            Single.just(ConfirmResult.EmptyPasswordError)
+                        else -> dataManager.changePass(null, password)
+                                .map { ConfirmResult.Success }
+                    }
+                }
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeBy(onSuccess = { confirmResult ->
+                    confirmLiveData.value = confirmResult
+                }, onError = { throwable ->
+                    Timber.e(throwable)
+                    confirmLiveData.value = ConfirmResult.Error(throwable.message)
+                })
     }
 
-    override fun onCleared() = compositeDisposable.clear()
+    override fun onCleared() = disposable?.dispose() ?: Unit
 }

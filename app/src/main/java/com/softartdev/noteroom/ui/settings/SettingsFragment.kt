@@ -1,14 +1,17 @@
 package com.softartdev.noteroom.ui.settings
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.preference.*
 import com.softartdev.noteroom.R
 import com.softartdev.noteroom.model.SecurityResult
 import com.softartdev.noteroom.ui.base.BasePrefFragment
+import com.softartdev.noteroom.ui.security.BaseDialogFragment
 import com.softartdev.noteroom.ui.security.SecurityViewModel
 import com.softartdev.noteroom.ui.security.change.ChangePasswordDialog
 import com.softartdev.noteroom.ui.security.confirm.ConfirmPasswordDialog
@@ -58,9 +61,9 @@ class SettingsFragment : BasePrefFragment(), Preference.OnPreferenceChangeListen
 
     override fun onChanged(securityResult: SecurityResult) = when (securityResult) {
         is SecurityResult.EncryptEnable -> showEncryptEnable(securityResult.encryption)
-        is SecurityResult.PasswordDialog -> showPasswordDialog()
-        is SecurityResult.SetPasswordDialog -> showSetPasswordDialog()
-        is SecurityResult.ChangePasswordDialog -> showChangePasswordDialog()
+        is SecurityResult.PasswordDialog -> showDialogFragment(EnterPasswordDialog())
+        is SecurityResult.SetPasswordDialog -> showDialogFragment(ConfirmPasswordDialog())
+        is SecurityResult.ChangePasswordDialog -> showDialogFragment(ChangePasswordDialog())
         is SecurityResult.Error -> showError(securityResult.message)
     }
 
@@ -82,26 +85,22 @@ class SettingsFragment : BasePrefFragment(), Preference.OnPreferenceChangeListen
         else -> throw IllegalArgumentException("Unknown preference key")
     }
 
-    private fun showPasswordDialog() {
-        val dialog = EnterPasswordDialog()
-        dialog.show(parentFragmentManager, null)
+    private fun showDialogFragment(dialogFragment: DialogFragment) {
+        dialogFragment.setTargetFragment(this, BaseDialogFragment.DIALOG_REQUEST_CODE)
+        dialogFragment.show(parentFragmentManager, "PASSWORD_DIALOG_TAG")
     }
 
-    private fun showSetPasswordDialog() {
-        val dialog = ConfirmPasswordDialog()
-        dialog.show(parentFragmentManager, null)
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) = when (requestCode) {
+        BaseDialogFragment.DIALOG_REQUEST_CODE -> securityViewModel.checkEncryption()
+        else -> super.onActivityResult(requestCode, resultCode, data)
     }
 
-    private fun showChangePasswordDialog() {
-        val dialog = ChangePasswordDialog()
-        dialog.show(parentFragmentManager, null)
-    }
-
-    private fun showError(message: String?) = with(AlertDialog.Builder(requireContext())) {
-        setTitle(android.R.string.dialog_alert_title)
-        setMessage(message)
-        setNeutralButton(android.R.string.cancel) { dialog, _ -> dialog.cancel() }
-        show(); Unit
+    private fun showError(message: String?) {
+        AlertDialog.Builder(requireContext())
+                .setTitle(android.R.string.dialog_alert_title)
+                .setMessage(message)
+                .setNeutralButton(android.R.string.cancel, null)
+                .show()
     }
 
 }

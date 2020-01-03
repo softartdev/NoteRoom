@@ -4,9 +4,9 @@ import android.text.Editable
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.softartdev.noteroom.data.DataManager
-import io.reactivex.Completable
+import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
@@ -18,31 +18,32 @@ class EnterViewModel @Inject constructor(
 
     val enterLiveData = MutableLiveData<EnterResult>()
 
-    private val compositeDisposable = CompositeDisposable()
+    private var disposable: Disposable? = null
 
-    fun enterCheck(password: Editable?) {
-        if (password.isNullOrEmpty()) {
-            enterLiveData.value = EnterResult.EmptyPasswordError
-        } else compositeDisposable.add(dataManager.checkPass(password)
-                .flatMapCompletable { checked ->
-                    if (checked) {
-                        dataManager.changePass(password, null).doOnSuccess {
-                            enterLiveData.postValue(EnterResult.Success)
-                        }.ignoreElement()
-                    } else Completable.fromCallable {
-                        enterLiveData.postValue(EnterResult.IncorrectPasswordError)
-                    }
+    fun enterCheck(password: Editable) {
+        disposable?.dispose()
+        disposable = Single.just(password)
+                .flatMap { passEditable ->
+                    if (passEditable.isNotEmpty()) {
+                        dataManager.checkPass(password)
+                                .flatMap { checked ->
+                                    when (checked) {
+                                        true -> dataManager.changePass(passEditable, null)
+                                                .map { EnterResult.Success }
+                                        false -> Single.just(EnterResult.IncorrectPasswordError)
+                                    }
+                                }
+                    } else Single.just(EnterResult.EmptyPasswordError)
                 }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(onComplete = {
-                    Timber.d("The password should have been changed")
+                .subscribeBy(onSuccess = { enterResult ->
+                    enterLiveData.value = enterResult
                 }, onError = { throwable: Throwable ->
                     Timber.e(throwable)
                     enterLiveData.value = EnterResult.Error(throwable.message)
-                }))
+                })
     }
 
-    override fun onCleared() = compositeDisposable.clear()
-
+    override fun onCleared() = disposable?.dispose() ?: Unit
 }
