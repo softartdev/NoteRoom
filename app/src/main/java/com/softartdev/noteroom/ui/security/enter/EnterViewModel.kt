@@ -37,6 +37,7 @@ class EnterViewModel @Inject constructor(
                 }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe { enterLiveData.value = EnterResult.Loading }
                 .subscribeBy(onSuccess = { enterResult ->
                     enterLiveData.value = enterResult
                 }, onError = { throwable: Throwable ->

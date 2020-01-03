@@ -1,6 +1,7 @@
 package com.softartdev.noteroom.ui.security.change
 
 sealed class ChangeResult {
+    object Loading: ChangeResult()
     object Success: ChangeResult()
     object OldEmptyPasswordError: ChangeResult()
     object NewEmptyPasswordError: ChangeResult()

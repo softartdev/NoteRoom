@@ -36,6 +36,7 @@ class ConfirmViewModel @Inject constructor(
                 }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe { confirmLiveData.value = ConfirmResult.Loading }
                 .subscribeBy(onSuccess = { confirmResult ->
                     confirmLiveData.value = confirmResult
                 }, onError = { throwable ->

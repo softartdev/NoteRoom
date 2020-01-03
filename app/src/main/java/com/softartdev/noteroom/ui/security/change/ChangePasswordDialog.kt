@@ -1,18 +1,24 @@
 package com.softartdev.noteroom.ui.security.change
 
 import android.os.Bundle
+import android.widget.ProgressBar
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.softartdev.noteroom.R
 import com.softartdev.noteroom.ui.security.BaseDialogFragment
+import com.softartdev.noteroom.util.invisible
+import com.softartdev.noteroom.util.visible
 
 class ChangePasswordDialog : BaseDialogFragment(
         dialogLayoutRes = R.layout.dialog_change_password
 ), Observer<ChangeResult> {
 
     private val changeViewModel by viewModels<ChangeViewModel> { viewModelFactory }
+
+    private val progressBar: ProgressBar
+        get() = requireDialog().findViewById(R.id.dialog_change_progress_bar)
 
     private val oldPasswordEditText: TextInputEditText
         get() = requireDialog().findViewById(R.id.old_password_edit_text)
@@ -44,10 +50,12 @@ class ChangePasswordDialog : BaseDialogFragment(
     )
 
     override fun onChanged(changeResult: ChangeResult) {
+        progressBar.invisible()
         oldPasswordTextInputLayout.error = null
         newPasswordTextInputLayout.error = null
         repeatPasswordTextInputLayout.error = null
         when (changeResult) {
+            ChangeResult.Loading -> progressBar.visible()
             ChangeResult.Success -> dismiss()
             ChangeResult.OldEmptyPasswordError -> {
                 oldPasswordTextInputLayout.error = requireContext().getString(R.string.empty_password)

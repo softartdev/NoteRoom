@@ -44,6 +44,7 @@ class ChangeViewModel @Inject constructor(
                 }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe { changeLiveData.value = ChangeResult.Loading }
                 .subscribeBy(onSuccess = { changeResult ->
                     changeLiveData.value = changeResult
                 }, onError = { throwable ->

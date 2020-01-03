@@ -1,18 +1,24 @@
 package com.softartdev.noteroom.ui.security.confirm
 
 import android.os.Bundle
+import android.widget.ProgressBar
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.softartdev.noteroom.R
 import com.softartdev.noteroom.ui.security.BaseDialogFragment
+import com.softartdev.noteroom.util.invisible
+import com.softartdev.noteroom.util.visible
 
 class ConfirmPasswordDialog : BaseDialogFragment(
         dialogLayoutRes = R.layout.dialog_set_password
 ), Observer<ConfirmResult> {
 
     private val confirmViewModel by viewModels<ConfirmViewModel> { viewModelFactory }
+
+    private val progressBar: ProgressBar
+        get() = requireDialog().findViewById(R.id.dialog_set_progress_bar)
 
     private val passwordEditText: TextInputEditText
         get() = requireDialog().findViewById(R.id.set_password_edit_text)
@@ -37,9 +43,11 @@ class ConfirmPasswordDialog : BaseDialogFragment(
     )
 
     override fun onChanged(confirmResult: ConfirmResult) {
+        progressBar.invisible()
         passwordTextInputLayout.error = null
         repeatPasswordTextInputLayout.error = null
         when (confirmResult) {
+            ConfirmResult.Loading -> progressBar.visible()
             ConfirmResult.Success -> dismiss()
             is ConfirmResult.EmptyPasswordError -> {
                 passwordTextInputLayout.error = requireContext().getString(R.string.empty_password)
@@ -48,7 +56,7 @@ class ConfirmPasswordDialog : BaseDialogFragment(
                 repeatPasswordTextInputLayout.error = requireContext().getString(R.string.passwords_do_not_match)
             }
             is ConfirmResult.Error -> showError(confirmResult.message)
-        }; Unit
+        }
     }
 
 }
