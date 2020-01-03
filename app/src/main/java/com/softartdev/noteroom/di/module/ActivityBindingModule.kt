@@ -12,19 +12,19 @@ import dagger.android.ContributesAndroidInjector
 abstract class ActivityBindingModule {
 
     @PerActivity
-    @ContributesAndroidInjector()
+    @ContributesAndroidInjector
     abstract fun splashActivity(): SplashActivity
 
     @PerActivity
-    @ContributesAndroidInjector()
+    @ContributesAndroidInjector
     abstract fun signInActivity(): SignInActivity
 
     @PerActivity
-    @ContributesAndroidInjector()
+    @ContributesAndroidInjector
     abstract fun mainActivity(): MainActivity
 
     @PerActivity
-    @ContributesAndroidInjector()
+    @ContributesAndroidInjector
     abstract fun noteActivity(): NoteActivity
 
 }

@@ -1,10 +1,9 @@
-package com.softartdev.noteroom.ui.signin
+package com.softartdev.noteroom.ui.security.enter
 
 import android.text.Editable
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.softartdev.noteroom.data.DataManager
-import com.softartdev.noteroom.model.SignInResult
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
@@ -13,36 +12,36 @@ import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 import javax.inject.Inject
 
-class SignInViewModel @Inject constructor(
+class EnterViewModel @Inject constructor(
         private val dataManager: DataManager
 ) : ViewModel() {
 
-    val signInLiveData = MutableLiveData<SignInResult>()
+    val enterLiveData = MutableLiveData<EnterResult>()
 
     private var disposable: Disposable? = null
 
-    fun signIn(pass: Editable) {
+    fun enterCheck(password: Editable) {
         disposable?.dispose()
-        disposable = Single.just(pass)
+        disposable = Single.just(password)
                 .flatMap { passEditable ->
                     if (passEditable.isNotEmpty()) {
-                        dataManager.checkPass(passEditable)
-                                .map { checked ->
+                        dataManager.checkPass(password)
+                                .flatMap { checked ->
                                     when (checked) {
-                                        true -> SignInResult.NavMain
-                                        false -> SignInResult.ShowIncorrectPassError
+                                        true -> dataManager.changePass(passEditable, null)
+                                                .map { EnterResult.Success }
+                                        false -> Single.just(EnterResult.IncorrectPasswordError)
                                     }
                                 }
-                    } else Single.just(SignInResult.ShowEmptyPassError)
+                    } else Single.just(EnterResult.EmptyPasswordError)
                 }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe { signInLiveData.value = SignInResult.ShowProgress }
-                .subscribeBy(onSuccess = { signInResult ->
-                    signInLiveData.value = signInResult
-                }, onError = { throwable ->
+                .subscribeBy(onSuccess = { enterResult ->
+                    enterLiveData.value = enterResult
+                }, onError = { throwable: Throwable ->
                     Timber.e(throwable)
-                    signInLiveData.value = SignInResult.ShowError(throwable)
+                    enterLiveData.value = EnterResult.Error(throwable.message)
                 })
     }
 

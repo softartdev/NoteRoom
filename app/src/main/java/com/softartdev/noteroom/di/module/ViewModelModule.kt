@@ -7,6 +7,9 @@ import com.softartdev.noteroom.model.NoteRoomViewModelFactory
 import com.softartdev.noteroom.ui.main.MainViewModel
 import com.softartdev.noteroom.ui.note.NoteViewModel
 import com.softartdev.noteroom.ui.security.SecurityViewModel
+import com.softartdev.noteroom.ui.security.change.ChangeViewModel
+import com.softartdev.noteroom.ui.security.confirm.ConfirmViewModel
+import com.softartdev.noteroom.ui.security.enter.EnterViewModel
 import com.softartdev.noteroom.ui.signin.SignInViewModel
 import com.softartdev.noteroom.ui.splash.SplashViewModel
 import dagger.Binds
@@ -41,6 +44,21 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(SecurityViewModel::class)
     abstract fun bindSecurityViewModel(securityViewModel: SecurityViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(EnterViewModel::class)
+    abstract fun bindEnterViewModel(enterViewModel: EnterViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(ConfirmViewModel::class)
+    abstract fun bindConfirmViewModel(confirmViewModel: ConfirmViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(ChangeViewModel::class)
+    abstract fun bindChangeViewModel(changeViewModel: ChangeViewModel): ViewModel
 
     @Binds
     abstract fun bindViewModelFactory(factory: NoteRoomViewModelFactory): ViewModelProvider.Factory
