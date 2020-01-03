@@ -3,6 +3,7 @@ package com.softartdev.noteroom.data
 import android.text.Editable
 import com.softartdev.noteroom.db.DbStore
 import com.softartdev.noteroom.model.Note
+import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Maybe
 import io.reactivex.Single
@@ -21,11 +22,9 @@ class DataManager(private val dbStore: DbStore) {
 
     fun checkPass(pass: Editable): Single<Boolean> = dbStore.checkPass(pass)
 
-    fun isEncryption(): Single<Boolean> = Single.fromCallable {
-        dbStore.isEncryption
-    }
+    fun isEncryption(): Single<Boolean> = Single.just(dbStore.isEncryption)
 
-    fun changePass(odlPass: Editable?, newPass: Editable?): Single<Unit> = Single.fromCallable {
+    fun changePass(odlPass: Editable?, newPass: Editable?): Completable = Completable.fromCallable {
         dbStore.changePass(odlPass, newPass)
     }
 

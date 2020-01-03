@@ -31,7 +31,7 @@ class ConfirmViewModel @Inject constructor(
                         passEditable.isEmpty() ->
                             Single.just(ConfirmResult.EmptyPasswordError)
                         else -> dataManager.changePass(null, password)
-                                .map { ConfirmResult.Success }
+                                .toSingleDefault(ConfirmResult.Success)
                     }
                 }
                 .subscribeOn(Schedulers.io())

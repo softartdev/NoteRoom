@@ -4,10 +4,13 @@ import android.app.Activity
 import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
+import android.widget.Toast
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.ViewModelProvider
+import com.google.android.material.snackbar.Snackbar
 import dagger.android.support.DaggerAppCompatDialogFragment
 import javax.inject.Inject
 
@@ -35,11 +38,17 @@ abstract class BaseDialogFragment(
 
     abstract fun onOkClicked()
 
-    fun showError(message: String?): AlertDialog = with(AlertDialog.Builder(requireContext())) {
-        setTitle(android.R.string.dialog_alert_title)
-        setMessage(message)
-        setNeutralButton(android.R.string.cancel, null)
-    }.show()
+    fun showError(message: String?) = parentFragment?.view?.let {
+        showSnackbar(it, message.orEmpty())
+    } ?: showToast(message)
+
+    private fun showSnackbar(parentFragmentView: View, text: CharSequence) = Snackbar
+            .make(parentFragmentView, text, Snackbar.LENGTH_LONG)
+            .show()
+
+    private fun showToast(text: String?) = Toast
+        .makeText(requireContext(), text, Toast.LENGTH_LONG)
+        .show()
 
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)

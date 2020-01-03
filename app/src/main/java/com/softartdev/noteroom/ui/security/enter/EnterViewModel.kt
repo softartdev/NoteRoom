@@ -29,7 +29,7 @@ class EnterViewModel @Inject constructor(
                                 .flatMap { checked ->
                                     when (checked) {
                                         true -> dataManager.changePass(passEditable, null)
-                                                .map { EnterResult.Success }
+                                                .toSingleDefault(EnterResult.Success)
                                         false -> Single.just(EnterResult.IncorrectPasswordError)
                                     }
                                 }

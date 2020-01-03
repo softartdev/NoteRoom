@@ -61,7 +61,7 @@ abstract class RoomDbRepository(private val context: Context) : DbStore {
                 val supportSQLiteDatabase: SupportSQLiteDatabase = noteDatabase.openHelper.writableDatabase
                 SafeHelperFactory.rekey(supportSQLiteDatabase, passphrase)
 
-                passphrase?.let { noteDatabase = db(it) }
+                noteDatabase = db(passphrase)
             }
         } else {
             val passphrase = Editable.Factory.getInstance().newEditable(newPass) // threadsafe
@@ -69,7 +69,7 @@ abstract class RoomDbRepository(private val context: Context) : DbStore {
             noteDatabase.close()
             SQLCipherUtils.encrypt(context, DB_NAME, passphrase)
 
-            passphrase?.let { noteDatabase = db(it) }
+            noteDatabase = db(passphrase)
         }
     }
 

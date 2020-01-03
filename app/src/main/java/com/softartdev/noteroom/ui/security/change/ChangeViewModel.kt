@@ -36,7 +36,7 @@ class ChangeViewModel @Inject constructor(
                                 .flatMap { checked ->
                                     when (checked) {
                                         true -> dataManager.changePass(oldEditable, newEditable)
-                                                .map { ChangeResult.Success }
+                                                .toSingleDefault(ChangeResult.Success)
                                         false -> Single.just(ChangeResult.IncorrectPasswordError)
                                     }
                                 }
