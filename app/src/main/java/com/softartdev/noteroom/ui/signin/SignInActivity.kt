@@ -3,77 +3,81 @@ package com.softartdev.noteroom.ui.signin
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
+import androidx.activity.viewModels
+import androidx.lifecycle.Observer
 import com.softartdev.noteroom.R
+import com.softartdev.noteroom.model.SignInResult
 import com.softartdev.noteroom.ui.base.BaseActivity
-import com.softartdev.noteroom.ui.common.OnReloadClickListener
 import com.softartdev.noteroom.ui.main.MainActivity
 import com.softartdev.noteroom.util.gone
 import com.softartdev.noteroom.util.hideKeyboard
 import com.softartdev.noteroom.util.visible
 import kotlinx.android.synthetic.main.activity_sign_in.*
-import kotlinx.android.synthetic.main.view_error.*
-import timber.log.Timber
-import javax.inject.Inject
+import kotlinx.android.synthetic.main.view_error.view.*
 
-class SignInActivity : BaseActivity(), SignInView, OnReloadClickListener {
-    @Inject lateinit var signInPresenter: SignInPresenter
+class SignInActivity : BaseActivity(), Observer<SignInResult> {
+
+    private val signInViewModel by viewModels<SignInViewModel> { viewModelFactory }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sign_in)
-        activityComponent().inject(this)
-        signInPresenter.attachView(this)
 
-        sign_in_error_view.reloadClickListener = this
+        sign_in_error_view.button_reload.setOnClickListener { attemptSignIn() }
 
         password_edit_text.setOnEditorActionListener { _, _, _ ->
             attemptSignIn()
             true
         }
         sign_in_button.setOnClickListener { attemptSignIn() }
+
+        signInViewModel.signInLiveData.observe(this, this)
     }
 
     private fun attemptSignIn() {
         hideKeyboard()
         val passphrase: Editable = password_edit_text.editableText
-        signInPresenter.signIn(passphrase)
+        signInViewModel.signIn(passphrase)
     }
 
-    override fun navMain() {
+    override fun onChanged(signInResult: SignInResult) = when (signInResult) {
+        is SignInResult.ShowProgress -> {
+            sign_in_progress_view.visible()
+            sign_in_layout.gone()
+            sign_in_error_view.gone()
+        }
+        SignInResult.NavMain -> {
+            showSignIn()
+            navMain()
+        }
+        SignInResult.ShowEmptyPassError -> showSignIn(
+                errorText = getString(R.string.empty_password)
+        )
+        SignInResult.ShowIncorrectPassError -> showSignIn(
+                errorText = getString(R.string.incorrect_password)
+        )
+        is SignInResult.ShowError -> {
+            sign_in_progress_view.gone()
+            sign_in_layout.gone()
+            sign_in_error_view.apply {
+                text_error_message.text = signInResult.error.message
+            }.visible()
+        }
+    }
+
+    private fun showSignIn(errorText: String? = null) {
+        sign_in_progress_view.gone()
+        sign_in_layout.apply {
+            password_text_input_layout.error = errorText
+        }.visible()
+        sign_in_error_view.gone()
+    }
+
+    private fun navMain() {
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
         finish()
     }
 
-    override fun hideError() {
-        password_text_input_layout?.error = null
-    }
-
-    override fun showEmptyPassError() {
-        password_text_input_layout?.error = getString(R.string.empty_password)
-    }
-
-    override fun showIncorrectPassError() {
-        password_text_input_layout?.error = getString(R.string.incorrect_password)
-    }
-
-    override fun showProgress(show: Boolean) {
-        sign_in_progress_view.apply { if (show) visible() else gone() }
-    }
-
-    override fun showError(error: Throwable) {
-        sign_in_error_view.apply {
-            visible()
-            text_error_message.text = error.message
-        }
-        Timber.e(error, "There was an error sign in")
-    }
-
-    override fun onReloadClick() = attemptSignIn()
-
-    override fun onDestroy() {
-        signInPresenter.detachView()
-        super.onDestroy()
-    }
 }
 
