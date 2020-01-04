@@ -3,18 +3,16 @@ package com.softartdev.noteroom.data
 import android.text.Editable
 import com.softartdev.noteroom.db.DbStore
 import com.softartdev.noteroom.model.Note
+import io.reactivex.Completable
+import io.reactivex.Flowable
 import io.reactivex.Maybe
 import io.reactivex.Single
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-class DataManager @Inject
-internal constructor(private val dbStore: DbStore) {
+class DataManager(private val dbStore: DbStore) {
 
-    fun notes(): Single<List<Note>> = dbStore.notes
+    fun notes(): Flowable<List<Note>> = dbStore.notes
 
-    fun createNote(title: String, text: String): Single<Long> = dbStore.createNote(title, text)
+    fun createNote(title: String = "", text: String = ""): Single<Long> = dbStore.createNote(title, text)
 
     fun saveNote(id: Long, title: String, text: String): Single<Int> = dbStore.saveNote(id, title, text)
 
@@ -24,11 +22,9 @@ internal constructor(private val dbStore: DbStore) {
 
     fun checkPass(pass: Editable): Single<Boolean> = dbStore.checkPass(pass)
 
-    fun isEncryption(): Single<Boolean> = Single.fromCallable {
-        dbStore.isEncryption
-    }
+    fun isEncryption(): Single<Boolean> = Single.just(dbStore.isEncryption)
 
-    fun changePass(odlPass: Editable?, newPass: Editable?): Single<Unit> = Single.fromCallable {
+    fun changePass(odlPass: Editable?, newPass: Editable?): Completable = Completable.fromCallable {
         dbStore.changePass(odlPass, newPass)
     }
 

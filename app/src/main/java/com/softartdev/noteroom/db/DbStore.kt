@@ -3,12 +3,13 @@ package com.softartdev.noteroom.db
 import android.text.Editable
 
 import com.softartdev.noteroom.model.Note
+import io.reactivex.Flowable
 
 import io.reactivex.Maybe
 import io.reactivex.Single
 
 interface DbStore {
-    val notes: Single<List<Note>>
+    val notes: Flowable<List<Note>>
 
     val isEncryption: Boolean
 

@@ -43,6 +43,12 @@ fun View.visible() {
     }
 }
 
+fun View.invisible() {
+    if (visibility != View.INVISIBLE) {
+        visibility = View.INVISIBLE
+    }
+}
+
 fun MenuItem.tintIcon(
         context: Context,
         @ColorInt color: Int = getThemeColor(context, android.R.attr.textColorPrimary)
