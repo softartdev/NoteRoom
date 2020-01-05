@@ -14,10 +14,7 @@ import com.softartdev.noteroom.R
 import com.softartdev.noteroom.model.NoteResult
 import com.softartdev.noteroom.ui.base.BaseActivity
 import com.softartdev.noteroom.ui.title.EditTitleDialog
-import com.softartdev.noteroom.util.getThemeColor
-import com.softartdev.noteroom.util.hideKeyboard
-import com.softartdev.noteroom.util.showKeyboard
-import com.softartdev.noteroom.util.tintIcon
+import com.softartdev.noteroom.util.*
 import kotlinx.android.synthetic.main.activity_note.*
 import timber.log.Timber
 
@@ -47,25 +44,30 @@ class NoteActivity : BaseActivity(), Observer<NoteResult> {
         } else noteViewModel.loadNote(noteId)
     }
 
-    override fun onChanged(noteResult: NoteResult) = when (noteResult) {
-        is NoteResult.Created -> note_edit_text.showKeyboard()
-        is NoteResult.Loaded -> {
-            supportActionBar?.title = noteResult.result.title
-            note_edit_text.setText(noteResult.result.text)
+    override fun onChanged(noteResult: NoteResult) {
+        note_progress_bar.invisible()
+        when (noteResult) {
+            NoteResult.Loading -> note_progress_bar.visible()
+            is NoteResult.Created -> note_edit_text.showKeyboard()
+            is NoteResult.Loaded -> {
+                supportActionBar?.title = noteResult.result.title
+                note_edit_text.setText(noteResult.result.text)
+            }
+            is NoteResult.Saved -> {
+                val noteSaved = getString(R.string.note_saved) + ": " + noteResult.title
+                Snackbar.make(note_edit_text, noteSaved, Snackbar.LENGTH_LONG).show()
+            }
+            NoteResult.Empty -> {
+                Snackbar.make(note_edit_text, R.string.note_empty, Snackbar.LENGTH_LONG).show()
+            }
+            NoteResult.Deleted -> {
+                Snackbar.make(note_edit_text, R.string.note_deleted, Snackbar.LENGTH_LONG).show()
+                onNavBack()
+            }
+            NoteResult.CheckSaveChange -> onCheckSaveChange()
+            NoteResult.NavBack -> onNavBack()
+            is NoteResult.Error -> showError(noteResult.message)
         }
-        is NoteResult.Saved -> {
-            val noteSaved = getString(R.string.note_saved) + ": " + noteResult.title
-            Snackbar.make(note_edit_text, noteSaved, Snackbar.LENGTH_LONG).show()
-        }
-        NoteResult.Empty -> {
-            Snackbar.make(note_edit_text, R.string.note_empty, Snackbar.LENGTH_LONG).show()
-        }
-        NoteResult.Deleted -> {
-            Snackbar.make(note_edit_text, R.string.note_deleted, Snackbar.LENGTH_LONG).show()
-            onNavBack()
-        }
-        NoteResult.CheckSaveChange -> onCheckSaveChange()
-        NoteResult.NavBack -> onNavBack()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -93,6 +95,7 @@ class NoteActivity : BaseActivity(), Observer<NoteResult> {
             true
         } catch (e: IllegalStateException) {
             Timber.e(e)
+            showError(e.message)
             false
         }
         R.id.action_delete_note -> {
@@ -129,6 +132,13 @@ class NoteActivity : BaseActivity(), Observer<NoteResult> {
     }
 
     private fun onNavBack() = NavUtils.navigateUpFromSameTask(this)
+
+    private fun showError(message: String?) = with(AlertDialog.Builder(this)) {
+        setTitle(android.R.string.dialog_alert_title)
+        setMessage(message)
+        setNeutralButton(android.R.string.cancel, null)
+        show(); Unit
+    }
 
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putString(KEY_TITLE, supportActionBar?.title?.toString())

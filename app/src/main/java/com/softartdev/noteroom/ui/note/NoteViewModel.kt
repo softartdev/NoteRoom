@@ -27,90 +27,86 @@ class NoteViewModel @Inject constructor(
 
     private val compositeDisposable = CompositeDisposable()
 
-    fun createNote() {
-        compositeDisposable.add(dataManager.createNote()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(onSuccess = {
+    fun createNote() = launch {
+        dataManager.createNote()
+                .map {
                     noteId = it
-                    noteLiveData.value = NoteResult.Created(it)
                     Timber.d("Created note with id=$noteId")
-                }, onError = Timber::e))
+                    NoteResult.Created(it)
+                }
     }
 
-    fun loadNote(id: Long) {
-        compositeDisposable.add(dataManager.loadNote(id)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(onSuccess = {
+    fun loadNote(id: Long) = launch {
+        dataManager.loadNote(id)
+                .flatMapSingle {
                     noteId = it.id
-                    noteLiveData.value = (NoteResult.Loaded(it))
                     Timber.d("Loaded note with id=$noteId")
-                }, onError = Timber::e))
+                    Single.just(NoteResult.Loaded(it))
+                }
     }
 
-    fun saveNote(title: String, text: String) {
-        if (title.isEmpty() && text.isEmpty()) {
-            noteLiveData.value = (NoteResult.Empty)
-        } else compositeDisposable.add(dataManager.saveNote(noteId, title, text)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(onSuccess = {
-                    noteLiveData.value = (NoteResult.Saved(title))
-                    Timber.d("Saved note with id=$noteId")
-                }, onError = Timber::e))
+    fun saveNote(title: String, text: String) = launch {
+        if (title.isNotEmpty() || text.isNotEmpty()) {
+            dataManager.saveNote(noteId, title, text)
+                    .map {
+                        Timber.d("Saved note with id=$noteId")
+                        NoteResult.Saved(title)
+                    }
+        } else Single.just(NoteResult.Empty)
     }
 
-    fun deleteNote() {
-        compositeDisposable.add(dataManager.deleteNote(noteId)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(onSuccess = {
-                    noteLiveData.value = (NoteResult.Deleted)
-                    Timber.d("Deleted note with id=$noteId")
-                }, onError = Timber::e))
-    }
+    fun deleteNote() = launch { deleteNoteSingle() }
 
-    fun checkSaveChange(title: String, text: String) {
-        compositeDisposable.add(Single.zip(
+    fun checkSaveChange(title: String, text: String) = launch {
+        Single.zip(
                 dataManager.checkChanges(noteId, title, text),
                 dataManager.emptyNote(noteId),
-                BiFunction<Boolean, Boolean, Pair<Boolean, Boolean>> { changed, empty -> Pair(changed, empty) })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(onSuccess = { pair ->
-                    val (changed, empty) = pair
+                BiFunction<Boolean, Boolean, Single<NoteResult>> { changed, empty ->
                     when {
-                        changed -> noteLiveData.value = (NoteResult.CheckSaveChange)
-                        empty -> deleteNote()
-                        else -> noteLiveData.value = (NoteResult.NavBack)
+                        changed -> Single.just(NoteResult.CheckSaveChange)
+                        empty -> deleteNoteSingle()
+                        else -> Single.just(NoteResult.NavBack)
                     }
-                }, onError = Timber::e))
+                }
+        ).flatMap { it }
     }
 
-    fun saveNoteAndNavBack(title: String, text: String) {
-        Timber.d("Save note with id=${noteId} before nav back")
-        compositeDisposable.add(dataManager.saveNote(noteId, title, text)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(onSuccess = {
-                    noteLiveData.value = (NoteResult.NavBack)
+    fun saveNoteAndNavBack(title: String, text: String) = launch {
+        dataManager.saveNote(noteId, title, text)
+                .map {
                     Timber.d("Saved and nav back")
-                }, onError = Timber::e))
+                    NoteResult.NavBack
+                }
     }
 
-    fun doNotSaveAndNavBack() {
-        compositeDisposable.add(dataManager.emptyNote(noteId)
+    fun doNotSaveAndNavBack() = launch {
+        dataManager.emptyNote(noteId)
+                .flatMap { noteIsEmpty ->
+                    if (noteIsEmpty) {
+                        deleteNoteSingle()
+                    } else {
+                        Timber.d("Don't save and nav back")
+                        Single.just(NoteResult.NavBack)
+                    }
+                }
+    }
+
+    private fun deleteNoteSingle(): Single<NoteResult> = dataManager.deleteNote(noteId).map {
+        Timber.d("Deleted note with id=$noteId")
+        NoteResult.Deleted
+    }
+
+    private fun launch(job: () -> Single<NoteResult>) {
+        compositeDisposable.add(job()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(onSuccess = { noteIsEmpty ->
-                    if (noteIsEmpty) {
-                        deleteNote()
-                    } else {
-                        noteLiveData.value = (NoteResult.NavBack)
-                        Timber.d("Don't save and nav back")
-                    }
-                }, onError = Timber::e))
+                .doOnSubscribe { noteLiveData.value = NoteResult.Loading }
+                .subscribeBy(onSuccess = { editTitleResult ->
+                    noteLiveData.value = editTitleResult
+                }, onError = { throwable: Throwable ->
+                    Timber.e(throwable)
+                    noteLiveData.value = NoteResult.Error(throwable.message)
+                }))
     }
 
     override fun onCleared() = compositeDisposable.clear()
