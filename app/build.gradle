@@ -7,20 +7,20 @@ apply plugin: 'io.fabric'
 apply plugin: 'com.google.android.gms.oss-licenses-plugin'
 apply plugin: "scabbard.gradle"
 
-def hasReleaseStore = project.hasProperty("RELEASE_STORE_FILE")
+def keystorePropertiesFile = rootProject.file("keystore.properties")
+def keystoreProperties = new Properties()
+keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
 android {
-    compileSdkVersion 29
-    if (hasReleaseStore) {
-        signingConfigs {
-            config {
-                storeFile file(RELEASE_STORE_FILE)
-                storePassword RELEASE_STORE_PASSWORD
-                keyAlias RELEASE_KEY_ALIAS
-                keyPassword RELEASE_KEY_PASSWORD
-            }
+    signingConfigs {
+        config {
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storeFile file(keystoreProperties['storeFile'])
+            storePassword keystoreProperties['storePassword']
         }
     }
+    compileSdkVersion 29
     defaultConfig {
         applicationId "com.softartdev.noteroom"
         minSdkVersion 16
