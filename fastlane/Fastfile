@@ -43,4 +43,12 @@ platform :android do
     )
     upload_to_play_store # Uploads the APK built in the gradle step above
   end
+
+  lane :clean_test_bundle_publish do
+    gradle(
+      task: 'clean test bundle',
+      build_type: 'Release'
+    )
+    upload_to_play_store # Uploads the APK built in the gradle step above
+  end
 end
