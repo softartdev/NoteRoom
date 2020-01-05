@@ -19,7 +19,7 @@ class NoteViewModel @Inject constructor(
 
     val noteLiveData: MutableLiveData<NoteResult> = MutableLiveData()
 
-    private var noteId: Long = 0
+    internal var noteId: Long = 0
         get() = when (field) {
             0L -> throw IllegalStateException()
             else -> field

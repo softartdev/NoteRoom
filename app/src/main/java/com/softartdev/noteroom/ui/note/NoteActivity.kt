@@ -13,11 +13,13 @@ import com.google.android.material.snackbar.Snackbar
 import com.softartdev.noteroom.R
 import com.softartdev.noteroom.model.NoteResult
 import com.softartdev.noteroom.ui.base.BaseActivity
+import com.softartdev.noteroom.ui.title.EditTitleDialog
 import com.softartdev.noteroom.util.getThemeColor
 import com.softartdev.noteroom.util.hideKeyboard
 import com.softartdev.noteroom.util.showKeyboard
 import com.softartdev.noteroom.util.tintIcon
 import kotlinx.android.synthetic.main.activity_note.*
+import timber.log.Timber
 
 class NoteActivity : BaseActivity(), Observer<NoteResult> {
 
@@ -85,7 +87,14 @@ class NoteActivity : BaseActivity(), Observer<NoteResult> {
             noteViewModel.saveNote(noteTitle, noteText)
             true
         }
-        R.id.action_edit_title -> false//TODO
+        R.id.action_edit_title -> try {
+            val editTitleDialog = EditTitleDialog.create(noteViewModel.noteId)
+            editTitleDialog.show(supportFragmentManager, "EDIT_TITLE_DIALOG_TAG")
+            true
+        } catch (e: IllegalStateException) {
+            Timber.e(e)
+            false
+        }
         R.id.action_delete_note -> {
             showDeleteDialog()
             true

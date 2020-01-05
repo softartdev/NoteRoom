@@ -11,11 +11,10 @@ import androidx.preference.*
 import com.softartdev.noteroom.R
 import com.softartdev.noteroom.model.SecurityResult
 import com.softartdev.noteroom.ui.base.BasePrefFragment
-import com.softartdev.noteroom.ui.security.BaseDialogFragment
-import com.softartdev.noteroom.ui.security.SecurityViewModel
-import com.softartdev.noteroom.ui.security.change.ChangePasswordDialog
-import com.softartdev.noteroom.ui.security.confirm.ConfirmPasswordDialog
-import com.softartdev.noteroom.ui.security.enter.EnterPasswordDialog
+import com.softartdev.noteroom.ui.base.BaseDialogFragment
+import com.softartdev.noteroom.ui.settings.security.change.ChangePasswordDialog
+import com.softartdev.noteroom.ui.settings.security.confirm.ConfirmPasswordDialog
+import com.softartdev.noteroom.ui.settings.security.enter.EnterPasswordDialog
 import com.softartdev.noteroom.util.ThemeHelper
 import com.softartdev.noteroom.util.tintIcon
 import timber.log.Timber
@@ -23,7 +22,7 @@ import timber.log.Timber
 @SuppressLint("InflateParams")
 class SettingsFragment : BasePrefFragment(), Preference.OnPreferenceChangeListener, Observer<SecurityResult> {
 
-    private val securityViewModel by viewModels<SecurityViewModel> { viewModelFactory }
+    private val settingsViewModel by viewModels<SettingsViewModel> { viewModelFactory }
     private var securityPreferences: SwitchPreference? = null
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
@@ -45,7 +44,7 @@ class SettingsFragment : BasePrefFragment(), Preference.OnPreferenceChangeListen
 
         val passwordPreference: Preference? = findPreference(getString(R.string.password_key))
         passwordPreference?.setOnPreferenceClickListener {
-            securityViewModel.changePassword()
+            settingsViewModel.changePassword()
             true
         }
         passwordPreference?.tintIcon()
@@ -55,8 +54,8 @@ class SettingsFragment : BasePrefFragment(), Preference.OnPreferenceChangeListen
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        securityViewModel.securityLiveData.observe(this, this)
-        securityViewModel.checkEncryption()
+        settingsViewModel.securityLiveData.observe(this, this)
+        settingsViewModel.checkEncryption()
     }
 
     override fun onChanged(securityResult: SecurityResult) = when (securityResult) {
@@ -79,7 +78,7 @@ class SettingsFragment : BasePrefFragment(), Preference.OnPreferenceChangeListen
             true
         }
         getString(R.string.security_key) -> {
-            securityViewModel.changeEncryption(newValue as Boolean)
+            settingsViewModel.changeEncryption(newValue as Boolean)
             false
         }
         else -> throw IllegalArgumentException("Unknown preference key")
@@ -91,7 +90,7 @@ class SettingsFragment : BasePrefFragment(), Preference.OnPreferenceChangeListen
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) = when (requestCode) {
-        BaseDialogFragment.DIALOG_REQUEST_CODE -> securityViewModel.checkEncryption()
+        BaseDialogFragment.DIALOG_REQUEST_CODE -> settingsViewModel.checkEncryption()
         else -> super.onActivityResult(requestCode, resultCode, data)
     }
 

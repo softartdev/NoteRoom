@@ -1,4 +1,4 @@
-package com.softartdev.noteroom.ui.security
+package com.softartdev.noteroom.ui.settings
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -12,7 +12,7 @@ import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 import javax.inject.Inject
 
-class SecurityViewModel @Inject constructor(
+class SettingsViewModel @Inject constructor(
         private val dataManager: DataManager
 ) : ViewModel() {
 

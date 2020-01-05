@@ -45,4 +45,6 @@
     <string name="hide_screen_contents">Скрыть содержимое экрана</string>
     <string name="hide_screen_contents_summary">Включите, чтобы не видеть содержание экрана при переключении между приложениями. Также отключится возможность сделать снимок экрана.</string>
     <string name="action_edit_title">Редактировать заголовок</string>
+    <string name="enter_title">Введите заголовок</string>
+    <string name="empty_title">Заголовок не должен быть пустым</string>
 </resources>
