@@ -19,7 +19,7 @@ abstract class RoomDbRepository(private val context: Context) : DbStore {
     private fun db(passphrase: Editable = SpannableStringBuilder()): NoteDatabase = Room
             .databaseBuilder(context, NoteDatabase::class.java, DB_NAME)
             .openHelperFactory(SafeHelperFactory.fromUser(passphrase,
-                    SafeHelperFactory.POST_KEY_SQL_MIGRATE))//TODO skip the second and subsequent times
+                    SafeHelperFactory.POST_KEY_SQL_MIGRATE))//TODO skip the second and subsequent times; all users need update to version 3.0 or above
             .build()
 
     override val isEncryption: Boolean
