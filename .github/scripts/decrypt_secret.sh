@@ -8,3 +8,6 @@ gpg --quiet --batch --yes --decrypt --passphrase="$LARGE_SECRET_PASSPHRASE" \
 
 gpg --quiet --batch --yes --decrypt --passphrase="$LARGE_SECRET_PASSPHRASE" \
 --output ./note_room_key_store.jks ./.github/secrets/note_room_key_store.jks.gpg
+
+gpg --quiet --batch --yes --decrypt --passphrase="$LARGE_SECRET_PASSPHRASE" \
+--output ./app/google-services.json ./.github/secrets/google-services.json.gpg
