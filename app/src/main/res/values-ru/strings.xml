@@ -3,6 +3,7 @@
     <string name="press_add_note">Нажмите \"+\", чтобы добавить заметку.</string>
     <string name="title_activity_note">Новая заметка</string>
     <string name="enter_the_title">Введите заголовок</string>
+    <string name="action_save_note">Сохранить заметку</string>
     <string name="action_delete_note">Удалить заметку</string>
     <string name="note_delete_dialog_message">Вы уверены, что хотите удалить заметку?</string>
     <string name="note_deleted">Заметка удалена</string>
@@ -43,4 +44,5 @@
     <string name="set_by_byttery_saver">Автоматически</string>
     <string name="hide_screen_contents">Скрыть содержимое экрана</string>
     <string name="hide_screen_contents_summary">Включите, чтобы не видеть содержание экрана при переключении между приложениями. Также отключится возможность сделать снимок экрана.</string>
+    <string name="action_edit_title">Редактировать заголовок</string>
 </resources>

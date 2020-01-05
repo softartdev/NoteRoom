@@ -18,14 +18,13 @@ import com.softartdev.noteroom.util.hideKeyboard
 import com.softartdev.noteroom.util.showKeyboard
 import com.softartdev.noteroom.util.tintIcon
 import kotlinx.android.synthetic.main.activity_note.*
-import kotlinx.android.synthetic.main.content_note.*
 
 class NoteActivity : BaseActivity(), Observer<NoteResult> {
 
     private val noteViewModel by viewModels<NoteViewModel> { viewModelFactory }
 
     private val noteTitle: String
-        get() = note_title_edit_text.text.toString()
+        get() = supportActionBar?.title?.toString().orEmpty()
 
     private val noteText: String
         get() = note_edit_text.text.toString()
@@ -33,39 +32,34 @@ class NoteActivity : BaseActivity(), Observer<NoteResult> {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_note)
-        setSupportActionBar(note_toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         noteViewModel.noteLiveData.observe(this, this)
 
-        save_note_fab.setOnClickListener {
-            noteViewModel.saveNote(noteTitle, noteText)
-        }
         val noteId = intent.getLongExtra(NOTE_ID, 0L)
-        savedInstanceState?.let {
-            note_title_edit_text.setText(it.getString(KEY_TITLE))
-            note_edit_text.setText(it.getString(KEY_TEXT))
+        savedInstanceState?.let { bundle ->
+            bundle.getString(KEY_TITLE)?.let { supportActionBar?.title = it }
+            bundle.getString(KEY_TEXT)?.let { note_edit_text.setText(it) }
         } ?: if (noteId == 0L) {
             noteViewModel.createNote()
         } else noteViewModel.loadNote(noteId)
     }
 
     override fun onChanged(noteResult: NoteResult) = when (noteResult) {
-        is NoteResult.Created -> note_title_edit_text.showKeyboard()
+        is NoteResult.Created -> note_edit_text.showKeyboard()
         is NoteResult.Loaded -> {
             supportActionBar?.title = noteResult.result.title
-            note_title_edit_text.setText(noteResult.result.title)
             note_edit_text.setText(noteResult.result.text)
         }
         is NoteResult.Saved -> {
             val noteSaved = getString(R.string.note_saved) + ": " + noteResult.title
-            Snackbar.make(save_note_fab, noteSaved, Snackbar.LENGTH_LONG).show()
+            Snackbar.make(note_edit_text, noteSaved, Snackbar.LENGTH_LONG).show()
         }
         NoteResult.Empty -> {
-            Snackbar.make(save_note_fab, R.string.note_empty, Snackbar.LENGTH_LONG).show()
+            Snackbar.make(note_edit_text, R.string.note_empty, Snackbar.LENGTH_LONG).show()
         }
         NoteResult.Deleted -> {
-            Snackbar.make(save_note_fab, R.string.note_deleted, Snackbar.LENGTH_LONG).show()
+            Snackbar.make(note_edit_text, R.string.note_deleted, Snackbar.LENGTH_LONG).show()
             onNavBack()
         }
         NoteResult.CheckSaveChange -> onCheckSaveChange()
@@ -74,24 +68,29 @@ class NoteActivity : BaseActivity(), Observer<NoteResult> {
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_note, menu)
-        val menuIconColor = getThemeColor(app_bar.context, android.R.attr.textColorPrimary)
+        val menuIconColor = getThemeColor(this, android.R.attr.textColorPrimary)
+        menu.findItem(R.id.action_save_note).tintIcon(this, menuIconColor)
+        menu.findItem(R.id.action_edit_title).tintIcon(this, menuIconColor)
         menu.findItem(R.id.action_delete_note).tintIcon(this, menuIconColor)
         menu.findItem(R.id.action_settings).tintIcon(this, menuIconColor)
         return true
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            android.R.id.home -> {
-                checkSaveChange()
-                true
-            }
-            R.id.action_delete_note -> {
-                showDeleteDialog()
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
+    override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
+        android.R.id.home -> {
+            checkSaveChange()
+            true
         }
+        R.id.action_save_note -> {
+            noteViewModel.saveNote(noteTitle, noteText)
+            true
+        }
+        R.id.action_edit_title -> false//TODO
+        R.id.action_delete_note -> {
+            showDeleteDialog()
+            true
+        }
+        else -> super.onOptionsItemSelected(item)
     }
 
     override fun onBackPressed() = checkSaveChange()
@@ -123,7 +122,7 @@ class NoteActivity : BaseActivity(), Observer<NoteResult> {
     private fun onNavBack() = NavUtils.navigateUpFromSameTask(this)
 
     override fun onSaveInstanceState(outState: Bundle) {
-        outState.putString(KEY_TITLE, noteTitle)
+        outState.putString(KEY_TITLE, supportActionBar?.title?.toString())
         outState.putString(KEY_TEXT, noteText)
         super.onSaveInstanceState(outState)
     }
