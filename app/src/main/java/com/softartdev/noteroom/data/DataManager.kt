@@ -7,14 +7,20 @@ import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Maybe
 import io.reactivex.Single
+import io.reactivex.subjects.PublishSubject
+import io.reactivex.subjects.Subject
 
 class DataManager(private val dbStore: DbStore) {
+
+    val titleSubject: Subject<String> by lazy { PublishSubject.create<String>() }
 
     fun notes(): Flowable<List<Note>> = dbStore.notes
 
     fun createNote(title: String = "", text: String = ""): Single<Long> = dbStore.createNote(title, text)
 
     fun saveNote(id: Long, title: String, text: String): Single<Int> = dbStore.saveNote(id, title, text)
+
+    fun updateTitle(id: Long, title: String): Completable = dbStore.updateTitle(id, title)
 
     fun loadNote(noteId: Long): Maybe<Note> = dbStore.loadNote(noteId)
 

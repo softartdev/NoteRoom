@@ -16,7 +16,6 @@ import com.softartdev.noteroom.ui.base.BaseActivity
 import com.softartdev.noteroom.ui.title.EditTitleDialog
 import com.softartdev.noteroom.util.*
 import kotlinx.android.synthetic.main.activity_note.*
-import timber.log.Timber
 
 class NoteActivity : BaseActivity(), Observer<NoteResult> {
 
@@ -63,6 +62,13 @@ class NoteActivity : BaseActivity(), Observer<NoteResult> {
                 val noteSaved = getString(R.string.note_saved) + ": " + noteResult.title
                 Snackbar.make(note_edit_text, noteSaved, Snackbar.LENGTH_LONG).show()
             }
+            is NoteResult.NavEditTitle -> {
+                val editTitleDialog = EditTitleDialog.create(noteResult.noteId)
+                editTitleDialog.show(supportFragmentManager, "EDIT_TITLE_DIALOG_TAG")
+            }
+            is NoteResult.TitleUpdated -> {
+                supportActionBar?.title = noteResult.title
+            }
             NoteResult.Empty -> {
                 Snackbar.make(note_edit_text, R.string.note_empty, Snackbar.LENGTH_LONG).show()
             }
@@ -95,14 +101,9 @@ class NoteActivity : BaseActivity(), Observer<NoteResult> {
             noteViewModel.saveNote(noteTitle, noteText)
             true
         }
-        R.id.action_edit_title -> try {
-            val editTitleDialog = EditTitleDialog.create(noteViewModel.noteId)
-            editTitleDialog.show(supportFragmentManager, "EDIT_TITLE_DIALOG_TAG")
+        R.id.action_edit_title -> {
+            noteViewModel.editTitle()
             true
-        } catch (e: IllegalStateException) {
-            Timber.e(e)
-            showError(e.message)
-            false
         }
         R.id.action_delete_note -> {
             showDeleteDialog()

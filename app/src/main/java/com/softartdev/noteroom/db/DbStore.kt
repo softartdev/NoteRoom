@@ -3,6 +3,7 @@ package com.softartdev.noteroom.db
 import android.text.Editable
 
 import com.softartdev.noteroom.model.Note
+import io.reactivex.Completable
 import io.reactivex.Flowable
 
 import io.reactivex.Maybe
@@ -16,6 +17,8 @@ interface DbStore {
     fun createNote(title: String, text: String): Single<Long>
 
     fun saveNote(id: Long, title: String, text: String): Single<Int>
+
+    fun updateTitle(id: Long, title: String): Completable
 
     fun loadNote(noteId: Long): Maybe<Note>
 

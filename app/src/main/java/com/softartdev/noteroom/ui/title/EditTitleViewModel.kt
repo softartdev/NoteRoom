@@ -25,13 +25,16 @@ class EditTitleViewModel @Inject constructor(
                 .map { EditTitleResult.Loaded(it.title) }
     }
 
-    fun editTitle(newTitle: String) = launch {
-        Single.just(newTitle)
-                .flatMap { title ->
-                    if (title.isNotEmpty()) {
-                        //TODO
-                        Single.just(EditTitleResult.Success)
-                    } else Single.just(EditTitleResult.EmptyTitleError)
+    fun editTitle(id: Long, newTitle: String) = launch {
+        Single.just(id to newTitle.trim())
+                .flatMap { pair ->
+                    val (noteId, noteTitle) = pair
+                    when {
+                        noteTitle.isEmpty() -> Single.just(EditTitleResult.EmptyTitleError)
+                        else -> dataManager.updateTitle(noteId, noteTitle)
+                                .doOnComplete { dataManager.titleSubject.onNext(noteTitle) }
+                                .toSingleDefault(EditTitleResult.Success)
+                    }
                 }
     }
 

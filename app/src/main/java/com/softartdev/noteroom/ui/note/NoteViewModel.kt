@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.softartdev.noteroom.data.DataManager
 import com.softartdev.noteroom.model.NoteResult
+import com.softartdev.noteroom.util.createTitle
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -19,7 +20,7 @@ class NoteViewModel @Inject constructor(
 
     val noteLiveData: MutableLiveData<NoteResult> = MutableLiveData()
 
-    internal var noteId: Long = 0
+    private var noteId: Long = 0
         get() = when (field) {
             0L -> throw IllegalStateException()
             else -> field
@@ -60,6 +61,11 @@ class NoteViewModel @Inject constructor(
                                 }
                     }
                 }
+    }
+
+    fun editTitle() = launch {
+        subscribeToEditTitle()
+        Single.just(NoteResult.NavEditTitle(noteId))
     }
 
     fun deleteNote() = launch { deleteNoteSingle() }
@@ -118,31 +124,23 @@ class NoteViewModel @Inject constructor(
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe { noteLiveData.value = NoteResult.Loading }
-                .subscribeBy(onSuccess = { editTitleResult ->
-                    noteLiveData.value = editTitleResult
-                }, onError = { throwable: Throwable ->
-                    Timber.e(throwable)
-                    noteLiveData.value = NoteResult.Error(throwable.message)
-                }))
+                .subscribeBy(onSuccess = this::onResult, onError = this::onError))
     }
 
-    private fun createTitle(text: String): String {
-        // Get the note's length
-        val length = text.length
+    private fun subscribeToEditTitle() = compositeDisposable.add(
+            dataManager.titleSubject
+                    .map { NoteResult.TitleUpdated(it) }
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeBy(onNext = this::onResult, onError = this::onError))
 
-        // Sets the title by getting a substring of the text that is 31 characters long
-        // or the number of characters in the note plus one, whichever is smaller.
-        var title = text.substring(0, 30.coerceAtMost(length))
+    private fun onResult(noteResult: NoteResult) {
+        noteLiveData.value = noteResult
+    }
 
-        // If the resulting length is more than 30 characters, chops off any
-        // trailing spaces
-        if (length > 30) {
-            val lastSpace: Int = title.lastIndexOf(' ')
-            if (lastSpace > 0) {
-                title = title.substring(0, lastSpace)
-            }
-        }
-        return title
+    private fun onError(throwable: Throwable) {
+        Timber.e(throwable)
+        noteLiveData.value = NoteResult.Error(throwable.message)
     }
 
     override fun onCleared() = compositeDisposable.clear()

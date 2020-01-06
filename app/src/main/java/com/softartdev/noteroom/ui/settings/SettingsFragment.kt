@@ -10,8 +10,8 @@ import androidx.lifecycle.Observer
 import androidx.preference.*
 import com.softartdev.noteroom.R
 import com.softartdev.noteroom.model.SecurityResult
-import com.softartdev.noteroom.ui.base.BasePrefFragment
 import com.softartdev.noteroom.ui.base.BaseDialogFragment
+import com.softartdev.noteroom.ui.base.BasePrefFragment
 import com.softartdev.noteroom.ui.settings.security.change.ChangePasswordDialog
 import com.softartdev.noteroom.ui.settings.security.confirm.ConfirmPasswordDialog
 import com.softartdev.noteroom.ui.settings.security.enter.EnterPasswordDialog

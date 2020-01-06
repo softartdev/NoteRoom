@@ -36,6 +36,7 @@ class EditTitleDialog : BaseDialogFragment(
     }
 
     override fun onOkClicked() = editTitleViewModel.editTitle(
+            id = noteId,
             newTitle = editText.text?.toString().orEmpty()
     )
 
@@ -44,10 +45,9 @@ class EditTitleDialog : BaseDialogFragment(
         textInputLayout.error = null
         when (editTitleResult) {
             EditTitleResult.Loading -> progressBar.visible()
+            is EditTitleResult.Loaded -> editText.setText(editTitleResult.title)
             EditTitleResult.Success -> dismiss()
-            EditTitleResult.EmptyTitleError -> {
-                textInputLayout.error = getString(R.string.empty_title)
-            }
+            EditTitleResult.EmptyTitleError -> textInputLayout.error = getString(R.string.empty_title)
             is EditTitleResult.Error -> showError(editTitleResult.message)
         }
     }
