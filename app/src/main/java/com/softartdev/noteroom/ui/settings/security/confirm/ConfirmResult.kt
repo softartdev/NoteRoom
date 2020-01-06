@@ -1,4 +1,4 @@
-package com.softartdev.noteroom.ui.security.confirm
+package com.softartdev.noteroom.ui.settings.security.confirm
 
 sealed class ConfirmResult {
     object Loading: ConfirmResult()

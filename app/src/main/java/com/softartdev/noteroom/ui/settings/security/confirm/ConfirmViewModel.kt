@@ -1,4 +1,4 @@
-package com.softartdev.noteroom.ui.security.confirm
+package com.softartdev.noteroom.ui.settings.security.confirm
 
 import android.text.Editable
 import androidx.lifecycle.MutableLiveData

@@ -3,6 +3,7 @@ package com.softartdev.noteroom.ui
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu
 import androidx.test.espresso.Espresso.pressBack
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.matches
@@ -13,6 +14,7 @@ import androidx.test.rule.ActivityTestRule
 import com.softartdev.noteroom.R
 import com.softartdev.noteroom.db.RoomDbRepository
 import com.softartdev.noteroom.ui.splash.SplashActivity
+import org.hamcrest.CoreMatchers.allOf
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -21,12 +23,13 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class CreateRemoveNoteTest {
 
+    private val context = ApplicationProvider.getApplicationContext<Context>()
+
     @Rule
     @JvmField
     var activityTestRule = object : ActivityTestRule<SplashActivity>(SplashActivity::class.java) {
         override fun beforeActivityLaunched() {
             super.beforeActivityLaunched()
-            val context = ApplicationProvider.getApplicationContext<Context>()
             context.deleteDatabase(RoomDbRepository.DB_NAME)
         }
     }
@@ -38,7 +41,7 @@ class CreateRemoveNoteTest {
 
         Thread.sleep(500)
 
-        val textInputEditText = onView(withId(R.id.note_title_edit_text))
+        val textInputEditText = onView(withId(R.id.note_edit_text))
         val titleText = "Lorem"
         textInputEditText.perform(replaceText(titleText))
         textInputEditText.perform(closeSoftKeyboard())
@@ -57,7 +60,12 @@ class CreateRemoveNoteTest {
 
         textView.perform(click())
 
-        val actionMenuItemView = onView(withId(R.id.action_delete_note))
+        openActionBarOverflowOrOptionsMenu(context)
+
+        val actionMenuItemView = onView(allOf(
+                withId(R.id.title),
+                withText(R.string.action_delete_note),
+                isDisplayed()))
         actionMenuItemView.perform(click())
 
         alertDialogPositiveButton.perform(click())

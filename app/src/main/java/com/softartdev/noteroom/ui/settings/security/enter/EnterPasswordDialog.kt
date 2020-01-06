@@ -1,4 +1,4 @@
-package com.softartdev.noteroom.ui.security.enter
+package com.softartdev.noteroom.ui.settings.security.enter
 
 import android.os.Bundle
 import android.widget.ProgressBar
@@ -7,7 +7,7 @@ import androidx.lifecycle.Observer
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.softartdev.noteroom.R
-import com.softartdev.noteroom.ui.security.BaseDialogFragment
+import com.softartdev.noteroom.ui.base.BaseDialogFragment
 import com.softartdev.noteroom.util.invisible
 import com.softartdev.noteroom.util.visible
 

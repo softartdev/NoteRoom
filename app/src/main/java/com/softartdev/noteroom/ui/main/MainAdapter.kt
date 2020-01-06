@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.softartdev.noteroom.R
 import com.softartdev.noteroom.model.Note
+import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_note.view.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -17,7 +18,9 @@ class MainAdapter : RecyclerView.Adapter<MainAdapter.NotesViewHolder>() {
             field = value
             notifyDataSetChanged()
         }
+
     var clickListener: ClickListener? = null
+
     private val simpleDateFormat = SimpleDateFormat("HH:mm dd-MM-yyyy", Locale.getDefault())
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NotesViewHolder {
@@ -32,11 +35,13 @@ class MainAdapter : RecyclerView.Adapter<MainAdapter.NotesViewHolder>() {
 
     override fun getItemCount(): Int = notes.size
 
-    inner class NotesViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        fun bind(note: Note) {
-            itemView.item_note_title_text_view.text = note.title
-            itemView.item_note_date_text_view.text = simpleDateFormat.format(note.dateModified)
-            itemView.setOnClickListener { clickListener?.onNoteClick(note.id) }
+    inner class NotesViewHolder(
+            override val containerView: View
+    ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
+        fun bind(note: Note) = with(containerView) {
+            item_note_title_text_view.text = note.title
+            item_note_date_text_view.text = simpleDateFormat.format(note.dateModified)
+            setOnClickListener { clickListener?.onNoteClick(note.id) }
         }
     }
 

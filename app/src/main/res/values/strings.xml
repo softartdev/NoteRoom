@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name" translatable="false">Note Room</string>
+    <string name="action_save_note">Save note</string>
     <string name="action_delete_note">Delete note</string>
     <string name="press_add_note">Press \"+\" to add a note.</string>
     <string name="title_activity_note">New Note</string>
@@ -50,4 +51,7 @@
     <string name="hide_screen_contents_key" translatable="false">hide_screen_contents_key</string>
     <string name="hide_screen_contents">Hide screen contents</string>
     <string name="hide_screen_contents_summary">Turn on to hide the contents of the screen when switching between applications. Also, the ability to take a screenshot will be disabled.</string>
+    <string name="action_edit_title">Edit title</string>
+    <string name="enter_title">Enter title</string>
+    <string name="empty_title">Title must not be empty</string>
 </resources>
