@@ -188,7 +188,7 @@ class SettingPasswordTest {
 
         changeOkButton.perform(click())
 
-        Thread.sleep(1000)
+        Thread.sleep(2000)
 
         switch.check(matches(isChecked()))
 
@@ -227,7 +227,7 @@ class SettingPasswordTest {
 
         enterOkButton.perform(click())
 
-        Thread.sleep(1000)
+        Thread.sleep(2000)
 
         switch.check(matches(isDisplayed()))
         switch.check(matches(not(isChecked())))
