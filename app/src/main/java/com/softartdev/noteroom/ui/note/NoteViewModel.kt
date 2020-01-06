@@ -45,37 +45,54 @@ class NoteViewModel @Inject constructor(
                 }
     }
 
-    fun saveNote(title: String, text: String) = launch {
-        if (title.isNotEmpty() || text.isNotEmpty()) {
-            dataManager.saveNote(noteId, title, text)
-                    .map {
-                        Timber.d("Saved note with id=$noteId")
-                        NoteResult.Saved(title)
+    fun saveNote(title: String?, text: String) = launch {
+        Single.just(title to text)
+                .flatMap { pair ->
+                    var (noteTitle, noteText) = pair
+                    if (noteTitle.isNullOrEmpty() && noteText.isEmpty()) {
+                        Single.just(NoteResult.Empty)
+                    } else {
+                        noteTitle = noteTitle ?: createTitle(text)
+                        dataManager.saveNote(noteId, noteTitle, noteText)
+                                .map {
+                                    Timber.d("Saved note with id=$noteId")
+                                    NoteResult.Saved(noteTitle)
+                                }
                     }
-        } else Single.just(NoteResult.Empty)
+                }
     }
 
     fun deleteNote() = launch { deleteNoteSingle() }
 
-    fun checkSaveChange(title: String, text: String) = launch {
-        Single.zip(
-                dataManager.checkChanges(noteId, title, text),
-                dataManager.emptyNote(noteId),
-                BiFunction<Boolean, Boolean, Single<NoteResult>> { changed, empty ->
-                    when {
-                        changed -> Single.just(NoteResult.CheckSaveChange)
-                        empty -> deleteNoteSingle()
-                        else -> Single.just(NoteResult.NavBack)
-                    }
-                }
-        ).flatMap { it }
+    fun checkSaveChange(title: String?, text: String) = launch {
+        Single.just(title to text)
+                .flatMap { pair ->
+                    var (noteTitle, noteText) = pair
+                    noteTitle = noteTitle ?: createTitle(text)
+                    Single.zip(
+                            dataManager.checkChanges(noteId, noteTitle, noteText),
+                            dataManager.emptyNote(noteId),
+                            BiFunction<Boolean, Boolean, Single<NoteResult>> { changed, empty ->
+                                when {
+                                    changed -> Single.just(NoteResult.CheckSaveChange)
+                                    empty -> deleteNoteSingle()
+                                    else -> Single.just(NoteResult.NavBack)
+                                }
+                            }
+                    )
+                }.flatMap { it }
     }
 
-    fun saveNoteAndNavBack(title: String, text: String) = launch {
-        dataManager.saveNote(noteId, title, text)
-                .map {
-                    Timber.d("Saved and nav back")
-                    NoteResult.NavBack
+    fun saveNoteAndNavBack(title: String?, text: String) = launch {
+        Single.just(title to text)
+                .flatMap { pair ->
+                    var (noteTitle, noteText) = pair
+                    noteTitle = noteTitle ?: createTitle(text)
+                    dataManager.saveNote(noteId, noteTitle, noteText)
+                            .map {
+                                Timber.d("Saved and nav back")
+                                NoteResult.NavBack
+                            }
                 }
     }
 
@@ -107,6 +124,25 @@ class NoteViewModel @Inject constructor(
                     Timber.e(throwable)
                     noteLiveData.value = NoteResult.Error(throwable.message)
                 }))
+    }
+
+    private fun createTitle(text: String): String {
+        // Get the note's length
+        val length = text.length
+
+        // Sets the title by getting a substring of the text that is 31 characters long
+        // or the number of characters in the note plus one, whichever is smaller.
+        var title = text.substring(0, 30.coerceAtMost(length))
+
+        // If the resulting length is more than 30 characters, chops off any
+        // trailing spaces
+        if (length > 30) {
+            val lastSpace: Int = title.lastIndexOf(' ')
+            if (lastSpace > 0) {
+                title = title.substring(0, lastSpace)
+            }
+        }
+        return title
     }
 
     override fun onCleared() = compositeDisposable.clear()

@@ -22,8 +22,14 @@ class NoteActivity : BaseActivity(), Observer<NoteResult> {
 
     private val noteViewModel by viewModels<NoteViewModel> { viewModelFactory }
 
-    private val noteTitle: String
-        get() = supportActionBar?.title?.toString().orEmpty()
+    private val noteId: Long
+        get() = intent.getLongExtra(NOTE_ID, 0L)
+
+    private val noteTitle: String?
+        get() = when(noteId) {
+            0L -> null
+            else -> supportActionBar?.title?.toString().orEmpty()
+        }
 
     private val noteText: String
         get() = note_edit_text.text.toString()
@@ -35,13 +41,13 @@ class NoteActivity : BaseActivity(), Observer<NoteResult> {
 
         noteViewModel.noteLiveData.observe(this, this)
 
-        val noteId = intent.getLongExtra(NOTE_ID, 0L)
         savedInstanceState?.let { bundle ->
             bundle.getString(KEY_TITLE)?.let { supportActionBar?.title = it }
             bundle.getString(KEY_TEXT)?.let { note_edit_text.setText(it) }
-        } ?: if (noteId == 0L) {
-            noteViewModel.createNote()
-        } else noteViewModel.loadNote(noteId)
+        } ?: when (noteId) {
+            0L -> noteViewModel.createNote()
+            else -> noteViewModel.loadNote(noteId)
+        }
     }
 
     override fun onChanged(noteResult: NoteResult) {
