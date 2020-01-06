@@ -1,4 +1,4 @@
-package com.softartdev.noteroom.ui.security
+package com.softartdev.noteroom.ui.base
 
 import android.app.Activity
 import android.app.Dialog

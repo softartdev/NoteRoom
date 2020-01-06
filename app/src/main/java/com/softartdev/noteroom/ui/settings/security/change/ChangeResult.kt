@@ -1,4 +1,4 @@
-package com.softartdev.noteroom.ui.security.change
+package com.softartdev.noteroom.ui.settings.security.change
 
 sealed class ChangeResult {
     object Loading: ChangeResult()
