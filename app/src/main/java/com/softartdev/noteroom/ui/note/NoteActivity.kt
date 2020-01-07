@@ -24,14 +24,18 @@ class NoteActivity : BaseActivity(), Observer<NoteResult> {
     private val noteId: Long
         get() = intent.getLongExtra(NOTE_ID, 0L)
 
-    private val noteTitle: String?
-        get() = when(noteId) {
-            0L -> null
-            else -> supportActionBar?.title?.toString().orEmpty()
+    private var noteTitle: String?
+        get() = when (val actionBarTitle = supportActionBar?.title?.toString().orEmpty()) {
+            getString(R.string.title_activity_note) -> null
+            else -> actionBarTitle
+        }
+        set(value) {
+            supportActionBar?.title = value
         }
 
-    private val noteText: String
+    private var noteText: String
         get() = note_edit_text.text.toString()
+        set(value) = note_edit_text.setText(value)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,8 +45,8 @@ class NoteActivity : BaseActivity(), Observer<NoteResult> {
         noteViewModel.noteLiveData.observe(this, this)
 
         savedInstanceState?.let { bundle ->
-            bundle.getString(KEY_TITLE)?.let { supportActionBar?.title = it }
-            bundle.getString(KEY_TEXT)?.let { note_edit_text.setText(it) }
+            bundle.getString(KEY_TITLE)?.let { noteTitle = it }
+            bundle.getString(KEY_TEXT)?.let { noteText = it }
         } ?: when (noteId) {
             0L -> noteViewModel.createNote()
             else -> noteViewModel.loadNote(noteId)
@@ -55,8 +59,8 @@ class NoteActivity : BaseActivity(), Observer<NoteResult> {
             NoteResult.Loading -> note_progress_bar.visible()
             is NoteResult.Created -> note_edit_text.showKeyboard()
             is NoteResult.Loaded -> {
-                supportActionBar?.title = noteResult.result.title
-                note_edit_text.setText(noteResult.result.text)
+                noteTitle = noteResult.result.title
+                noteText = noteResult.result.text
             }
             is NoteResult.Saved -> {
                 val noteSaved = getString(R.string.note_saved) + ": " + noteResult.title
@@ -67,7 +71,7 @@ class NoteActivity : BaseActivity(), Observer<NoteResult> {
                 editTitleDialog.show(supportFragmentManager, "EDIT_TITLE_DIALOG_TAG")
             }
             is NoteResult.TitleUpdated -> {
-                supportActionBar?.title = noteResult.title
+                noteTitle = noteResult.title
             }
             NoteResult.Empty -> {
                 Snackbar.make(note_edit_text, R.string.note_empty, Snackbar.LENGTH_LONG).show()
@@ -148,7 +152,7 @@ class NoteActivity : BaseActivity(), Observer<NoteResult> {
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        outState.putString(KEY_TITLE, supportActionBar?.title?.toString())
+        outState.putString(KEY_TITLE, noteTitle)
         outState.putString(KEY_TEXT, noteText)
         super.onSaveInstanceState(outState)
     }
