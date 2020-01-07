@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.NavUtils
@@ -77,7 +78,7 @@ class NoteActivity : BaseActivity(), Observer<NoteResult> {
                 Snackbar.make(note_edit_text, R.string.note_empty, Snackbar.LENGTH_LONG).show()
             }
             NoteResult.Deleted -> {
-                Snackbar.make(note_edit_text, R.string.note_deleted, Snackbar.LENGTH_LONG).show()
+                Toast.makeText(this, R.string.note_deleted, Toast.LENGTH_LONG).show()
                 onNavBack()
             }
             NoteResult.CheckSaveChange -> onCheckSaveChange()
