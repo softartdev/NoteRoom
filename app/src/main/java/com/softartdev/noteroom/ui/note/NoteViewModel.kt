@@ -123,7 +123,7 @@ class NoteViewModel @Inject constructor(
         compositeDisposable.add(job()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe { noteLiveData.value = NoteResult.Loading }
+                .doOnSubscribe { onResult(noteResult = NoteResult.Loading) }
                 .subscribeBy(onSuccess = this::onResult, onError = this::onError))
     }
 
@@ -140,7 +140,7 @@ class NoteViewModel @Inject constructor(
 
     private fun onError(throwable: Throwable) {
         Timber.e(throwable)
-        noteLiveData.value = NoteResult.Error(throwable.message)
+        onResult(noteResult = NoteResult.Error(throwable.message))
     }
 
     override fun onCleared() = compositeDisposable.clear()
