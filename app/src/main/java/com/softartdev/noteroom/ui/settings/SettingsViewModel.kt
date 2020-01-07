@@ -27,7 +27,7 @@ class SettingsViewModel @Inject constructor(
                 }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(onSuccess = this::onSuccess, onError =  this::onError))
+                .subscribeBy(onSuccess = this::onResult, onError =  this::onError))
     }
 
     fun changeEncryption(checked: Boolean) {
@@ -46,7 +46,7 @@ class SettingsViewModel @Inject constructor(
                 }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(onSuccess = this::onSuccess, onError =  this::onError))
+                .subscribeBy(onSuccess = this::onResult, onError =  this::onError))
     }
 
     fun changePassword() {
@@ -59,16 +59,16 @@ class SettingsViewModel @Inject constructor(
                 }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(onSuccess = this::onSuccess, onError =  this::onError))
+                .subscribeBy(onSuccess = this::onResult, onError =  this::onError))
     }
 
-    private fun onSuccess(securityResult: SecurityResult) {
+    private fun onResult(securityResult: SecurityResult) {
         securityLiveData.value = securityResult
     }
 
     private fun onError(throwable: Throwable) {
         Timber.e(throwable)
-        securityLiveData.value = SecurityResult.Error(throwable.message)
+        onResult(securityResult = SecurityResult.Error(throwable.message))
     }
 
     override fun onCleared() = compositeDisposable.clear()

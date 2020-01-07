@@ -27,18 +27,23 @@ class MainViewModel @Inject constructor(
     fun updateNotes() {
         disposable?.dispose()
         disposable = dataManager.notes()
+                .map { NoteListResult.Success(it) }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe { notesLiveData.postValue(NoteListResult.Loading) }
-                .subscribeBy(onNext = { notes ->
-                    notesLiveData.postValue(NoteListResult.Success(notes))
-                }, onError = { throwable ->
-                    when (throwable) {
-                        is SQLiteException -> notesLiveData.postValue(NoteListResult.NavMain)
-                        else -> notesLiveData.postValue(NoteListResult.Error(throwable.message))
-                    }
-                    Timber.e(throwable)
-                })
+                .doOnSubscribe { onResult(noteListResult = NoteListResult.Loading) }
+                .subscribeBy(onNext = this::onResult, onError = this::onError)
+    }
+
+    private fun onResult(noteListResult: NoteListResult) {
+        notesLiveData.value = noteListResult
+    }
+
+    private fun onError(throwable: Throwable) {
+        onResult(noteListResult = when (throwable) {
+            is SQLiteException -> NoteListResult.NavMain
+            else -> NoteListResult.Error(throwable.message)
+        })
+        Timber.e(throwable)
     }
 
     override fun onCleared() = disposable?.dispose() ?: Unit
