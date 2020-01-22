@@ -12,7 +12,6 @@ import com.softartdev.noteroom.util.ThemeHelper
 import dagger.android.AndroidInjector
 import dagger.android.support.DaggerApplication
 import io.fabric.sdk.android.Fabric
-import io.reactivex.plugins.RxJavaPlugins
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -40,8 +39,6 @@ class NoteRoomApp : DaggerApplication() {
         val core = CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build()
         val kit = Crashlytics.Builder().core(core).build()
         Fabric.with(this, kit, Answers())
-
-        RxJavaPlugins.setErrorHandler(Timber::e)
     }
 
 }

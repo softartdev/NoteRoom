@@ -2,12 +2,11 @@ package com.softartdev.noteroom.ui.title
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.softartdev.noteroom.data.DataManager
-import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.rxkotlin.subscribeBy
-import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -17,39 +16,36 @@ class EditTitleViewModel @Inject constructor(
 
     val editTitleLiveData = MutableLiveData<EditTitleResult>()
 
-    private val compositeDisposable = CompositeDisposable()
-
     fun loadTitle(noteId: Long) = launch {
-        dataManager.loadNote(noteId)
-                .toSingle()
-                .map { EditTitleResult.Loaded(it.title) }
+        val note = dataManager.loadNote(noteId)
+        EditTitleResult.Loaded(note.title)
     }
 
     fun editTitle(id: Long, newTitle: String) = launch {
-        Single.just(id to newTitle.trim())
-                .flatMap { pair ->
-                    val (noteId, noteTitle) = pair
-                    when {
-                        noteTitle.isEmpty() -> Single.just(EditTitleResult.EmptyTitleError)
-                        else -> dataManager.updateTitle(noteId, noteTitle)
-                                .doOnComplete { dataManager.titleSubject.onNext(noteTitle) }
-                                .toSingleDefault(EditTitleResult.Success)
-                    }
-                }
+        val (noteId, noteTitle) = id to newTitle.trim()
+        when {
+            noteTitle.isEmpty() -> EditTitleResult.EmptyTitleError
+            else -> {
+                dataManager.updateTitle(noteId, noteTitle)
+                dataManager.titleChannel.send(noteTitle)
+                EditTitleResult.Success
+            }
+        }
     }
 
-    private fun launch(job: () -> Single<EditTitleResult>) {
-        compositeDisposable.add(job()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe { editTitleLiveData.value = EditTitleResult.Loading }
-                .subscribeBy(onSuccess = { editTitleResult ->
-                    editTitleLiveData.value = editTitleResult
-                }, onError = { throwable: Throwable ->
-                    Timber.e(throwable)
-                    editTitleLiveData.value = EditTitleResult.Error(throwable.message)
-                }))
+    private fun launch(
+            block: suspend CoroutineScope.() -> EditTitleResult
+    ) {
+        viewModelScope.launch(Dispatchers.IO) {
+            editTitleLiveData.value = EditTitleResult.Loading
+            val editTitleResult = try {
+                block()
+            } catch (throwable: Throwable) {
+                Timber.e(throwable)
+                EditTitleResult.Error(throwable.message)
+            }
+            editTitleLiveData.value = editTitleResult
+        }
     }
 
-    override fun onCleared() = compositeDisposable.clear()
 }

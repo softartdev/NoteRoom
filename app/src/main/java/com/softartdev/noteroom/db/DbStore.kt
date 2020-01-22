@@ -3,32 +3,27 @@ package com.softartdev.noteroom.db
 import android.text.Editable
 
 import com.softartdev.noteroom.model.Note
-import io.reactivex.Completable
-import io.reactivex.Flowable
-
-import io.reactivex.Maybe
-import io.reactivex.Single
 
 interface DbStore {
-    val notes: Flowable<List<Note>>
+    suspend fun getNotes(): List<Note>
 
-    val isEncryption: Boolean
+    suspend fun isEncryption(): Boolean
 
-    fun createNote(title: String, text: String): Single<Long>
+    suspend fun createNote(title: String, text: String): Long
 
-    fun saveNote(id: Long, title: String, text: String): Single<Int>
+    suspend fun saveNote(id: Long, title: String, text: String): Int
 
-    fun updateTitle(id: Long, title: String): Completable
+    suspend fun updateTitle(id: Long, title: String)
 
-    fun loadNote(noteId: Long): Maybe<Note>
+    suspend fun loadNote(noteId: Long): Note
 
-    fun deleteNote(id: Long): Single<Int>
+    suspend fun deleteNote(id: Long): Int
 
-    fun checkPass(pass: Editable): Single<Boolean>
+    suspend fun checkPass(pass: Editable): Boolean
 
-    fun changePass(oldPass: Editable?, newPass: Editable?)
+    suspend fun changePass(oldPass: Editable?, newPass: Editable?)
 
-    fun isChanged(id: Long, title: String, text: String): Single<Boolean>
+    suspend fun isChanged(id: Long, title: String, text: String): Boolean
 
-    fun isEmpty(id: Long): Single<Boolean>
+    suspend fun isEmpty(id: Long): Boolean
 }

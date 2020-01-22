@@ -2,12 +2,12 @@ package com.softartdev.noteroom.ui.splash
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.softartdev.noteroom.data.DataManager
 import com.softartdev.noteroom.model.SplashResult
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
-import io.reactivex.rxkotlin.subscribeBy
-import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -17,30 +17,23 @@ class SplashViewModel @Inject constructor(
 
     val splashLiveData = MutableLiveData<SplashResult>()
 
-    private var disposable: Disposable? = null
-
     init {
         checkEncryption()
     }
 
-    private fun checkEncryption() {
-        disposable?.dispose()
-        disposable = dataManager.isEncryption()
-                .map { isEncrypted ->
-                    when {
-                        isEncrypted -> SplashResult.NavSignIn
-                        else -> SplashResult.NavMain
-                    }
-                }
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(onSuccess = {
-                    splashLiveData.value = it
-                }, onError = { throwable ->
-                    Timber.e(throwable)
-                    splashLiveData.value = SplashResult.ShowError(throwable.message)
-                })
+    private fun checkEncryption() = viewModelScope.launch(Dispatchers.IO) {
+        val splashResult: SplashResult = try {
+            when (val isEncrypted = dataManager.isEncryption()) {
+                isEncrypted -> SplashResult.NavSignIn
+                else -> SplashResult.NavMain
+            }
+        } catch (throwable: Throwable) {
+            Timber.e(throwable)
+            SplashResult.ShowError(throwable.message)
+        }
+        withContext(Dispatchers.Main) {
+            splashLiveData.value = splashResult
+        }
     }
 
-    override fun onCleared() = disposable?.dispose() ?: Unit
 }

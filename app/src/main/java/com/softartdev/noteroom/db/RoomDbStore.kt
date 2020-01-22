@@ -2,51 +2,46 @@ package com.softartdev.noteroom.db
 
 import android.content.Context
 import com.softartdev.noteroom.model.Note
-import io.reactivex.Completable
-import io.reactivex.Flowable
-import io.reactivex.Maybe
-import io.reactivex.Single
 import java.util.*
 
 class RoomDbStore(context: Context) : RoomDbRepository(context) {
 
-    override val notes: Flowable<List<Note>>
-        get() = noteDao.getNotes()
+    override suspend fun getNotes(): List<Note> = noteDao.getNotes()
 
-    override fun createNote(title: String, text: String): Single<Long> {
+    override suspend fun createNote(title: String, text: String): Long {
         val date = Date()
         val note = Note(0, title, text, date, date)
         return noteDao.insertNote(note)
     }
 
-    override fun saveNote(id: Long, title: String, text: String): Single<Int> = noteDao
-            .getNoteById(id)
-            .flatMapSingle {
-                noteDao.updateNote(note = it.copy(
-                        title = title,
-                        text = text,
-                        dateModified = Date()
-                ))
-            }
+    override suspend fun saveNote(id: Long, title: String, text: String): Int {
+        val note = noteDao.getNoteById(id).copy(
+                title = title,
+                text = text,
+                dateModified = Date()
+        )
+        return noteDao.updateNote(note)
+    }
 
-    override fun updateTitle(id: Long, title: String): Completable = noteDao
-            .getNoteById(id)
-            .flatMapCompletable {
-                noteDao.updateNote(note = it.copy(
-                        title = title,
-                        dateModified = Date()
-                )).ignoreElement()
-            }
+    override suspend fun updateTitle(id: Long, title: String) {
+        val note = noteDao.getNoteById(id).copy(
+                title = title,
+                dateModified = Date()
+        )
+        noteDao.updateNote(note)
+    }
 
-    override fun loadNote(noteId: Long): Maybe<Note> = noteDao.getNoteById(noteId)
+    override suspend fun loadNote(noteId: Long): Note = noteDao.getNoteById(noteId)
 
-    override fun deleteNote(id: Long): Single<Int> = noteDao.deleteNoteById(id)
+    override suspend fun deleteNote(id: Long): Int = noteDao.deleteNoteById(id)
 
-    override fun isChanged(id: Long, title: String, text: String): Single<Boolean> = noteDao.getNoteById(id)
-            .map { it.title != title || it.text != text }
-            .toSingle(false)
+    override suspend fun isChanged(id: Long, title: String, text: String): Boolean {
+        val note = noteDao.getNoteById(id)
+        return note.title != title || note.text != text
+    }
 
-    override fun isEmpty(id: Long): Single<Boolean> = noteDao.getNoteById(id)
-            .map { it.title.isEmpty() && it.text.isEmpty() }
-            .toSingle(true)
+    override suspend fun isEmpty(id: Long): Boolean {
+        val note = noteDao.getNoteById(id)
+        return note.title.isEmpty() && note.text.isEmpty()
+    }
 }

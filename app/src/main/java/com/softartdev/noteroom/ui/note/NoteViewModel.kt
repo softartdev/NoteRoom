@@ -2,15 +2,14 @@ package com.softartdev.noteroom.ui.note
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.softartdev.noteroom.data.DataManager
 import com.softartdev.noteroom.model.NoteResult
 import com.softartdev.noteroom.util.createTitle
-import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.functions.BiFunction
-import io.reactivex.rxkotlin.subscribeBy
-import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -26,122 +25,101 @@ class NoteViewModel @Inject constructor(
             else -> field
         }
 
-    private val compositeDisposable = CompositeDisposable()
-
     fun createNote() = launch {
-        dataManager.createNote()
-                .map {
-                    noteId = it
-                    Timber.d("Created note with id=$noteId")
-                    NoteResult.Created(it)
-                }
+        val note = dataManager.createNote()
+        noteId = note
+        Timber.d("Created note with id=$noteId")
+        NoteResult.Created(note)
     }
 
     fun loadNote(id: Long) = launch {
-        dataManager.loadNote(id)
-                .flatMapSingle {
-                    noteId = it.id
-                    Timber.d("Loaded note with id=$noteId")
-                    Single.just(NoteResult.Loaded(it))
-                }
+        val note = dataManager.loadNote(id)
+        noteId = note.id
+        Timber.d("Loaded note with id=$noteId")
+        NoteResult.Loaded(note)
     }
 
     fun saveNote(title: String?, text: String) = launch {
-        Single.just(title to text)
-                .flatMap { pair ->
-                    var (noteTitle, noteText) = pair
-                    if (noteTitle.isNullOrEmpty() && noteText.isEmpty()) {
-                        Single.just(NoteResult.Empty)
-                    } else {
-                        noteTitle = noteTitle ?: createTitle(text)
-                        dataManager.saveNote(noteId, noteTitle, noteText)
-                                .map {
-                                    Timber.d("Saved note with id=$noteId")
-                                    NoteResult.Saved(noteTitle)
-                                }
-                    }
-                }
+        if (title.isNullOrEmpty() && text.isEmpty()) {
+            NoteResult.Empty
+        } else {
+            val noteTitle = title ?: createTitle(text)
+            dataManager.saveNote(noteId, noteTitle, text)
+            Timber.d("Saved note with id=$noteId")
+            NoteResult.Saved(noteTitle)
+        }
     }
 
     fun editTitle() = launch {
         subscribeToEditTitle()
-        Single.just(NoteResult.NavEditTitle(noteId))
+        NoteResult.NavEditTitle(noteId)
     }
 
-    fun deleteNote() = launch { deleteNoteSingle() }
+    fun deleteNote() = launch { deleteNoteForResult() }
 
     fun checkSaveChange(title: String?, text: String) = launch {
-        Single.just(title to text)
-                .flatMap { pair ->
-                    var (noteTitle, noteText) = pair
-                    noteTitle = noteTitle ?: createTitle(text)
-                    Single.zip(
-                            dataManager.checkChanges(noteId, noteTitle, noteText),
-                            dataManager.emptyNote(noteId),
-                            BiFunction<Boolean, Boolean, Single<NoteResult>> { changed, empty ->
-                                when {
-                                    changed -> Single.just(NoteResult.CheckSaveChange)
-                                    empty -> deleteNoteSingle()
-                                    else -> Single.just(NoteResult.NavBack)
-                                }
-                            }
-                    )
-                }.flatMap { it }
+        val noteTitle = title ?: createTitle(text)
+        val changed = dataManager.checkChanges(noteId, noteTitle, text)
+        val empty = dataManager.emptyNote(noteId)
+        when {
+            changed -> NoteResult.CheckSaveChange
+            empty -> deleteNoteForResult()
+            else -> NoteResult.NavBack
+        }
     }
 
     fun saveNoteAndNavBack(title: String?, text: String) = launch {
-        Single.just(title to text)
-                .flatMap { pair ->
-                    var (noteTitle, noteText) = pair
-                    noteTitle = noteTitle ?: createTitle(text)
-                    dataManager.saveNote(noteId, noteTitle, noteText)
-                            .map {
-                                Timber.d("Saved and nav back")
-                                NoteResult.NavBack
-                            }
-                }
+        val noteTitle = title ?: createTitle(text)
+        dataManager.saveNote(noteId, noteTitle, text)
+        Timber.d("Saved and nav back")
+        NoteResult.NavBack
     }
 
     fun doNotSaveAndNavBack() = launch {
-        dataManager.emptyNote(noteId)
-                .flatMap { noteIsEmpty ->
-                    if (noteIsEmpty) {
-                        deleteNoteSingle()
-                    } else {
-                        Timber.d("Don't save and nav back")
-                        Single.just(NoteResult.NavBack)
-                    }
-                }
+        val noteIsEmpty = dataManager.emptyNote(noteId)
+        if (noteIsEmpty) {
+            deleteNoteForResult()
+        } else {
+            Timber.d("Don't save and nav back")
+            NoteResult.NavBack
+        }
     }
 
-    private fun deleteNoteSingle(): Single<NoteResult> = dataManager.deleteNote(noteId).map {
+    private suspend fun deleteNoteForResult(): NoteResult {
+        dataManager.deleteNote(noteId)
         Timber.d("Deleted note with id=$noteId")
-        NoteResult.Deleted
+        return NoteResult.Deleted
     }
 
-    private fun launch(job: () -> Single<NoteResult>) {
-        compositeDisposable.add(job()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe { onResult(noteResult = NoteResult.Loading) }
-                .subscribeBy(onSuccess = this::onResult, onError = this::onError))
+    private fun launch(
+            block: suspend CoroutineScope.() -> NoteResult
+    ) {
+        viewModelScope.launch(Dispatchers.IO) {
+            onResult(noteResult = NoteResult.Loading)
+            try {
+                val noteResult: NoteResult = block()
+                onResult(noteResult)
+            } catch (e: Throwable) {
+                onError(e)
+            }
+        }
     }
 
-    private fun subscribeToEditTitle() = compositeDisposable.add(
-            dataManager.titleSubject
-                    .map { NoteResult.TitleUpdated(it) }
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeBy(onNext = this::onResult, onError = this::onError))
+    private fun subscribeToEditTitle() = viewModelScope.launch(Dispatchers.IO) {
+        try {
+            val title = dataManager.titleChannel.receive()
+            onResult(NoteResult.TitleUpdated(title))
+        } catch (e: Throwable) {
+            onError(e)
+        }
+    }
 
-    private fun onResult(noteResult: NoteResult) {
+    private suspend fun onResult(noteResult: NoteResult) = withContext(Dispatchers.Main) {
         noteLiveData.value = noteResult
     }
 
-    private fun onError(throwable: Throwable) {
+    private suspend fun onError(throwable: Throwable) {
         Timber.e(throwable)
         onResult(noteResult = NoteResult.Error(throwable.message))
     }
-
-    override fun onCleared() = compositeDisposable.clear()
 }

@@ -3,12 +3,11 @@ package com.softartdev.noteroom.ui.settings.security.confirm
 import android.text.Editable
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.softartdev.noteroom.data.DataManager
-import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
-import io.reactivex.rxkotlin.subscribeBy
-import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -18,32 +17,25 @@ class ConfirmViewModel @Inject constructor(
 
     val confirmLiveData = MutableLiveData<ConfirmResult>()
 
-    private var disposable: Disposable? = null
-
     fun conformCheck(password: Editable, repeatPassword: Editable) {
-        disposable?.dispose()
-        disposable = Single.just(password to repeatPassword)
-                .flatMap { pair ->
-                    val (passEditable, repeatPassEditable) = pair
-                    when {
-                        passEditable.toString() != repeatPassEditable.toString() ->
-                            Single.just(ConfirmResult.PasswordsNoMatchError)
-                        passEditable.isEmpty() ->
-                            Single.just(ConfirmResult.EmptyPasswordError)
-                        else -> dataManager.changePass(null, password)
-                                .toSingleDefault(ConfirmResult.Success)
+        viewModelScope.launch {
+            try {
+                confirmLiveData.postValue(ConfirmResult.Loading)
+                val confirmResult = when {
+                    password.toString() != repeatPassword.toString() -> ConfirmResult.PasswordsNoMatchError
+                    password.isEmpty() -> ConfirmResult.EmptyPasswordError
+                    else -> withContext(Dispatchers.IO) {
+                        dataManager.changePass(null, password)
+                        ConfirmResult.Success
                     }
                 }
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe { confirmLiveData.value = ConfirmResult.Loading }
-                .subscribeBy(onSuccess = { confirmResult ->
-                    confirmLiveData.value = confirmResult
-                }, onError = { throwable ->
-                    Timber.e(throwable)
-                    confirmLiveData.value = ConfirmResult.Error(throwable.message)
-                })
+                confirmLiveData.postValue(confirmResult)
+            } catch (throwable: Throwable) {
+                withContext(Dispatchers.Main) {
+                    confirmLiveData.postValue(ConfirmResult.Error(throwable.message))
+                }
+                Timber.e(throwable)
+            }
+        }
     }
-
-    override fun onCleared() = disposable?.dispose() ?: Unit
 }
