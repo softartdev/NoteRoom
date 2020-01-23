@@ -20,7 +20,7 @@ class NoteRoomApp : DaggerApplication() {
     @Inject
     lateinit var preferencesHelper: PreferencesHelper
 
-    override fun applicationInjector(): AndroidInjector<NoteRoomApp> = DaggerAppComponent.builder().create(this)
+    override fun applicationInjector(): AndroidInjector<NoteRoomApp> = DaggerAppComponent.factory().create(this)
 
     override fun attachBaseContext(base: Context?) {
         super.attachBaseContext(base)
