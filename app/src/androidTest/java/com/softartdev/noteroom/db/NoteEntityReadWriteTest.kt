@@ -6,7 +6,10 @@ import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.softartdev.noteroom.model.Note
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runBlockingTest
 import org.junit.After
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -16,6 +19,7 @@ import java.util.*
 
 
 @RunWith(AndroidJUnit4::class)
+@UseExperimental(ExperimentalCoroutinesApi::class)
 class NoteEntityReadWriteTest {
 
     @get:Rule var instantTaskExecutorRule = InstantTaskExecutorRule()
@@ -48,26 +52,22 @@ class NoteEntityReadWriteTest {
 
     @Test
     @Throws(Exception::class)
-    fun writeNoteAndReadById() {
-        noteDao.insertNote(note)
-                .test()
-                .assertValue(expId)
+    fun writeNoteAndReadById() = runBlockingTest {
+        val actId = noteDao.insertNote(note)
+        assertEquals(expId, actId)
         val exp = note.copy(id = expId)
-        noteDao.getNoteById(expId)
-                .test()
-                .assertValue(exp)
+        val act = noteDao.getNoteById(expId)
+        assertEquals(exp, act)
     }
 
     @Test
     @Throws(Exception::class)
-    fun writeNoteAndReadInList() {
-        noteDao.insertNote(note)
-                .test()
-                .assertValue(expId)
-        val exp = note.copy(id = expId)
-        noteDao.getNotes()
-                .test()
-                .assertValue(listOf(exp))
+    fun writeNoteAndReadInList() = runBlockingTest {
+        val actId = noteDao.insertNote(note)
+        assertEquals(expId, actId)
+        val exp = listOf(note.copy(id = expId))
+        val act = noteDao.getNotes()
+        assertEquals(exp, act)
     }
 
 }

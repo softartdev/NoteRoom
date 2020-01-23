@@ -50,6 +50,7 @@ android {
     }
     kotlinOptions {
         jvmTarget = "1.8"
+        freeCompilerArgs += "-Xuse-experimental=kotlin.Experimental"
     }
     lintOptions {
         abortOnError false
@@ -104,6 +105,7 @@ dependencies {
     kaptTest "com.google.dagger:dagger-compiler:$dagger_version"
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test:rules:1.2.0'
+    androidTestImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version"
     def espresso_version = "3.2.0"
     androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_version"
     androidTestImplementation "androidx.test.espresso:espresso-contrib:$espresso_version"

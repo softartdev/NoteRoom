@@ -28,12 +28,12 @@ class ChangeViewModel @Inject constructor(
                     oldPassword.isEmpty() -> ChangeResult.OldEmptyPasswordError
                     newPassword.isEmpty() -> ChangeResult.NewEmptyPasswordError
                     newPassword.toString() != repeatNewPassword.toString() -> ChangeResult.PasswordsNoMatchError
-                    else -> when (val checked = dataManager.checkPass(oldPassword)) {
-                        checked -> {
+                    else -> when (dataManager.checkPass(oldPassword)) {
+                        true -> {
                             dataManager.changePass(oldPassword, newPassword)
                             ChangeResult.Success
                         }
-                        else -> ChangeResult.IncorrectPasswordError
+                        false -> ChangeResult.IncorrectPasswordError
                     }
                 }
                 changeLiveData.postValue(changeResult)

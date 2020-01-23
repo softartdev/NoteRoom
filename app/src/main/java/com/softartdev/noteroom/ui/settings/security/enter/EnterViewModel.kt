@@ -22,12 +22,12 @@ class EnterViewModel @Inject constructor(
             _enterLiveData.value = EnterResult.Loading
             _enterLiveData.value = try {
                 if (password.isNotEmpty()) {
-                    when (val checked = dataManager.checkPass(password)) {
-                        checked -> {
+                    when (dataManager.checkPass(password)) {
+                        true -> {
                             dataManager.changePass(password, null)
                             EnterResult.Success
                         }
-                        else -> EnterResult.IncorrectPasswordError
+                        false -> EnterResult.IncorrectPasswordError
                     }
                 } else EnterResult.EmptyPasswordError
             } catch (throwable: Throwable) {
