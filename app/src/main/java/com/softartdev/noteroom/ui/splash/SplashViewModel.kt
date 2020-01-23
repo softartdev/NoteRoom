@@ -23,9 +23,9 @@ class SplashViewModel @Inject constructor(
 
     private fun checkEncryption() = viewModelScope.launch(Dispatchers.IO) {
         val splashResult: SplashResult = try {
-            when (val isEncrypted = dataManager.isEncryption()) {
-                isEncrypted -> SplashResult.NavSignIn
-                else -> SplashResult.NavMain
+            when (dataManager.isEncryption()) {
+                true -> SplashResult.NavSignIn
+                false -> SplashResult.NavMain
             }
         } catch (throwable: Throwable) {
             Timber.e(throwable)
