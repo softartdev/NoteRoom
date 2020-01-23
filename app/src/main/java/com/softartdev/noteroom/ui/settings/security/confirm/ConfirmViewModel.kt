@@ -18,24 +18,26 @@ class ConfirmViewModel @Inject constructor(
     val confirmLiveData = MutableLiveData<ConfirmResult>()
 
     fun conformCheck(password: Editable, repeatPassword: Editable) {
-        viewModelScope.launch {
-            try {
-                confirmLiveData.postValue(ConfirmResult.Loading)
-                val confirmResult = when {
+        viewModelScope.launch(Dispatchers.IO) {
+            onResult(ConfirmResult.Loading)
+            val confirmResult = try {
+                when {
                     password.toString() != repeatPassword.toString() -> ConfirmResult.PasswordsNoMatchError
                     password.isEmpty() -> ConfirmResult.EmptyPasswordError
-                    else -> withContext(Dispatchers.IO) {
+                    else -> {
                         dataManager.changePass(null, password)
                         ConfirmResult.Success
                     }
                 }
-                confirmLiveData.postValue(confirmResult)
             } catch (throwable: Throwable) {
-                withContext(Dispatchers.Main) {
-                    confirmLiveData.postValue(ConfirmResult.Error(throwable.message))
-                }
                 Timber.e(throwable)
+                ConfirmResult.Error(throwable.message)
             }
+            onResult(confirmResult)
         }
+    }
+
+    private suspend fun onResult(confirmResult: ConfirmResult) = withContext(Dispatchers.Main) {
+        confirmLiveData.value = confirmResult
     }
 }

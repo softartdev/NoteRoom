@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.softartdev.noteroom.data.DataManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -22,9 +23,9 @@ class ChangeViewModel @Inject constructor(
             repeatNewPassword: Editable
     ) {
         viewModelScope.launch(Dispatchers.IO) {
-            try {
-                changeLiveData.postValue(ChangeResult.Loading)
-                val changeResult = when {
+            onResult(ChangeResult.Loading)
+            val changeResult = try {
+                when {
                     oldPassword.isEmpty() -> ChangeResult.OldEmptyPasswordError
                     newPassword.isEmpty() -> ChangeResult.NewEmptyPasswordError
                     newPassword.toString() != repeatNewPassword.toString() -> ChangeResult.PasswordsNoMatchError
@@ -36,12 +37,15 @@ class ChangeViewModel @Inject constructor(
                         false -> ChangeResult.IncorrectPasswordError
                     }
                 }
-                changeLiveData.postValue(changeResult)
             } catch (throwable: Throwable) {
                 Timber.e(throwable)
-                changeLiveData.postValue(ChangeResult.Error(throwable.message))
+                ChangeResult.Error(throwable.message)
             }
+            onResult(changeResult)
         }
     }
 
+    private suspend fun onResult(changeResult: ChangeResult) = withContext(Dispatchers.Main) {
+        changeLiveData.value = changeResult
+    }
 }

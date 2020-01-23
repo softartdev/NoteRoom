@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.softartdev.noteroom.data.DataManager
 import com.softartdev.noteroom.model.SecurityResult
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -17,50 +18,42 @@ class SettingsViewModel @Inject constructor(
 
     val securityLiveData = MutableLiveData<SecurityResult>()
 
-    fun checkEncryption() {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val isEncrypted = dataManager.isEncryption()
-                onResult(securityResult = SecurityResult.EncryptEnable(isEncrypted))
-            } catch (e: Throwable) {
-                onError(e)
+    fun checkEncryption() = launch {
+        val isEncrypted = dataManager.isEncryption()
+        SecurityResult.EncryptEnable(isEncrypted)
+    }
+
+    fun changeEncryption(checked: Boolean) = launch {
+        when (checked) {
+            true -> SecurityResult.SetPasswordDialog
+            false -> when (dataManager.isEncryption()) {
+                true -> SecurityResult.PasswordDialog
+                false -> SecurityResult.EncryptEnable(false)
             }
         }
     }
 
-    fun changeEncryption(checked: Boolean) = viewModelScope.launch(Dispatchers.IO) {
-        try {
-            onResult(securityResult = when (checked) {
-                true -> SecurityResult.SetPasswordDialog
-                false -> when (dataManager.isEncryption()) {
-                    true -> SecurityResult.PasswordDialog
-                    false -> SecurityResult.EncryptEnable(false)
-                }
-            })
-        } catch (e: Throwable) {
-            onError(e)
+    fun changePassword() = launch {
+            when(dataManager.isEncryption()) {
+                true -> SecurityResult.ChangePasswordDialog
+                false -> SecurityResult.SetPasswordDialog
+            }
         }
-    }
 
-    fun changePassword() = viewModelScope.launch(Dispatchers.IO) {
-        try {
-            val isEncrypted = dataManager.isEncryption()
-            onResult(securityResult = when {
-                isEncrypted -> SecurityResult.ChangePasswordDialog
-                else -> SecurityResult.SetPasswordDialog
-            })
-        } catch (e: Throwable) {
-            onError(e)
+    private fun launch(
+            block: suspend CoroutineScope.() -> SecurityResult
+    ) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val securityResult = try {
+                block()
+            } catch (throwable: Throwable) {
+                Timber.e(throwable)
+                SecurityResult.Error(throwable.message)
+            }
+            withContext(Dispatchers.Main) {
+                securityLiveData.value = securityResult
+            }
         }
-    }
-
-    private suspend fun onResult(securityResult: SecurityResult) = withContext(Dispatchers.Main) {
-        securityLiveData.value = securityResult
-    }
-
-    private suspend fun onError(throwable: Throwable) {
-        Timber.e(throwable)
-        onResult(securityResult = SecurityResult.Error(throwable.message))
     }
 
 }

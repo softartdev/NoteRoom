@@ -96,30 +96,29 @@ class NoteViewModel @Inject constructor(
     ) {
         viewModelScope.launch(Dispatchers.IO) {
             onResult(noteResult = NoteResult.Loading)
-            try {
-                val noteResult: NoteResult = block()
-                onResult(noteResult)
+            val noteResult: NoteResult = try {
+                block()
             } catch (e: Throwable) {
-                onError(e)
+                Timber.e(e)
+                NoteResult.Error(e.message)
             }
+            onResult(noteResult)
         }
     }
 
-    private fun subscribeToEditTitle() = viewModelScope.launch(Dispatchers.IO) {
-        try {
+    private suspend fun subscribeToEditTitle() = viewModelScope.launch(Dispatchers.IO) {
+        val noteResult = try {
             val title = dataManager.titleChannel.receive()
-            onResult(NoteResult.TitleUpdated(title))
+            NoteResult.TitleUpdated(title)
         } catch (e: Throwable) {
-            onError(e)
+            Timber.e(e)
+            NoteResult.Error(e.message)
         }
+        onResult(noteResult)
     }
 
     private suspend fun onResult(noteResult: NoteResult) = withContext(Dispatchers.Main) {
         noteLiveData.value = noteResult
     }
 
-    private suspend fun onError(throwable: Throwable) {
-        Timber.e(throwable)
-        onResult(noteResult = NoteResult.Error(throwable.message))
-    }
 }

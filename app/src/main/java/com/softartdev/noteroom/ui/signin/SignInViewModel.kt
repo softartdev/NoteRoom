@@ -8,6 +8,7 @@ import com.softartdev.noteroom.data.DataManager
 import com.softartdev.noteroom.model.SignInResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -18,7 +19,7 @@ class SignInViewModel @Inject constructor(
     val signInLiveData = MutableLiveData<SignInResult>()
 
     fun signIn(pass: Editable) = viewModelScope.launch(Dispatchers.IO) {
-        signInLiveData.postValue(SignInResult.ShowProgress)
+        onResult(SignInResult.ShowProgress)
         val signInResult = try {
             if (pass.isNotEmpty()) {
                 when (val checked = dataManager.checkPass(pass)) {
@@ -30,6 +31,10 @@ class SignInViewModel @Inject constructor(
             Timber.e(throwable)
             SignInResult.ShowError(throwable)
         }
-        signInLiveData.postValue(signInResult)
+        onResult(signInResult)
+    }
+
+    private suspend fun onResult(signInResult: SignInResult) = withContext(Dispatchers.Main) {
+        signInLiveData.value = signInResult
     }
 }

@@ -23,22 +23,21 @@ class MainViewModel @Inject constructor(
     }
 
     fun updateNotes() = viewModelScope.launch(Dispatchers.IO) {
-        kotlin.runCatching {
-            onResult(noteListResult = NoteListResult.Loading)
+        onResult(NoteListResult.Loading)
+        val noteListResult = try {
             val notes = dataManager.notes()
-            onResult(noteListResult = NoteListResult.Success(notes))
-        }.onFailure { onError(it) }
+            NoteListResult.Success(notes)
+        } catch (throwable: Throwable) {
+            Timber.e(throwable)
+            when (throwable) {
+                is SQLiteException -> NoteListResult.NavMain
+                else -> NoteListResult.Error(throwable.message)
+            }
+        }
+        onResult(noteListResult)
     }
 
     private suspend fun onResult(noteListResult: NoteListResult) = withContext(Dispatchers.Main) {
         notesLiveData.value = noteListResult
-    }
-
-    private suspend fun onError(throwable: Throwable) {
-        onResult(noteListResult = when (throwable) {
-            is SQLiteException -> NoteListResult.NavMain
-            else -> NoteListResult.Error(throwable.message)
-        })
-        Timber.e(throwable)
     }
 }

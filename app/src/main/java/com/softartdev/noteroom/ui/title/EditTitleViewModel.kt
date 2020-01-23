@@ -7,6 +7,7 @@ import com.softartdev.noteroom.data.DataManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -37,15 +38,19 @@ class EditTitleViewModel @Inject constructor(
             block: suspend CoroutineScope.() -> EditTitleResult
     ) {
         viewModelScope.launch(Dispatchers.IO) {
-            editTitleLiveData.value = EditTitleResult.Loading
+            onResult(EditTitleResult.Loading)
             val editTitleResult = try {
                 block()
             } catch (throwable: Throwable) {
                 Timber.e(throwable)
                 EditTitleResult.Error(throwable.message)
             }
-            editTitleLiveData.value = editTitleResult
+            onResult(editTitleResult)
         }
+    }
+
+    private suspend fun onResult(editTitleResult: EditTitleResult) = withContext(Dispatchers.Main) {
+        editTitleLiveData.value = editTitleResult
     }
 
 }
