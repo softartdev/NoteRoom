@@ -28,7 +28,7 @@ class EnterPasswordDialog : BaseDialogFragment(
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        enterViewModel.enterLiveData.observe(this, this)
+        enterViewModel.resultLiveData.observe(this, this)
     }
 
     override fun onOkClicked() = enterViewModel.enterCheck(

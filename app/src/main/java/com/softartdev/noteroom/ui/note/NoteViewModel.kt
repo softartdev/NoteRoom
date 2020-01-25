@@ -1,29 +1,22 @@
 package com.softartdev.noteroom.ui.note
 
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.softartdev.noteroom.data.DataManager
-import com.softartdev.noteroom.model.NoteResult
+import com.softartdev.noteroom.ui.base.BaseViewModel
 import com.softartdev.noteroom.util.createTitle
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
 
 class NoteViewModel @Inject constructor(
         private val dataManager: DataManager
-) : ViewModel() {
-
-    val noteLiveData: MutableLiveData<NoteResult> = MutableLiveData()
+) : BaseViewModel<NoteResult>() {
 
     private var noteId: Long = 0
         get() = when (field) {
             0L -> throw IllegalStateException()
             else -> field
         }
+
+    override val loadingResult: NoteResult = NoteResult.Loading
 
     fun createNote() = launch {
         val note = dataManager.createNote()
@@ -91,34 +84,10 @@ class NoteViewModel @Inject constructor(
         return NoteResult.Deleted
     }
 
-    private fun launch(
-            block: suspend CoroutineScope.() -> NoteResult
-    ) {
-        viewModelScope.launch(Dispatchers.IO) {
-            onResult(noteResult = NoteResult.Loading)
-            val noteResult: NoteResult = try {
-                block()
-            } catch (e: Throwable) {
-                Timber.e(e)
-                NoteResult.Error(e.message)
-            }
-            onResult(noteResult)
-        }
+    private suspend fun subscribeToEditTitle() = launch {
+        val title = dataManager.titleChannel.receive()
+        NoteResult.TitleUpdated(title)
     }
 
-    private suspend fun subscribeToEditTitle() = viewModelScope.launch(Dispatchers.IO) {
-        val noteResult = try {
-            val title = dataManager.titleChannel.receive()
-            NoteResult.TitleUpdated(title)
-        } catch (e: Throwable) {
-            Timber.e(e)
-            NoteResult.Error(e.message)
-        }
-        onResult(noteResult)
-    }
-
-    private suspend fun onResult(noteResult: NoteResult) = withContext(Dispatchers.Main) {
-        noteLiveData.value = noteResult
-    }
-
+    override fun errorResult(throwable: Throwable): NoteResult = NoteResult.Error(throwable.message)
 }

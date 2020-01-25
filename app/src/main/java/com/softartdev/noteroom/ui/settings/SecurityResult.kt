@@ -1,4 +1,4 @@
-package com.softartdev.noteroom.model
+package com.softartdev.noteroom.ui.settings
 
 sealed class SecurityResult {
     data class EncryptEnable(val encryption: Boolean) : SecurityResult()

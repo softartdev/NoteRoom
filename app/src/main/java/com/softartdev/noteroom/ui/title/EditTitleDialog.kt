@@ -31,7 +31,7 @@ class EditTitleDialog : BaseDialogFragment(
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        editTitleViewModel.editTitleLiveData.observe(this, this)
+        editTitleViewModel.resultLiveData.observe(this, this)
         editTitleViewModel.loadTitle(noteId)
     }
 

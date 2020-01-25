@@ -12,7 +12,6 @@ import androidx.core.app.NavUtils
 import androidx.lifecycle.Observer
 import com.google.android.material.snackbar.Snackbar
 import com.softartdev.noteroom.R
-import com.softartdev.noteroom.model.NoteResult
 import com.softartdev.noteroom.ui.base.BaseActivity
 import com.softartdev.noteroom.ui.title.EditTitleDialog
 import com.softartdev.noteroom.util.*
@@ -43,7 +42,7 @@ class NoteActivity : BaseActivity(), Observer<NoteResult> {
         setContentView(R.layout.activity_note)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        noteViewModel.noteLiveData.observe(this, this)
+        noteViewModel.resultLiveData.observe(this, this)
 
         savedInstanceState?.let { bundle ->
             bundle.getString(KEY_TITLE)?.let { noteTitle = it }

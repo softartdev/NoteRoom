@@ -1,4 +1,4 @@
-package com.softartdev.noteroom.model
+package com.softartdev.noteroom.ui.splash
 
 sealed class SplashResult {
     object NavSignIn : SplashResult()
