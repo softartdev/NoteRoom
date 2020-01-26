@@ -36,8 +36,6 @@ class CreateRemoveNoteTest {
         val floatingActionButton = onView(withId(R.id.add_note_fab))
         floatingActionButton.perform(click())
 
-        Thread.sleep(500)
-
         val textInputEditText = onView(withId(R.id.note_title_edit_text))
         val titleText = "Lorem"
         textInputEditText.perform(replaceText(titleText))
@@ -45,12 +43,8 @@ class CreateRemoveNoteTest {
 
         pressBack()
 
-        Thread.sleep(500)
-
         val alertDialogPositiveButton = onView(withId(android.R.id.button1))
         alertDialogPositiveButton.perform(click())
-
-        Thread.sleep(500)
 
         val textView = onView(withId(R.id.item_note_title_text_view))
         textView.check(matches(withText(titleText)))
@@ -61,8 +55,6 @@ class CreateRemoveNoteTest {
         actionMenuItemView.perform(click())
 
         alertDialogPositiveButton.perform(click())
-
-        Thread.sleep(500)
 
         val textView2 = onView(withId(R.id.text_message))
         textView2.check(matches(withText(R.string.label_empty_result)))
