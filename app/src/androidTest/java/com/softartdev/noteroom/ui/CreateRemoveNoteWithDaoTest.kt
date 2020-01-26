@@ -3,6 +3,7 @@ package com.softartdev.noteroom.ui
 
 import android.content.Context
 import android.view.View
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
@@ -34,6 +35,8 @@ import java.util.*
 class CreateRemoveNoteWithDaoTest {
 
     private val context: Context = ApplicationProvider.getApplicationContext<Context>()
+
+    @get:Rule var instantTaskExecutorRule = InstantTaskExecutorRule()
 
     @Rule
     @JvmField
@@ -70,14 +73,19 @@ class CreateRemoveNoteWithDaoTest {
         val messageTextView = onView(withId(R.id.text_message))
         messageTextView.check(matches(withText(R.string.label_empty_result)))
 
+        val notesTestSubscriber = noteDao.getNotes()
+                .test()
+        notesTestSubscriber
+                .assertValues(emptyList())
+
         val expId = note.id + 1
         noteDao.insertNote(note)
                 .test()
                 .assertValue(expId)
         val exp = note.copy(id = expId)
-        noteDao.getNoteById(expId)
-                .test()
-                .assertValue(exp)
+
+        notesTestSubscriber
+                .assertValues(emptyList(), listOf(exp))
 
         val swipeRefresh = onView(withId(R.id.main_swipe_refresh))
         swipeRefresh.perform(withCustomConstraints(swipeDown(), isDisplayingAtLeast(85)))
@@ -91,6 +99,9 @@ class CreateRemoveNoteWithDaoTest {
                 .test()
                 .assertNoErrors()
                 .assertTerminated()
+
+        notesTestSubscriber
+                .assertValues(emptyList(), listOf(exp), emptyList())
 
         swipeRefresh.perform(withCustomConstraints(swipeDown(), isDisplayingAtLeast(85)))
 

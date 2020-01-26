@@ -3,13 +3,16 @@ package com.softartdev.noteroom
 import android.content.Context
 import androidx.multidex.MultiDex
 import com.crashlytics.android.Crashlytics
+import com.crashlytics.android.answers.Answers
 import com.crashlytics.android.core.CrashlyticsCore
 import com.softartdev.noteroom.di.component.DaggerAppComponent
+import com.softartdev.noteroom.util.CrashlyticsTree
 import com.softartdev.noteroom.util.PreferencesHelper
 import com.softartdev.noteroom.util.ThemeHelper
 import dagger.android.AndroidInjector
 import dagger.android.support.DaggerApplication
 import io.fabric.sdk.android.Fabric
+import io.reactivex.plugins.RxJavaPlugins
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -27,14 +30,18 @@ class NoteRoomApp : DaggerApplication() {
 
     override fun onCreate() {
         super.onCreate()
-        if (BuildConfig.DEBUG) {
-            Timber.plant(Timber.DebugTree())
-        }
-        val crashlyticsCore = CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build()
-        val crashlytics = Crashlytics.Builder().core(crashlyticsCore).build()
-        Fabric.with(this, crashlytics)
-
+        initLogging()
         ThemeHelper.applyTheme(preferencesHelper.themeEntry, this)
+    }
+
+    private fun initLogging() {
+        Timber.plant(if (BuildConfig.DEBUG) Timber.DebugTree() else CrashlyticsTree())
+
+        val core = CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build()
+        val kit = Crashlytics.Builder().core(core).build()
+        Fabric.with(this, kit, Answers())
+
+        RxJavaPlugins.setErrorHandler(Timber::e)
     }
 
 }

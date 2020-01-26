@@ -1,28 +1,28 @@
 package com.softartdev.noteroom.ui.settings
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
-import android.view.View
 import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.preference.*
 import com.softartdev.noteroom.R
 import com.softartdev.noteroom.model.SecurityResult
+import com.softartdev.noteroom.ui.base.BaseDialogFragment
 import com.softartdev.noteroom.ui.base.BasePrefFragment
-import com.softartdev.noteroom.ui.security.PassMediator
-import com.softartdev.noteroom.ui.security.SecurityViewModel
+import com.softartdev.noteroom.ui.settings.security.change.ChangePasswordDialog
+import com.softartdev.noteroom.ui.settings.security.confirm.ConfirmPasswordDialog
+import com.softartdev.noteroom.ui.settings.security.enter.EnterPasswordDialog
 import com.softartdev.noteroom.util.ThemeHelper
 import com.softartdev.noteroom.util.tintIcon
-import kotlinx.android.synthetic.main.dialog_change_password.view.*
-import kotlinx.android.synthetic.main.dialog_password.view.*
-import kotlinx.android.synthetic.main.dialog_set_password.view.*
 import timber.log.Timber
 
 @SuppressLint("InflateParams")
 class SettingsFragment : BasePrefFragment(), Preference.OnPreferenceChangeListener, Observer<SecurityResult> {
 
-    private val securityViewModel by viewModels<SecurityViewModel> { viewModelFactory }
+    private val settingsViewModel by viewModels<SettingsViewModel> { viewModelFactory }
     private var securityPreferences: SwitchPreference? = null
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
@@ -44,7 +44,7 @@ class SettingsFragment : BasePrefFragment(), Preference.OnPreferenceChangeListen
 
         val passwordPreference: Preference? = findPreference(getString(R.string.password_key))
         passwordPreference?.setOnPreferenceClickListener {
-            securityViewModel.changePassword()
+            settingsViewModel.changePassword()
             true
         }
         passwordPreference?.tintIcon()
@@ -54,15 +54,15 @@ class SettingsFragment : BasePrefFragment(), Preference.OnPreferenceChangeListen
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        securityViewModel.securityLiveData.observe(this, this)
-        securityViewModel.checkEncryption()
+        settingsViewModel.securityLiveData.observe(this, this)
+        settingsViewModel.checkEncryption()
     }
 
     override fun onChanged(securityResult: SecurityResult) = when (securityResult) {
         is SecurityResult.EncryptEnable -> showEncryptEnable(securityResult.encryption)
-        is SecurityResult.PasswordDialog -> showPasswordDialog()
-        is SecurityResult.SetPasswordDialog -> showSetPasswordDialog()
-        is SecurityResult.ChangePasswordDialog -> showChangePasswordDialog()
+        is SecurityResult.PasswordDialog -> showDialogFragment(EnterPasswordDialog())
+        is SecurityResult.SetPasswordDialog -> showDialogFragment(ConfirmPasswordDialog())
+        is SecurityResult.ChangePasswordDialog -> showDialogFragment(ChangePasswordDialog())
         is SecurityResult.Error -> showError(securityResult.message)
     }
 
@@ -78,65 +78,28 @@ class SettingsFragment : BasePrefFragment(), Preference.OnPreferenceChangeListen
             true
         }
         getString(R.string.security_key) -> {
-            securityViewModel.changeEncryption(newValue as Boolean)
+            settingsViewModel.changeEncryption(newValue as Boolean)
             false
         }
         else -> throw IllegalArgumentException("Unknown preference key")
     }
 
-    private fun showPasswordDialog() {
-        val dialogPasswordView = layoutInflater.inflate(R.layout.dialog_password, null)
-        val alertDialog = createDialog(dialogPasswordView)
-        dialogPositiveClickListener(alertDialog, View.OnClickListener {
-            val pass = PassMediator(dialogPasswordView.enter_password_text_input_layout, dialogPasswordView.enter_password_edit_text)
-            securityViewModel.enterPassCorrect(pass) { alertDialog.dismiss() }
-        })
-        alertDialog.show()
+    private fun showDialogFragment(dialogFragment: DialogFragment) {
+        dialogFragment.setTargetFragment(this, BaseDialogFragment.DIALOG_REQUEST_CODE)
+        dialogFragment.show(parentFragmentManager, "PASSWORD_DIALOG_TAG")
     }
 
-    private fun showSetPasswordDialog() {
-        val dialogPasswordView = layoutInflater.inflate(R.layout.dialog_set_password, null)
-        val alertDialog = createDialog(dialogPasswordView)
-        dialogPositiveClickListener(alertDialog, View.OnClickListener {
-            val pass = PassMediator(dialogPasswordView.set_password_text_input_layout, dialogPasswordView.set_password_edit_text)
-            val repeatPass = PassMediator(dialogPasswordView.repeat_set_password_text_input_layout, dialogPasswordView.repeat_set_password_edit_text)
-            securityViewModel.setPassCorrect(pass, repeatPass) { alertDialog.dismiss() }
-        })
-        alertDialog.show()
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) = when (requestCode) {
+        BaseDialogFragment.DIALOG_REQUEST_CODE -> settingsViewModel.checkEncryption()
+        else -> super.onActivityResult(requestCode, resultCode, data)
     }
 
-    private fun showChangePasswordDialog() {
-        val dialogPasswordView = layoutInflater.inflate(R.layout.dialog_change_password, null)
-        val alertDialog = createDialog(dialogPasswordView)
-        dialogPositiveClickListener(alertDialog, View.OnClickListener {
-            val oldPass = PassMediator(dialogPasswordView.old_password_text_input_layout, dialogPasswordView.old_password_edit_text)
-            val newPass = PassMediator(dialogPasswordView.new_password_text_input_layout, dialogPasswordView.new_password_edit_text)
-            val repeatNewPass = PassMediator(dialogPasswordView.repeat_new_password_text_input_layout, dialogPasswordView.repeat_new_password_edit_text)
-            securityViewModel.changePassCorrect(oldPass, newPass, repeatNewPass) { alertDialog.dismiss() }
-        })
-        alertDialog.show()
-    }
-
-    private fun createDialog(dialogView: View?): AlertDialog = with(AlertDialog.Builder(requireContext())) {
-        setView(dialogView)
-        setPositiveButton(android.R.string.ok, null)
-        setNegativeButton(android.R.string.cancel) { dialog, _ -> dialog.cancel() }
-        create()
-    }
-
-    private fun dialogPositiveClickListener(
-            alertDialog: AlertDialog,
-            clickListener: View.OnClickListener
-    ) = alertDialog.setOnShowListener {
-        val okButton = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)
-        okButton.setOnClickListener(clickListener)
-    }
-
-    private fun showError(message: String?) = with(AlertDialog.Builder(requireContext())) {
-        setTitle(android.R.string.dialog_alert_title)
-        setMessage(message)
-        setNeutralButton(android.R.string.cancel) { dialog, _ -> dialog.cancel() }
-        show(); Unit
+    private fun showError(message: String?) {
+        AlertDialog.Builder(requireContext())
+                .setTitle(android.R.string.dialog_alert_title)
+                .setMessage(message)
+                .setNeutralButton(android.R.string.cancel, null)
+                .show()
     }
 
 }

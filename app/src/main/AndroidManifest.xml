@@ -33,9 +33,7 @@
         <activity
             android:name=".ui.note.NoteActivity"
             android:label="@string/title_activity_note"
-            android:parentActivityName=".ui.main.MainActivity"
-            android:theme="@style/AppTheme.NoActionBar"
-            tools:targetApi="jelly_bean">
+            android:parentActivityName=".ui.main.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.softartdev.noteroom.ui.main.MainActivity" />

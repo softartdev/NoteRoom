@@ -21,11 +21,8 @@ class Rx2IdlerRunner : AndroidJUnitRunner(), IdlingResource.ResourceCallback {
     }
 
     private fun create(name: String): Function<Callable<Scheduler>, Scheduler> = Function { delegate ->
-        val scheduler: IdlingResourceScheduler = DelegatingIdlingResourceScheduler(delegate.call(), name)
+        val scheduler: IdlingResourceScheduler = FixedDelegatingIdlingResourceScheduler(delegate.call(), name)
         IdlingRegistry.getInstance().register(scheduler)
-
-        scheduler.registerIdleTransitionCallback(this)
-
         scheduler
     }
 

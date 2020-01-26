@@ -43,6 +43,12 @@ fun View.visible() {
     }
 }
 
+fun View.invisible() {
+    if (visibility != View.INVISIBLE) {
+        visibility = View.INVISIBLE
+    }
+}
+
 fun MenuItem.tintIcon(
         context: Context,
         @ColorInt color: Int = getThemeColor(context, android.R.attr.textColorPrimary)
@@ -74,4 +80,23 @@ fun getThemeColor(context: Context, @AttrRes attrResId: Int): Int {
     } finally {
         a.recycle()
     }
+}
+
+fun createTitle(text: String): String {
+    // Get the note's length
+    val length = text.length
+
+    // Sets the title by getting a substring of the text that is 31 characters long
+    // or the number of characters in the note plus one, whichever is smaller.
+    var title = text.substring(0, 30.coerceAtMost(length))
+
+    // If the resulting length is more than 30 characters, chops off any
+    // trailing spaces
+    if (length > 30) {
+        val lastSpace: Int = title.lastIndexOf(' ')
+        if (lastSpace > 0) {
+            title = title.substring(0, lastSpace)
+        }
+    }
+    return title
 }

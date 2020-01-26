@@ -36,6 +36,11 @@ Deploy a new version to the Google Play
 fastlane android playstore
 ```
 
+### android clean_test_bundle_publish
+```
+fastlane android clean_test_bundle_publish
+```
+
 
 ----
 

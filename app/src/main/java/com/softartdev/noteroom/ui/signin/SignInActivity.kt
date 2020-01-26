@@ -14,9 +14,9 @@ import com.softartdev.noteroom.util.hideKeyboard
 import com.softartdev.noteroom.util.visible
 import kotlinx.android.synthetic.main.activity_sign_in.*
 import kotlinx.android.synthetic.main.view_error.view.*
-import timber.log.Timber
 
 class SignInActivity : BaseActivity(), Observer<SignInResult> {
+
     private val signInViewModel by viewModels<SignInViewModel> { viewModelFactory }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,12 +41,36 @@ class SignInActivity : BaseActivity(), Observer<SignInResult> {
     }
 
     override fun onChanged(signInResult: SignInResult) = when (signInResult) {
-        SignInResult.NavMain -> navMain()
-        SignInResult.ShowEmptyPassError -> showEmptyPassError()
-        SignInResult.ShowIncorrectPassError -> showIncorrectPassError()
-        SignInResult.HideError -> hideError()
-        is SignInResult.ShowProgress -> showProgress(signInResult.show)
-        is SignInResult.ShowError -> showError(signInResult.error)
+        is SignInResult.ShowProgress -> {
+            sign_in_progress_view.visible()
+            sign_in_layout.gone()
+            sign_in_error_view.gone()
+        }
+        SignInResult.NavMain -> {
+            showSignIn()
+            navMain()
+        }
+        SignInResult.ShowEmptyPassError -> showSignIn(
+                errorText = getString(R.string.empty_password)
+        )
+        SignInResult.ShowIncorrectPassError -> showSignIn(
+                errorText = getString(R.string.incorrect_password)
+        )
+        is SignInResult.ShowError -> {
+            sign_in_progress_view.gone()
+            sign_in_layout.gone()
+            sign_in_error_view.apply {
+                text_error_message.text = signInResult.error.message
+            }.visible()
+        }
+    }
+
+    private fun showSignIn(errorText: String? = null) {
+        sign_in_progress_view.gone()
+        sign_in_layout.apply {
+            password_text_input_layout.error = errorText
+        }.visible()
+        sign_in_error_view.gone()
     }
 
     private fun navMain() {
@@ -55,28 +79,5 @@ class SignInActivity : BaseActivity(), Observer<SignInResult> {
         finish()
     }
 
-    private fun hideError() {
-        password_text_input_layout?.error = null
-    }
-
-    private fun showEmptyPassError() {
-        password_text_input_layout?.error = getString(R.string.empty_password)
-    }
-
-    private fun showIncorrectPassError() {
-        password_text_input_layout?.error = getString(R.string.incorrect_password)
-    }
-
-    private fun showProgress(show: Boolean) {
-        sign_in_progress_view.apply { if (show) visible() else gone() }
-    }
-
-    private fun showError(error: Throwable) {
-        sign_in_error_view.apply {
-            visible()
-            text_error_message.text = error.message
-        }
-        Timber.e(error, "There was an error sign in")
-    }
 }
 
