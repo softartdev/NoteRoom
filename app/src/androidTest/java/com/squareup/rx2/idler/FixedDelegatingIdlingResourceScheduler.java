@@ -1,6 +1,7 @@
 package com.squareup.rx2.idler;
 
 import androidx.annotation.RestrictTo;
+import androidx.test.espresso.idling.CountingIdlingResource;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -16,12 +17,13 @@ import static androidx.annotation.RestrictTo.Scope.LIBRARY;
 final class FixedDelegatingIdlingResourceScheduler extends IdlingResourceScheduler {
   private final Scheduler delegate;
   private final String name;
-  private final AtomicInteger work = new AtomicInteger();
+  private final CountingIdlingResource countingIdlingResource;
   private ResourceCallback callback;
 
   FixedDelegatingIdlingResourceScheduler(Scheduler delegate, String name) {
     this.delegate = delegate;
     this.name = name;
+    this.countingIdlingResource = new CountingIdlingResource(name);
   }
 
   @Override public String getName() {
@@ -29,7 +31,7 @@ final class FixedDelegatingIdlingResourceScheduler extends IdlingResourceSchedul
   }
 
   @Override public boolean isIdleNow() {
-    return work.get() == 0;
+    return countingIdlingResource.isIdleNow();
   }
 
   @Override public void registerIdleTransitionCallback(ResourceCallback callback) {
@@ -90,12 +92,15 @@ final class FixedDelegatingIdlingResourceScheduler extends IdlingResourceSchedul
   }
 
   void startWork() {
-    work.incrementAndGet();
+    countingIdlingResource.increment();
   }
 
   void stopWork() {
-    if (work.decrementAndGet() == 0 && callback != null) {
-      callback.onTransitionToIdle();
+    if (!isIdleNow()) {
+      countingIdlingResource.decrement();
+      if (callback != null) {
+        callback.onTransitionToIdle();
+      }
     }
   }
 

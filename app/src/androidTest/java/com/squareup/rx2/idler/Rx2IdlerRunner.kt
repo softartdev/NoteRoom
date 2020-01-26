@@ -27,4 +27,11 @@ class Rx2IdlerRunner : AndroidJUnitRunner(), IdlingResource.ResourceCallback {
     }
 
     override fun onTransitionToIdle() = Unit
+
+    override fun onDestroy() {
+        val idlingRegistry = IdlingRegistry.getInstance()
+        idlingRegistry.unregister(*idlingRegistry.resources.toTypedArray())
+
+        super.onDestroy()
+    }
 }
