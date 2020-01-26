@@ -101,12 +101,13 @@ dependencies {
     implementation 'com.google.firebase:firebase-core:17.2.2'
     implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
     implementation 'com.google.android.gms:play-services-oss-licenses:17.0.0'
+    def espresso_version = "3.2.0"
+    implementation "androidx.test.espresso:espresso-idling-resource:$espresso_version"
     testImplementation 'junit:junit:4.13'
     kaptTest "com.google.dagger:dagger-compiler:$dagger_version"
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test:rules:1.2.0'
     androidTestImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version"
-    def espresso_version = "3.2.0"
     androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_version"
     androidTestImplementation "androidx.test.espresso:espresso-contrib:$espresso_version"
     kaptAndroidTest "com.google.dagger:dagger-compiler:$dagger_version"

@@ -3,6 +3,7 @@ package com.softartdev.noteroom.ui.base
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.softartdev.noteroom.util.wrapEspressoIdlingResource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -19,16 +20,18 @@ abstract class BaseViewModel<T> : ViewModel() {
             block: suspend CoroutineScope.() -> T
     ) {
         viewModelScope.launch(Dispatchers.IO) {
-            loadingResult?.let { loading ->
-                onResult(loading)
+            wrapEspressoIdlingResource {
+                loadingResult?.let { loading ->
+                    onResult(loading)
+                }
+                val result: T = try {
+                    block()
+                } catch (e: Throwable) {
+                    Timber.e(e)
+                    errorResult(e)
+                }
+                onResult(result)
             }
-            val result: T = try {
-                block()
-            } catch (e: Throwable) {
-                Timber.e(e)
-                errorResult(e)
-            }
-            onResult(result)
         }
     }
 
