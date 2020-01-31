@@ -84,7 +84,7 @@ class NoteViewModel @Inject constructor(
         return NoteResult.Deleted
     }
 
-    private suspend fun subscribeToEditTitle() = launch {
+    private suspend fun subscribeToEditTitle() = launchForReceive {
         val title = dataManager.titleChannel.receive()
         NoteResult.TitleUpdated(title)
     }
