@@ -17,10 +17,11 @@ abstract class BaseViewModel<T> : ViewModel() {
     open val loadingResult: T? = null
 
     fun launch(
+            useIdling: Boolean = true,
             block: suspend CoroutineScope.() -> T
     ) {
         viewModelScope.launch(Dispatchers.IO) {
-            wrapEspressoIdlingResource {
+            wrapEspressoIdlingResource(useIdling) {
                 loadingResult?.let { loading ->
                     onResult(loading)
                 }
@@ -32,23 +33,6 @@ abstract class BaseViewModel<T> : ViewModel() {
                 }
                 onResult(result)
             }
-        }
-    }
-
-    fun launchForReceive(
-            block: suspend CoroutineScope.() -> T
-    ) {
-        viewModelScope.launch(Dispatchers.IO) {
-            loadingResult?.let { loading ->
-                onResult(loading)
-            }
-            val result: T = try {
-                block()
-            } catch (e: Throwable) {
-                Timber.e(e)
-                errorResult(e)
-            }
-            onResult(result)
         }
     }
 
