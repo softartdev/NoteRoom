@@ -22,8 +22,8 @@ abstract class BaseViewModel<T> : ViewModel() {
     ) {
         viewModelScope.launch(Dispatchers.IO) {
             wrapEspressoIdlingResource(useIdling) {
-                loadingResult?.let { loading ->
-                    onResult(loading)
+                if (useIdling) {
+                    loadingResult?.let { loading -> onResult(loading) }
                 }
                 val result: T = try {
                     block()
