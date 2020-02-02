@@ -5,6 +5,7 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu
 import androidx.test.espresso.Espresso.pressBack
+import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
@@ -14,7 +15,10 @@ import androidx.test.rule.ActivityTestRule
 import com.softartdev.noteroom.R
 import com.softartdev.noteroom.db.RoomDbRepository
 import com.softartdev.noteroom.ui.splash.SplashActivity
+import com.softartdev.noteroom.util.EspressoIdlingResource
 import org.hamcrest.CoreMatchers.allOf
+import org.junit.After
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -34,12 +38,20 @@ class CreateRemoveNoteTest {
         }
     }
 
+    @Before
+    fun registerIdlingResource() {
+        IdlingRegistry.getInstance().register(EspressoIdlingResource.countingIdlingResource)
+    }
+
+    @After
+    fun unregisterIdlingResource() {
+        IdlingRegistry.getInstance().unregister(EspressoIdlingResource.countingIdlingResource)
+    }
+
     @Test
     fun createRemove() {
         val floatingActionButton = onView(withId(R.id.add_note_fab))
         floatingActionButton.perform(click())
-
-        Thread.sleep(500)
 
         val textInputEditText = onView(withId(R.id.note_edit_text))
         val titleText = "Lorem"
@@ -48,12 +60,8 @@ class CreateRemoveNoteTest {
 
         pressBack()
 
-        Thread.sleep(500)
-
         val alertDialogPositiveButton = onView(withId(android.R.id.button1))
         alertDialogPositiveButton.perform(click())
-
-        Thread.sleep(500)
 
         val textView = onView(withId(R.id.item_note_title_text_view))
         textView.check(matches(withText(titleText)))
@@ -69,8 +77,6 @@ class CreateRemoveNoteTest {
         actionMenuItemView.perform(click())
 
         alertDialogPositiveButton.perform(click())
-
-        Thread.sleep(500)
 
         val textView2 = onView(withId(R.id.text_message))
         textView2.check(matches(withText(R.string.label_empty_result)))

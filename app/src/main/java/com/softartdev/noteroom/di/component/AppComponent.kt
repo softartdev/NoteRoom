@@ -19,6 +19,6 @@ import javax.inject.Singleton
     DataModule::class])
 interface AppComponent : AndroidInjector<NoteRoomApp> {
 
-    @Component.Builder
-    abstract class Builder : AndroidInjector.Builder<NoteRoomApp>()
+    @Component.Factory
+    abstract class Factory : AndroidInjector.Factory<NoteRoomApp>
 }

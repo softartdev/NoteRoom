@@ -5,7 +5,6 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Observer
-import com.softartdev.noteroom.model.SplashResult
 import com.softartdev.noteroom.ui.base.BaseActivity
 import com.softartdev.noteroom.ui.main.MainActivity
 import com.softartdev.noteroom.ui.signin.SignInActivity
@@ -15,7 +14,7 @@ class SplashActivity : BaseActivity(), Observer<SplashResult> {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        splashViewModel.splashLiveData.observe(this, this)
+        splashViewModel.resultLiveData.observe(this, this)
     }
 
     override fun onChanged(splashResult: SplashResult) = when (splashResult) {

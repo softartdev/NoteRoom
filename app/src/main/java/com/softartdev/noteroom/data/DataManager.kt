@@ -3,38 +3,31 @@ package com.softartdev.noteroom.data
 import android.text.Editable
 import com.softartdev.noteroom.db.DbStore
 import com.softartdev.noteroom.model.Note
-import io.reactivex.Completable
-import io.reactivex.Flowable
-import io.reactivex.Maybe
-import io.reactivex.Single
-import io.reactivex.subjects.PublishSubject
-import io.reactivex.subjects.Subject
+import kotlinx.coroutines.channels.Channel
 
 class DataManager(private val dbStore: DbStore) {
 
-    val titleSubject: Subject<String> by lazy { PublishSubject.create<String>() }
+    val titleChannel: Channel<String> by lazy { Channel<String>() }
 
-    fun notes(): Flowable<List<Note>> = dbStore.notes
+    suspend fun notes(): List<Note> = dbStore.getNotes()
 
-    fun createNote(title: String = "", text: String = ""): Single<Long> = dbStore.createNote(title, text)
+    suspend fun createNote(title: String = "", text: String = ""): Long = dbStore.createNote(title, text)
 
-    fun saveNote(id: Long, title: String, text: String): Single<Int> = dbStore.saveNote(id, title, text)
+    suspend fun saveNote(id: Long, title: String, text: String): Int = dbStore.saveNote(id, title, text)
 
-    fun updateTitle(id: Long, title: String): Completable = dbStore.updateTitle(id, title)
+    suspend fun updateTitle(id: Long, title: String) = dbStore.updateTitle(id, title)
 
-    fun loadNote(noteId: Long): Maybe<Note> = dbStore.loadNote(noteId)
+    suspend fun loadNote(noteId: Long): Note = dbStore.loadNote(noteId)
 
-    fun deleteNote(id: Long): Single<Int> = dbStore.deleteNote(id)
+    suspend fun deleteNote(id: Long): Int = dbStore.deleteNote(id)
 
-    fun checkPass(pass: Editable): Single<Boolean> = dbStore.checkPass(pass)
+    suspend fun checkPass(pass: Editable): Boolean = dbStore.checkPass(pass)
 
-    fun isEncryption(): Single<Boolean> = Single.just(dbStore.isEncryption)
+    suspend fun isEncryption(): Boolean = dbStore.isEncryption()
 
-    fun changePass(odlPass: Editable?, newPass: Editable?): Completable = Completable.fromCallable {
-        dbStore.changePass(odlPass, newPass)
-    }
+    suspend fun changePass(odlPass: Editable?, newPass: Editable?) = dbStore.changePass(odlPass, newPass)
 
-    fun checkChanges(id: Long, title: String, text: String): Single<Boolean> = dbStore.isChanged(id, title, text)
+    suspend fun checkChanges(id: Long, title: String, text: String): Boolean = dbStore.isChanged(id, title, text)
 
-    fun emptyNote(id: Long): Single<Boolean> = dbStore.isEmpty(id)
+    suspend fun emptyNote(id: Long): Boolean = dbStore.isEmpty(id)
 }

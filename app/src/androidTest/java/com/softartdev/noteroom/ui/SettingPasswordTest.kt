@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.RootMatchers.isDialog
@@ -17,12 +18,15 @@ import com.google.android.material.textfield.TextInputLayout
 import com.softartdev.noteroom.R
 import com.softartdev.noteroom.db.RoomDbRepository
 import com.softartdev.noteroom.ui.splash.SplashActivity
+import com.softartdev.noteroom.util.EspressoIdlingResource
 import org.hamcrest.Description
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.not
 import org.hamcrest.TypeSafeMatcher
 import org.hamcrest.core.IsInstanceOf
+import org.junit.After
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -41,6 +45,16 @@ class SettingPasswordTest {
             super.beforeActivityLaunched()
             context.deleteDatabase(RoomDbRepository.DB_NAME)
         }
+    }
+
+    @Before
+    fun registerIdlingResource() {
+        IdlingRegistry.getInstance().register(EspressoIdlingResource.countingIdlingResource)
+    }
+
+    @After
+    fun unregisterIdlingResource() {
+        IdlingRegistry.getInstance().unregister(EspressoIdlingResource.countingIdlingResource)
     }
 
     @Test
@@ -110,8 +124,6 @@ class SettingPasswordTest {
 
         confirmOkButton.perform(click())
 
-        Thread.sleep(1000)
-
         switch.check(matches(isChecked()))
 
         val passwordPref = onView(allOf(
@@ -180,15 +192,11 @@ class SettingPasswordTest {
 
         changeOkButton.perform(click())
 
-        Thread.sleep(1000)
-
         changeOldPasswordTextInputLayout.check(matches(withError(R.string.incorrect_password)))
 
         changeOldEditText.perform(replaceText("1"), closeSoftKeyboard())
 
         changeOkButton.perform(click())
-
-        Thread.sleep(2000)
 
         switch.check(matches(isChecked()))
 
@@ -219,15 +227,11 @@ class SettingPasswordTest {
 
         enterOkButton.perform(click())
 
-        Thread.sleep(1000)
-
         enterPasswordTextInputLayout.check(matches(withError(R.string.incorrect_password)))
 
         enterPasswordEditText.perform(replaceText("2"), closeSoftKeyboard())
 
         enterOkButton.perform(click())
-
-        Thread.sleep(2000)
 
         switch.check(matches(isDisplayed()))
         switch.check(matches(not(isChecked())))

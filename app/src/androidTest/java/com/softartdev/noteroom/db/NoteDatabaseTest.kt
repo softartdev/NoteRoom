@@ -4,13 +4,18 @@ import android.content.Context
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.softartdev.noteroom.db.RoomDbRepository.Companion.DB_NAME
-import org.junit.After
-import org.junit.Before
-import org.junit.Rule
-import org.junit.Test
+import com.softartdev.noteroom.model.Note
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runBlockingTest
+import org.junit.*
+import org.junit.Assert.assertEquals
+import org.junit.runner.RunWith
 import java.io.IOException
 
+@RunWith(AndroidJUnit4::class)
+@UseExperimental(ExperimentalCoroutinesApi::class)
 class NoteDatabaseTest {
 
     @get:Rule var instantTaskExecutorRule = InstantTaskExecutorRule()
@@ -33,11 +38,9 @@ class NoteDatabaseTest {
     }
 
     @Test
-    fun noteDao() {
-        noteDao.getNotes()
-                .test()
-                .assertValue(emptyList())
-                .assertNoErrors()
-                .assertNotComplete()
+    fun noteDao() = runBlockingTest {
+        val act = noteDao.getNotes()
+        val exp = emptyList<Note>()
+        assertEquals(exp, act)
     }
 }

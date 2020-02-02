@@ -9,7 +9,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.preference.*
 import com.softartdev.noteroom.R
-import com.softartdev.noteroom.model.SecurityResult
 import com.softartdev.noteroom.ui.base.BaseDialogFragment
 import com.softartdev.noteroom.ui.base.BasePrefFragment
 import com.softartdev.noteroom.ui.settings.security.change.ChangePasswordDialog
@@ -54,7 +53,7 @@ class SettingsFragment : BasePrefFragment(), Preference.OnPreferenceChangeListen
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        settingsViewModel.securityLiveData.observe(this, this)
+        settingsViewModel.resultLiveData.observe(this, this)
         settingsViewModel.checkEncryption()
     }
 
