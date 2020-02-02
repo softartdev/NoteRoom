@@ -1,4 +1,4 @@
-package com.softartdev.noteroom.model
+package com.softartdev.noteroom.ui.signin
 
 sealed class SignInResult {
     object ShowProgress : SignInResult()

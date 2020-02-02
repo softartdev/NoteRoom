@@ -7,6 +7,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.UiController
 import androidx.test.espresso.ViewAction
 import androidx.test.espresso.action.ViewActions.swipeDown
@@ -21,17 +22,19 @@ import com.softartdev.noteroom.db.NoteDatabase
 import com.softartdev.noteroom.db.RoomDbRepository
 import com.softartdev.noteroom.model.Note
 import com.softartdev.noteroom.ui.splash.SplashActivity
+import com.softartdev.noteroom.util.EspressoIdlingResource
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runBlockingTest
 import org.hamcrest.Matcher
-import org.junit.After
-import org.junit.Before
-import org.junit.Rule
-import org.junit.Test
+import org.junit.*
+import org.junit.Assert.assertEquals
 import org.junit.runner.RunWith
 import java.io.IOException
 import java.util.*
 
 @LargeTest
 @RunWith(AndroidJUnit4::class)
+@UseExperimental(ExperimentalCoroutinesApi::class)
 class CreateRemoveNoteWithDaoTest {
 
     private val context: Context = ApplicationProvider.getApplicationContext<Context>()
@@ -60,32 +63,34 @@ class CreateRemoveNoteWithDaoTest {
     fun createDb() {
         db = Room.databaseBuilder(context, NoteDatabase::class.java, RoomDbRepository.DB_NAME).build()
         noteDao = db.noteDao()
+
+        IdlingRegistry.getInstance().register(EspressoIdlingResource.countingIdlingResource)
     }
 
     @After
     @Throws(IOException::class)
     fun closeDb() {
         db.close()
+
+        IdlingRegistry.getInstance().unregister(EspressoIdlingResource.countingIdlingResource)
     }
 
     @Test
-    fun createRemoveNoteWithDao() {
+    fun createRemoveNoteWithDao() = runBlockingTest {
         val messageTextView = onView(withId(R.id.text_message))
         messageTextView.check(matches(withText(R.string.label_empty_result)))
 
-        val notesTestSubscriber = noteDao.getNotes()
-                .test()
-        notesTestSubscriber
-                .assertValues(emptyList())
+        var act = noteDao.getNotes()
+        var exp = emptyList<Note>()
+        assertEquals(exp, act)
 
         val expId = note.id + 1
-        noteDao.insertNote(note)
-                .test()
-                .assertValue(expId)
-        val exp = note.copy(id = expId)
+        val actId = noteDao.insertNote(note)
+        assertEquals(expId, actId)
 
-        notesTestSubscriber
-                .assertValues(emptyList(), listOf(exp))
+        act = noteDao.getNotes()
+        exp = listOf(note.copy(id = expId))
+        assertEquals(exp, act)
 
         val swipeRefresh = onView(withId(R.id.main_swipe_refresh))
         swipeRefresh.perform(withCustomConstraints(swipeDown(), isDisplayingAtLeast(85)))
@@ -95,13 +100,13 @@ class CreateRemoveNoteWithDaoTest {
         val noteTitleTextView = onView(withId(R.id.item_note_title_text_view))
         noteTitleTextView.check(matches(withText(note.title)))
 
-        noteDao.deleteNoteById(expId)
-                .test()
-                .assertNoErrors()
-                .assertTerminated()
+        val actDeleted = noteDao.deleteNoteById(expId)
+        val expDeleted = 1
+        assertEquals(expDeleted, actDeleted)
 
-        notesTestSubscriber
-                .assertValues(emptyList(), listOf(exp), emptyList())
+        act = noteDao.getNotes()
+        exp = emptyList()
+        assertEquals(exp, act)
 
         swipeRefresh.perform(withCustomConstraints(swipeDown(), isDisplayingAtLeast(85)))
 

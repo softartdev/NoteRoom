@@ -34,7 +34,7 @@ class ConfirmPasswordDialog : BaseDialogFragment(
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        confirmViewModel.confirmLiveData.observe(this, this)
+        confirmViewModel.resultLiveData.observe(this, this)
     }
 
     override fun onOkClicked() = confirmViewModel.conformCheck(

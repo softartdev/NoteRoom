@@ -40,7 +40,7 @@ class ChangePasswordDialog : BaseDialogFragment(
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        changeViewModel.changeLiveData.observe(this, this)
+        changeViewModel.resultLiveData.observe(this, this)
     }
 
     override fun onOkClicked() = changeViewModel.checkChange(

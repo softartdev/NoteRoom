@@ -1,50 +1,27 @@
 package com.softartdev.noteroom.ui.settings.security.enter
 
 import android.text.Editable
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import com.softartdev.noteroom.data.DataManager
-import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
-import io.reactivex.rxkotlin.subscribeBy
-import io.reactivex.schedulers.Schedulers
-import timber.log.Timber
+import com.softartdev.noteroom.ui.base.BaseViewModel
 import javax.inject.Inject
 
 class EnterViewModel @Inject constructor(
         private val dataManager: DataManager
-) : ViewModel() {
+) : BaseViewModel<EnterResult>() {
 
-    val enterLiveData = MutableLiveData<EnterResult>()
+    override val loadingResult: EnterResult = EnterResult.Loading
 
-    private var disposable: Disposable? = null
-
-    fun enterCheck(password: Editable) {
-        disposable?.dispose()
-        disposable = Single.just(password)
-                .flatMap { passEditable ->
-                    if (passEditable.isNotEmpty()) {
-                        dataManager.checkPass(password)
-                                .flatMap { checked ->
-                                    when (checked) {
-                                        true -> dataManager.changePass(passEditable, null)
-                                                .toSingleDefault(EnterResult.Success)
-                                        false -> Single.just(EnterResult.IncorrectPasswordError)
-                                    }
-                                }
-                    } else Single.just(EnterResult.EmptyPasswordError)
+    fun enterCheck(password: Editable) = launch {
+        if (password.isNotEmpty()) {
+            when (dataManager.checkPass(password)) {
+                true -> {
+                    dataManager.changePass(password, null)
+                    EnterResult.Success
                 }
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe { enterLiveData.value = EnterResult.Loading }
-                .subscribeBy(onSuccess = { enterResult ->
-                    enterLiveData.value = enterResult
-                }, onError = { throwable: Throwable ->
-                    Timber.e(throwable)
-                    enterLiveData.value = EnterResult.Error(throwable.message)
-                })
+                false -> EnterResult.IncorrectPasswordError
+            }
+        } else EnterResult.EmptyPasswordError
     }
 
-    override fun onCleared() = disposable?.dispose() ?: Unit
+    override fun errorResult(throwable: Throwable): EnterResult = EnterResult.Error(throwable.message)
 }

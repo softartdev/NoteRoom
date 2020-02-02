@@ -8,7 +8,6 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.softartdev.noteroom.R
 import com.softartdev.noteroom.model.Note
-import com.softartdev.noteroom.model.NoteListResult
 import com.softartdev.noteroom.ui.base.BaseActivity
 import com.softartdev.noteroom.ui.note.NoteActivity
 import com.softartdev.noteroom.ui.signin.SignInActivity
@@ -44,7 +43,7 @@ class MainActivity : BaseActivity(), MainAdapter.ClickListener, Observer<NoteLis
         }
         main_error_view.button_reload.setOnClickListener { mainViewModel.updateNotes() }
 
-        mainViewModel.notesLiveData.observe(this, this)
+        mainViewModel.resultLiveData.observe(this, this)
     }
 
     override fun onChanged(noteListResult: NoteListResult) = when (noteListResult) {
