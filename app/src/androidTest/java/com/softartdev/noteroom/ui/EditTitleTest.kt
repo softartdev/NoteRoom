@@ -1,0 +1,133 @@
+package com.softartdev.noteroom.ui
+
+
+import android.content.Context
+import android.view.View
+import android.view.ViewGroup
+import androidx.test.core.app.ApplicationProvider
+import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu
+import androidx.test.espresso.IdlingRegistry
+import androidx.test.espresso.action.ViewActions.*
+import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.matcher.ViewMatchers.*
+import androidx.test.filters.LargeTest
+import androidx.test.rule.ActivityTestRule
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.softartdev.noteroom.R
+import com.softartdev.noteroom.db.RoomDbRepository
+import com.softartdev.noteroom.ui.splash.SplashActivity
+import com.softartdev.noteroom.util.EspressoIdlingResource
+import org.hamcrest.Description
+import org.hamcrest.Matcher
+import org.hamcrest.Matchers.allOf
+import org.hamcrest.TypeSafeMatcher
+import org.junit.After
+import org.junit.Before
+import org.junit.Rule
+import org.junit.Test
+import org.junit.runner.RunWith
+
+@LargeTest
+@RunWith(AndroidJUnit4::class)
+class EditTitleTest {
+
+    private val context = ApplicationProvider.getApplicationContext<Context>()
+
+    @Rule
+    @JvmField
+    var activityTestRule = object : ActivityTestRule<SplashActivity>(SplashActivity::class.java) {
+        override fun beforeActivityLaunched() {
+            super.beforeActivityLaunched()
+            context.deleteDatabase(RoomDbRepository.DB_NAME)
+        }
+    }
+
+    @Before
+    fun registerIdlingResource() {
+        IdlingRegistry.getInstance().register(EspressoIdlingResource.countingIdlingResource)
+    }
+
+    @After
+    fun unregisterIdlingResource() {
+        IdlingRegistry.getInstance().unregister(EspressoIdlingResource.countingIdlingResource)
+    }
+
+    @Test
+    fun editTitleTest() {
+        val floatingActionButton = onView(withId(R.id.add_note_fab))
+        floatingActionButton.perform(click())
+
+        val textInputEditText = onView(withId(R.id.note_edit_text))
+        val text = "text"
+        textInputEditText.perform(replaceText(text), closeSoftKeyboard())
+
+        val saveNoteActionMenu = onView(withId(R.id.action_save_note))
+        saveNoteActionMenu.perform(click())
+
+        val navBackButton = onView(childAtPosition(
+                parentMatcher = allOf(
+                        withId(R.id.action_bar),
+                        childAtPosition(
+                                parentMatcher = withId(R.id.action_bar_container),
+                                position = 0)),
+                position = 1))
+        navBackButton.perform(click())
+
+        val textView = onView(withId(R.id.item_note_title_text_view))
+        textView.check(matches(withText(text)))
+
+        val cardView = onView(allOf(
+                withId(R.id.item_note_card_view),
+                childAtPosition(
+                        parentMatcher = withId(R.id.notes_recycler_view),
+                        position = 0)))
+        cardView.perform(click())
+
+        val actionBar = onView(childAtPosition(
+                parentMatcher = withId(R.id.action_bar),
+                position = 0))
+        actionBar.check(matches(withText(text)))
+
+        openActionBarOverflowOrOptionsMenu(context)
+
+        val actionMenuItemView = onView(allOf(
+                withId(R.id.title),
+                withText(R.string.action_edit_title),
+                childAtPosition(
+                        parentMatcher = childAtPosition(
+                                parentMatcher = withId(R.id.content),
+                                position = 0),
+                        position = 0)))
+        actionMenuItemView.perform(click())
+
+        val textInputEditTitle = onView(withId(R.id.edit_title_text_input))
+        val title = "title"
+        textInputEditTitle.perform(replaceText(title), closeSoftKeyboard())
+
+        val okButton = onView(withId(android.R.id.button1))
+        okButton.perform(click())
+
+        actionBar.check(matches(withText(title)))
+
+        navBackButton.perform(click())
+
+        textView.check(matches(withText(title)))
+    }
+
+    private fun childAtPosition(
+            parentMatcher: Matcher<View>,
+            position: Int
+    ): Matcher<View> = object : TypeSafeMatcher<View>() {
+
+        public override fun matchesSafely(view: View): Boolean {
+            val parent = view.parent
+            return parent is ViewGroup && parentMatcher.matches(parent) && view == parent.getChildAt(position)
+        }
+
+        override fun describeTo(description: Description) {
+            description.appendText("Child at position $position in parent ")
+            parentMatcher.describeTo(description)
+        }
+    }
+}

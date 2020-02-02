@@ -6,7 +6,6 @@ import android.text.Editable
 import androidx.activity.viewModels
 import androidx.lifecycle.Observer
 import com.softartdev.noteroom.R
-import com.softartdev.noteroom.model.SignInResult
 import com.softartdev.noteroom.ui.base.BaseActivity
 import com.softartdev.noteroom.ui.main.MainActivity
 import com.softartdev.noteroom.util.gone
@@ -31,7 +30,7 @@ class SignInActivity : BaseActivity(), Observer<SignInResult> {
         }
         sign_in_button.setOnClickListener { attemptSignIn() }
 
-        signInViewModel.signInLiveData.observe(this, this)
+        signInViewModel.resultLiveData.observe(this, this)
     }
 
     private fun attemptSignIn() {

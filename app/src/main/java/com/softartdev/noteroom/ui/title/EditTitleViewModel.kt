@@ -1,21 +1,14 @@
 package com.softartdev.noteroom.ui.title
 
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.softartdev.noteroom.data.DataManager
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import timber.log.Timber
+import com.softartdev.noteroom.ui.base.BaseViewModel
 import javax.inject.Inject
 
 class EditTitleViewModel @Inject constructor(
         private val dataManager: DataManager
-) : ViewModel() {
+) : BaseViewModel<EditTitleResult>() {
 
-    val editTitleLiveData = MutableLiveData<EditTitleResult>()
+    override val loadingResult: EditTitleResult = EditTitleResult.Loading
 
     fun loadTitle(noteId: Long) = launch {
         val note = dataManager.loadNote(noteId)
@@ -34,23 +27,5 @@ class EditTitleViewModel @Inject constructor(
         }
     }
 
-    private fun launch(
-            block: suspend CoroutineScope.() -> EditTitleResult
-    ) {
-        viewModelScope.launch(Dispatchers.IO) {
-            onResult(EditTitleResult.Loading)
-            val editTitleResult = try {
-                block()
-            } catch (throwable: Throwable) {
-                Timber.e(throwable)
-                EditTitleResult.Error(throwable.message)
-            }
-            onResult(editTitleResult)
-        }
-    }
-
-    private suspend fun onResult(editTitleResult: EditTitleResult) = withContext(Dispatchers.Main) {
-        editTitleLiveData.value = editTitleResult
-    }
-
+    override fun errorResult(throwable: Throwable): EditTitleResult = EditTitleResult.Error(throwable.message)
 }

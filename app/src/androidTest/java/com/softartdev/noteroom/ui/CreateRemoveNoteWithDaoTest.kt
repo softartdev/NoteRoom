@@ -7,6 +7,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.UiController
 import androidx.test.espresso.ViewAction
 import androidx.test.espresso.action.ViewActions.swipeDown
@@ -21,6 +22,7 @@ import com.softartdev.noteroom.db.NoteDatabase
 import com.softartdev.noteroom.db.RoomDbRepository
 import com.softartdev.noteroom.model.Note
 import com.softartdev.noteroom.ui.splash.SplashActivity
+import com.softartdev.noteroom.util.EspressoIdlingResource
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.hamcrest.Matcher
@@ -61,12 +63,16 @@ class CreateRemoveNoteWithDaoTest {
     fun createDb() {
         db = Room.databaseBuilder(context, NoteDatabase::class.java, RoomDbRepository.DB_NAME).build()
         noteDao = db.noteDao()
+
+        IdlingRegistry.getInstance().register(EspressoIdlingResource.countingIdlingResource)
     }
 
     @After
     @Throws(IOException::class)
     fun closeDb() {
         db.close()
+
+        IdlingRegistry.getInstance().unregister(EspressoIdlingResource.countingIdlingResource)
     }
 
     @Test
