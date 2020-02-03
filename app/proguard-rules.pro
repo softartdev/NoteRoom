@@ -24,5 +24,9 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
--keep class android.support.v7.widget.SearchView { *; }
--keep class android.support.v7.view.** { *; }
+#-keep class androidx.appcompat.widget.SearchView { *; }
+#-keep class androidx.core.view.** { *; }
+
+-keep class net.sqlcipher.** {
+    *;
+}
