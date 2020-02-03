@@ -30,3 +30,38 @@
 -keep class net.sqlcipher.** {
     *;
 }
+
+-keep class kotlinx.coroutines.internal.** {
+    *;
+}
+
+-keep public class kotlin.collections.** {
+    *;
+}
+
+-keepclassmembers class * {
+    static final %                                  *;
+    static final java.lang.Iterable                 *;
+    static final kotlin.sequences.Sequence          *;
+    static final kotlin.collections.CollectionsKt   *;
+}
+
+-keep class kotlin.collections.CollectionsKt {
+    *;
+}
+
+-keep class kotlin.** { *; }
+
+-keep class androidx.test.espresso.IdlingRegistry {
+    *;
+}
+
+-keep class androidx.test.espresso.** { *; }
+
+-keep class androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner {
+    *;
+}
+
+-keep class androidx.test.runner.AndroidJUnitRunner {
+    *;
+}
