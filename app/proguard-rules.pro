@@ -27,61 +27,29 @@
 #-keep class androidx.appcompat.widget.SearchView { *; }
 #-keep class androidx.core.view.** { *; }
 
--keep class net.sqlcipher.** {
-    *;
-}
-
--keep class kotlinx.coroutines.internal.** {
-    *;
-}
-
--keep public class kotlin.collections.** {
-    *;
-}
-
--keepclassmembers class * {
-    static final %                                  *;
-    static final java.lang.Iterable                 *;
-    static final kotlin.sequences.Sequence          *;
-    static final kotlin.collections.CollectionsKt   *;
-}
-
--keep class kotlin.collections.CollectionsKt {
-    *;
-}
-
--keep class kotlin.** { *; }
-
--keep class androidx.test.espresso.IdlingRegistry {
-    *;
-}
-
--keep class androidx.test.espresso.** { *; }
-
--keep class androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner {
-    *;
-}
-
--keep class androidx.test.runner.AndroidJUnitRunner {
-    *;
-}
-
--keep class androidx.room.** { *; }
--keepclassmembers class androidx.room.** { *; }
-
--keep class com.softartdev.noteroom.** { *; }
--keepclassmembers class com.softartdev.noteroom.** { *; }
-
 -dontobfuscate
 
-# The Android pre-handler for exceptions is loaded reflectively (via ServiceLoader).
--keep class kotlinx.coroutines.experimental.android.AndroidExceptionPreHandler { *; }
+-keep interface com.softartdev.noteroom.db.NoteDao
 
--keep class kotlinx.coroutines.** { *; }
--keepclassmembers class kotlinx.coroutines.** { *; }
-
--keep class kotlinx.coroutines.internal.MainDispatcherFactory { *; }
--keepclassmembers class kotlinx.coroutines.internal.MainDispatcherFactory { *; }
-
--keep class androidx.arch.core.executor.ArchTaskExecutor { *; }
 -keepclassmembers class androidx.arch.core.executor.ArchTaskExecutor { *; }
+
+-keepclassmembers class net.sqlcipher.CursorWindow { *; }
+-keepclassmembers class net.sqlcipher.database.SQLiteDatabase { *; }
+-keepclassmembers class net.sqlcipher.database.SQLiteCompiledSql { *; }
+-keepclassmembers class net.sqlcipher.database.SQLiteQuery { *; }
+-keepclassmembers class net.sqlcipher.database.SQLiteStatement { *; }
+
+-keepclassmembers class kotlin.coroutines.jvm.internal.Boxing { *; }
+-keepclassmembers class kotlinx.coroutines.Job { *; }
+-keepclassmembers class kotlinx.coroutines.BuildersKt { *; }
+-keepclassmembers class kotlinx.coroutines.Deferred { *; }
+-keepclassmembers class kotlinx.coroutines.internal.MainDispatchersKt { *; }
+-keep class * implements kotlinx.coroutines.internal.MainDispatcherFactory
+
+-keepclassmembers class kotlin.collections.CollectionsKt { *; }
+-keepclassmembers class kotlin.collections.SetsKt { *; }
+-keep class * implements kotlin.sequences.Sequence
+
+-keep class androidx.test.espresso.IdlingRegistry { *; }
+-keepclassmembers class androidx.test.espresso.IdlingResource { *; }
+
