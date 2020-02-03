@@ -65,3 +65,23 @@
 -keep class androidx.test.runner.AndroidJUnitRunner {
     *;
 }
+
+-keep class androidx.room.** { *; }
+-keepclassmembers class androidx.room.** { *; }
+
+-keep class com.softartdev.noteroom.** { *; }
+-keepclassmembers class com.softartdev.noteroom.** { *; }
+
+-dontobfuscate
+
+# The Android pre-handler for exceptions is loaded reflectively (via ServiceLoader).
+-keep class kotlinx.coroutines.experimental.android.AndroidExceptionPreHandler { *; }
+
+-keep class kotlinx.coroutines.** { *; }
+-keepclassmembers class kotlinx.coroutines.** { *; }
+
+-keep class kotlinx.coroutines.internal.MainDispatcherFactory { *; }
+-keepclassmembers class kotlinx.coroutines.internal.MainDispatcherFactory { *; }
+
+-keep class androidx.arch.core.executor.ArchTaskExecutor { *; }
+-keepclassmembers class androidx.arch.core.executor.ArchTaskExecutor { *; }
