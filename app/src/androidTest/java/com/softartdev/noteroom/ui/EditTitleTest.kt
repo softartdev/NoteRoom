@@ -4,6 +4,8 @@ package com.softartdev.noteroom.ui
 import android.content.Context
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.IdRes
+import androidx.annotation.StringRes
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu
@@ -11,9 +13,9 @@ import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.rule.ActivityTestRule
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.softartdev.noteroom.R
 import com.softartdev.noteroom.db.RoomDbRepository
 import com.softartdev.noteroom.ui.splash.SplashActivity
@@ -89,17 +91,8 @@ class EditTitleTest {
                 position = 0))
         actionBar.check(matches(withText(text)))
 
-        openActionBarOverflowOrOptionsMenu(context)
-
-        val actionMenuItemView = onView(allOf(
-                withId(R.id.title),
-                withText(R.string.action_edit_title),
-                childAtPosition(
-                        parentMatcher = childAtPosition(
-                                parentMatcher = withId(R.id.content),
-                                position = 0),
-                        position = 0)))
-        actionMenuItemView.perform(click())
+        val actionMenuItemView = withMenuIdOrText(R.id.action_edit_title, R.string.action_edit_title)
+        onView(actionMenuItemView).perform(click())
 
         val textInputEditTitle = onView(withId(R.id.edit_title_text_input))
         val title = "title"
@@ -113,6 +106,18 @@ class EditTitleTest {
         navBackButton.perform(click())
 
         textView.check(matches(withText(title)))
+    }
+
+    @Suppress("SameParameterValue")
+    private fun withMenuIdOrText(@IdRes id: Int, @StringRes menuText: Int): Matcher<View> {
+        val matcher = withId(id)
+        return try {
+            onView(matcher).check(matches(isDisplayed()))
+            matcher
+        } catch (NoMatchingViewException: Exception) {
+            openActionBarOverflowOrOptionsMenu(context)
+            withText(menuText)
+        }
     }
 
     private fun childAtPosition(
