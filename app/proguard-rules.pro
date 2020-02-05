@@ -24,5 +24,32 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
--keep class android.support.v7.widget.SearchView { *; }
--keep class android.support.v7.view.** { *; }
+#-keep class androidx.appcompat.widget.SearchView { *; }
+#-keep class androidx.core.view.** { *; }
+
+-dontobfuscate
+
+-keep interface com.softartdev.noteroom.db.NoteDao
+
+-keepclassmembers class androidx.arch.core.executor.ArchTaskExecutor { *; }
+
+-keepclassmembers class net.sqlcipher.CursorWindow { *; }
+-keepclassmembers class net.sqlcipher.database.SQLiteDatabase { *; }
+-keepclassmembers class net.sqlcipher.database.SQLiteCompiledSql { *; }
+-keepclassmembers class net.sqlcipher.database.SQLiteQuery { *; }
+-keepclassmembers class net.sqlcipher.database.SQLiteStatement { *; }
+
+-keepclassmembers class kotlin.coroutines.jvm.internal.Boxing { *; }
+-keepclassmembers class kotlinx.coroutines.Job { *; }
+-keepclassmembers class kotlinx.coroutines.BuildersKt { *; }
+-keepclassmembers class kotlinx.coroutines.Deferred { *; }
+-keepclassmembers class kotlinx.coroutines.internal.MainDispatchersKt { *; }
+-keep class * implements kotlinx.coroutines.internal.MainDispatcherFactory
+
+-keepclassmembers class kotlin.collections.CollectionsKt { *; }
+-keepclassmembers class kotlin.collections.SetsKt { *; }
+-keep class * implements kotlin.sequences.Sequence
+
+-keep class androidx.test.espresso.IdlingRegistry { *; }
+-keepclassmembers class androidx.test.espresso.IdlingResource { *; }
+
