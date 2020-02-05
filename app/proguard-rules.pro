@@ -29,6 +29,13 @@
 
 -dontobfuscate
 
+-keepattributes *Annotation*
+-keepattributes SourceFile,LineNumberTable
+-keep public class * extends java.lang.Exception
+
+-keep class com.crashlytics.** { *; }
+-dontwarn com.crashlytics.**
+
 -keep interface com.softartdev.noteroom.db.NoteDao
 
 -keepclassmembers class androidx.arch.core.executor.ArchTaskExecutor { *; }
