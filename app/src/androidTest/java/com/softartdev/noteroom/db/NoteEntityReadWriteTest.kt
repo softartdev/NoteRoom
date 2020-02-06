@@ -39,7 +39,6 @@ class NoteEntityReadWriteTest {
     @Before
     fun createDb() {
         val context = ApplicationProvider.getApplicationContext<Context>()
-        context.deleteDatabase(RoomDbRepository.DB_NAME)
         db = Room.databaseBuilder(context, NoteDatabase::class.java, RoomDbRepository.DB_NAME).build()
         noteDao = db.noteDao()
     }

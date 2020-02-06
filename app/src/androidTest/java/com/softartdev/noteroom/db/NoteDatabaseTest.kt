@@ -26,7 +26,6 @@ class NoteDatabaseTest {
     @Before
     fun createDb() {
         val context = ApplicationProvider.getApplicationContext<Context>()
-        context.deleteDatabase(DB_NAME)
         db = Room.databaseBuilder(context, NoteDatabase::class.java, DB_NAME).build()
         noteDao = db.noteDao()
     }

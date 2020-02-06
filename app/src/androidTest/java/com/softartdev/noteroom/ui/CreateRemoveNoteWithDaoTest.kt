@@ -43,12 +43,8 @@ class CreateRemoveNoteWithDaoTest {
 
     @Rule
     @JvmField
-    var activityTestRule = object : ActivityTestRule<SplashActivity>(SplashActivity::class.java) {
-        override fun beforeActivityLaunched() {
-            super.beforeActivityLaunched()
-            context.deleteDatabase(RoomDbRepository.DB_NAME)
-        }
-    }
+    var activityTestRule = ActivityTestRule<SplashActivity>(SplashActivity::class.java)
+
     private lateinit var db: NoteDatabase
     private lateinit var noteDao: NoteDao
     private val note = Note(

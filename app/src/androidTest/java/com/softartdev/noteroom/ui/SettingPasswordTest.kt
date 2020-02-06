@@ -16,7 +16,6 @@ import androidx.test.filters.LargeTest
 import androidx.test.rule.ActivityTestRule
 import com.google.android.material.textfield.TextInputLayout
 import com.softartdev.noteroom.R
-import com.softartdev.noteroom.db.RoomDbRepository
 import com.softartdev.noteroom.ui.splash.SplashActivity
 import com.softartdev.noteroom.util.EspressoIdlingResource
 import org.hamcrest.Description
@@ -25,7 +24,10 @@ import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.not
 import org.hamcrest.TypeSafeMatcher
 import org.hamcrest.core.IsInstanceOf
-import org.junit.*
+import org.junit.After
+import org.junit.Before
+import org.junit.Rule
+import org.junit.Test
 import org.junit.runner.RunWith
 import timber.log.Timber
 
@@ -37,12 +39,7 @@ class SettingPasswordTest {
 
     @Rule
     @JvmField
-    var activityTestRule = object : ActivityTestRule<SplashActivity>(SplashActivity::class.java) {
-        override fun beforeActivityLaunched() {
-            super.beforeActivityLaunched()
-            context.deleteDatabase(RoomDbRepository.DB_NAME)
-        }
-    }
+    var activityTestRule = ActivityTestRule<SplashActivity>(SplashActivity::class.java)
 
     @Before
     fun registerIdlingResource() {
