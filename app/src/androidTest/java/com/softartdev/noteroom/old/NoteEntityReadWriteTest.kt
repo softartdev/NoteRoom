@@ -1,11 +1,14 @@
-package com.softartdev.noteroom.db
+package com.softartdev.noteroom.old
 
 import android.content.Context
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.softartdev.noteroom.model.Note
+import com.softartdev.noteroom.data.SafeRepo.Companion.DB_NAME
+import com.softartdev.noteroom.database.NoteDao
+import com.softartdev.noteroom.database.NoteDatabase
+import com.softartdev.noteroom.database.Note
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.After
@@ -39,7 +42,7 @@ class NoteEntityReadWriteTest {
     @Before
     fun createDb() {
         val context = ApplicationProvider.getApplicationContext<Context>()
-        db = Room.databaseBuilder(context, NoteDatabase::class.java, RoomDbRepository.DB_NAME).build()
+        db = Room.databaseBuilder(context, NoteDatabase::class.java, DB_NAME).build()
         noteDao = db.noteDao()
     }
 

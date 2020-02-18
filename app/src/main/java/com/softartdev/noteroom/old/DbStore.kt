@@ -1,8 +1,8 @@
-package com.softartdev.noteroom.db
+package com.softartdev.noteroom.old
 
 import android.text.Editable
 
-import com.softartdev.noteroom.model.Note
+import com.softartdev.noteroom.database.Note
 
 interface DbStore {
     suspend fun getNotes(): List<Note>

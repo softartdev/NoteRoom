@@ -1,6 +1,6 @@
 package com.softartdev.noteroom.ui.note
 
-import com.softartdev.noteroom.model.Note
+import com.softartdev.noteroom.database.Note
 
 sealed class NoteResult {
     object Loading : NoteResult()

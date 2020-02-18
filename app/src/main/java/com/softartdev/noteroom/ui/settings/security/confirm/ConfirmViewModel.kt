@@ -1,7 +1,7 @@
 package com.softartdev.noteroom.ui.settings.security.confirm
 
 import android.text.Editable
-import com.softartdev.noteroom.data.DataManager
+import com.softartdev.noteroom.old.DataManager
 import com.softartdev.noteroom.ui.base.BaseViewModel
 import javax.inject.Inject
 

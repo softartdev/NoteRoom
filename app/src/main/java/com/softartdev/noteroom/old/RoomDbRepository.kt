@@ -1,4 +1,4 @@
-package com.softartdev.noteroom.db
+package com.softartdev.noteroom.old
 
 import android.content.Context
 import android.text.Editable
@@ -7,6 +7,9 @@ import androidx.room.Room
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.commonsware.cwac.saferoom.SQLCipherUtils
 import com.commonsware.cwac.saferoom.SafeHelperFactory
+import com.softartdev.noteroom.data.SafeRepo.Companion.DB_NAME
+import com.softartdev.noteroom.database.NoteDao
+import com.softartdev.noteroom.database.NoteDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -70,9 +73,5 @@ abstract class RoomDbRepository(private val context: Context) : DbStore {
 
             noteDatabase = db(passphrase)
         }
-    }
-
-    companion object {
-        const val DB_NAME = "notes.db"
     }
 }

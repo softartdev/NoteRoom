@@ -17,17 +17,20 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.rule.ActivityTestRule
 import com.softartdev.noteroom.R
-import com.softartdev.noteroom.db.NoteDao
-import com.softartdev.noteroom.db.NoteDatabase
-import com.softartdev.noteroom.db.RoomDbRepository
-import com.softartdev.noteroom.model.Note
+import com.softartdev.noteroom.data.SafeRepo.Companion.DB_NAME
+import com.softartdev.noteroom.database.Note
+import com.softartdev.noteroom.database.NoteDao
+import com.softartdev.noteroom.database.NoteDatabase
 import com.softartdev.noteroom.ui.splash.SplashActivity
 import com.softartdev.noteroom.util.EspressoIdlingResource
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.hamcrest.Matcher
-import org.junit.*
+import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Before
+import org.junit.Rule
+import org.junit.Test
 import org.junit.runner.RunWith
 import java.io.IOException
 import java.util.*
@@ -57,7 +60,7 @@ class CreateRemoveNoteWithDaoTest {
 
     @Before
     fun createDb() {
-        db = Room.databaseBuilder(context, NoteDatabase::class.java, RoomDbRepository.DB_NAME).build()
+        db = Room.databaseBuilder(context, NoteDatabase::class.java, DB_NAME).build()
         noteDao = db.noteDao()
 
         IdlingRegistry.getInstance().register(EspressoIdlingResource.countingIdlingResource)

@@ -1,6 +1,6 @@
 package com.softartdev.noteroom.ui.note
 
-import com.softartdev.noteroom.data.DataManager
+import com.softartdev.noteroom.old.DataManager
 import com.softartdev.noteroom.ui.base.BaseViewModel
 import com.softartdev.noteroom.util.createTitle
 import timber.log.Timber

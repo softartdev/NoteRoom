@@ -1,8 +1,7 @@
-package com.softartdev.noteroom.data
+package com.softartdev.noteroom.old
 
 import android.text.Editable
-import com.softartdev.noteroom.db.DbStore
-import com.softartdev.noteroom.model.Note
+import com.softartdev.noteroom.database.Note
 import kotlinx.coroutines.channels.Channel
 
 class DataManager(private val dbStore: DbStore) {

@@ -1,6 +1,6 @@
 package com.softartdev.noteroom.ui.main
 
-import com.softartdev.noteroom.data.DataManager
+import com.softartdev.noteroom.old.DataManager
 import com.softartdev.noteroom.ui.base.BaseViewModel
 import net.sqlcipher.database.SQLiteException
 import javax.inject.Inject
