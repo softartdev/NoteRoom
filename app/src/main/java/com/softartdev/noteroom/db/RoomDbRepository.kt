@@ -12,6 +12,7 @@ import kotlinx.coroutines.withContext
 
 abstract class RoomDbRepository(private val context: Context) : DbStore {
 
+    @Volatile
     private var noteDatabase: NoteDatabase = db()
 
     val noteDao: NoteDao

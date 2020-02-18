@@ -52,6 +52,19 @@ class SettingPasswordTest {
     }
 
     @Test
+    fun repeat10times() = repeat(10) {
+        settingPasswordTest()
+        val navBackButton = onView(childAtPosition(
+                parentMatcher = allOf(
+                        withId(R.id.action_bar),
+                        childAtPosition(
+                                parentMatcher = withId(R.id.action_bar_container),
+                                position = 0)),
+                position = 1))
+        navBackButton.perform(click())
+    }
+
+    @Test
     fun settingPasswordTest() {
         val settingsActionMenuItemView = onView(allOf(
                 withId(R.id.action_settings),
