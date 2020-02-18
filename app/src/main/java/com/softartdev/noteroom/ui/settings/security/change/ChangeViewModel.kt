@@ -1,12 +1,12 @@
 package com.softartdev.noteroom.ui.settings.security.change
 
 import android.text.Editable
-import com.softartdev.noteroom.old.DataManager
+import com.softartdev.noteroom.data.CryptUseCase
 import com.softartdev.noteroom.ui.base.BaseViewModel
 import javax.inject.Inject
 
 class ChangeViewModel @Inject constructor(
-        private val dataManager: DataManager
+        private val cryptUseCase: CryptUseCase
 ) : BaseViewModel<ChangeResult>() {
 
     override val loadingResult: ChangeResult = ChangeResult.Loading
@@ -20,9 +20,9 @@ class ChangeViewModel @Inject constructor(
             oldPassword.isEmpty() -> ChangeResult.OldEmptyPasswordError
             newPassword.isEmpty() -> ChangeResult.NewEmptyPasswordError
             newPassword.toString() != repeatNewPassword.toString() -> ChangeResult.PasswordsNoMatchError
-            else -> when (dataManager.checkPass(oldPassword)) {
+            else -> when (cryptUseCase.checkPassword(oldPassword)) {
                 true -> {
-                    dataManager.changePass(oldPassword, newPassword)
+                    cryptUseCase.changePassword(oldPassword, newPassword)
                     ChangeResult.Success
                 }
                 false -> ChangeResult.IncorrectPasswordError

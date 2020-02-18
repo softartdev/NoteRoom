@@ -1,11 +1,11 @@
 package com.softartdev.noteroom.ui.splash
 
-import com.softartdev.noteroom.old.DataManager
+import com.softartdev.noteroom.data.CryptUseCase
 import com.softartdev.noteroom.ui.base.BaseViewModel
 import javax.inject.Inject
 
 class SplashViewModel @Inject constructor(
-        private val dataManager: DataManager
+        private val cryptUseCase: CryptUseCase
 ) : BaseViewModel<SplashResult>() {
 
     init {
@@ -13,7 +13,7 @@ class SplashViewModel @Inject constructor(
     }
 
     private fun checkEncryption() = launch {
-        when (dataManager.isEncryption()) {
+        when (cryptUseCase.dbIsEncrypted()) {
             true -> SplashResult.NavSignIn
             false -> SplashResult.NavMain
         }

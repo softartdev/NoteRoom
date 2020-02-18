@@ -1,22 +1,22 @@
 package com.softartdev.noteroom.ui.settings
 
-import com.softartdev.noteroom.old.DataManager
+import com.softartdev.noteroom.data.CryptUseCase
 import com.softartdev.noteroom.ui.base.BaseViewModel
 import javax.inject.Inject
 
 class SettingsViewModel @Inject constructor(
-        private val dataManager: DataManager
+        private val cryptUseCase: CryptUseCase
 ) : BaseViewModel<SecurityResult>() {
 
     fun checkEncryption() = launch {
-        val isEncrypted = dataManager.isEncryption()
+        val isEncrypted = cryptUseCase.dbIsEncrypted()
         SecurityResult.EncryptEnable(isEncrypted)
     }
 
     fun changeEncryption(checked: Boolean) = launch {
         when (checked) {
             true -> SecurityResult.SetPasswordDialog
-            false -> when (dataManager.isEncryption()) {
+            false -> when (cryptUseCase.dbIsEncrypted()) {
                 true -> SecurityResult.PasswordDialog
                 false -> SecurityResult.EncryptEnable(false)
             }
@@ -24,7 +24,7 @@ class SettingsViewModel @Inject constructor(
     }
 
     fun changePassword() = launch {
-            when(dataManager.isEncryption()) {
+            when(cryptUseCase.dbIsEncrypted()) {
                 true -> SecurityResult.ChangePasswordDialog
                 false -> SecurityResult.SetPasswordDialog
             }

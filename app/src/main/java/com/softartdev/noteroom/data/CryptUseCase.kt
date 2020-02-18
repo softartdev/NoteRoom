@@ -28,7 +28,7 @@ class CryptUseCase(
         false
     }
 
-    fun changePass(oldPass: Editable?, newPass: Editable?) {
+    fun changePassword(oldPass: Editable?, newPass: Editable?) {
         if (dbIsEncrypted()) {
             if (newPass.isNullOrEmpty()) {
                 val originalFile = context.getDatabasePath(SafeRepo.DB_NAME)

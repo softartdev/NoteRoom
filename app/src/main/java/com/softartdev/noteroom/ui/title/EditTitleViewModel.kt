@@ -1,17 +1,17 @@
 package com.softartdev.noteroom.ui.title
 
-import com.softartdev.noteroom.old.DataManager
+import com.softartdev.noteroom.data.NoteUseCase
 import com.softartdev.noteroom.ui.base.BaseViewModel
 import javax.inject.Inject
 
 class EditTitleViewModel @Inject constructor(
-        private val dataManager: DataManager
+        private val noteUseCase: NoteUseCase
 ) : BaseViewModel<EditTitleResult>() {
 
     override val loadingResult: EditTitleResult = EditTitleResult.Loading
 
     fun loadTitle(noteId: Long) = launch {
-        val note = dataManager.loadNote(noteId)
+        val note = noteUseCase.loadNote(noteId)
         EditTitleResult.Loaded(note.title)
     }
 
@@ -20,8 +20,8 @@ class EditTitleViewModel @Inject constructor(
         when {
             noteTitle.isEmpty() -> EditTitleResult.EmptyTitleError
             else -> {
-                dataManager.updateTitle(noteId, noteTitle)
-                dataManager.titleChannel.send(noteTitle)
+                noteUseCase.updateTitle(noteId, noteTitle)
+                noteUseCase.titleChannel.send(noteTitle)
                 EditTitleResult.Success
             }
         }

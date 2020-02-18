@@ -12,7 +12,7 @@ class NoteUseCase(
     
     suspend fun getNotes(): List<Note> = safeRepo.noteDao.getNotes()
 
-    suspend fun createNote(title: String, text: String): Long {
+    suspend fun createNote(title: String = "", text: String = ""): Long {
         val date = Date()
         val note = Note(0, title, text, date, date)
         return safeRepo.noteDao.insertNote(note)

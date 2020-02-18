@@ -13,7 +13,7 @@ class SafeRepo(
 ) {
 
     @Volatile
-    private var noteDatabase: NoteDatabase? = null
+    private var noteDatabase: NoteDatabase? = buildDatabaseInstanceIfNeed()
 
     val noteDao: NoteDao
         get() = noteDatabase?.noteDao() ?: throw SafeSQLiteException("DB is null")
