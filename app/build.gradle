@@ -39,8 +39,8 @@ android {
     }
     buildTypes {
         debug {
-            minifyEnabled true
-            shrinkResources true
+            minifyEnabled false
+            shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         release {
@@ -84,11 +84,11 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     implementation 'androidx.core:core-ktx:1.2.0'
     implementation 'androidx.activity:activity-ktx:1.1.0'
-    implementation 'androidx.fragment:fragment-ktx:1.2.1'
+    implementation 'androidx.fragment:fragment-ktx:1.2.2'
     def arch_version = "2.1.0"
     implementation "androidx.arch.core:core-common:$arch_version"
     implementation "androidx.arch.core:core-runtime:$arch_version"
-    def room_version = '2.2.3'
+    def room_version = '2.2.4'
     implementation "androidx.room:room-runtime:$room_version"
     implementation "androidx.room:room-ktx:$room_version"
     kapt "androidx.room:room-compiler:$room_version"

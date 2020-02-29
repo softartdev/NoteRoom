@@ -7,7 +7,7 @@ import androidx.activity.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.softartdev.noteroom.R
-import com.softartdev.noteroom.model.Note
+import com.softartdev.noteroom.database.Note
 import com.softartdev.noteroom.ui.base.BaseActivity
 import com.softartdev.noteroom.ui.note.NoteActivity
 import com.softartdev.noteroom.ui.signin.SignInActivity

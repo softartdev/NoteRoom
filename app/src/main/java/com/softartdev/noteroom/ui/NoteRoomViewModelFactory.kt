@@ -1,4 +1,4 @@
-package com.softartdev.noteroom.model
+package com.softartdev.noteroom.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

@@ -1,4 +1,4 @@
-package com.softartdev.noteroom.db
+package com.softartdev.noteroom.database
 
 import androidx.room.TypeConverter
 import java.util.*
