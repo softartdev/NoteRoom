@@ -1,15 +1,18 @@
 package com.softartdev.noteroom.util
 
 import android.content.Context
+import android.os.Build
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.os.BuildCompat
 import com.softartdev.noteroom.R
 
 object ThemeHelper {
 
+    private val isAtLeastQ
+        get() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
+
     fun applyTheme(themePref: String, context: Context) = AppCompatDelegate.setDefaultNightMode(when (themePref) {
         context.getString(R.string.light_theme_entry) -> AppCompatDelegate.MODE_NIGHT_NO
         context.getString(R.string.dark_theme_entry) -> AppCompatDelegate.MODE_NIGHT_YES
-        else -> if (BuildCompat.isAtLeastQ()) AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM else AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY
+        else -> if (isAtLeastQ) AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM else AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY
     })
 }

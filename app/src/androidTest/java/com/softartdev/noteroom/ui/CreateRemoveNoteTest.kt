@@ -13,7 +13,6 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.rule.ActivityTestRule
 import com.softartdev.noteroom.R
-import com.softartdev.noteroom.db.RoomDbRepository
 import com.softartdev.noteroom.ui.splash.SplashActivity
 import com.softartdev.noteroom.util.EspressoIdlingResource
 import org.hamcrest.CoreMatchers.allOf
@@ -31,12 +30,7 @@ class CreateRemoveNoteTest {
 
     @Rule
     @JvmField
-    var activityTestRule = object : ActivityTestRule<SplashActivity>(SplashActivity::class.java) {
-        override fun beforeActivityLaunched() {
-            super.beforeActivityLaunched()
-            context.deleteDatabase(RoomDbRepository.DB_NAME)
-        }
-    }
+    var activityTestRule = ActivityTestRule<SplashActivity>(SplashActivity::class.java)
 
     @Before
     fun registerIdlingResource() {

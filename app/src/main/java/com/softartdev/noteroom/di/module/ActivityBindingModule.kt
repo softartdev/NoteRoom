@@ -1,6 +1,7 @@
 package com.softartdev.noteroom.di.module
 
-import com.softartdev.noteroom.di.PerActivity
+import com.softartdev.noteroom.di.CryptScope
+import com.softartdev.noteroom.di.NoteScope
 import com.softartdev.noteroom.ui.main.MainActivity
 import com.softartdev.noteroom.ui.note.NoteActivity
 import com.softartdev.noteroom.ui.signin.SignInActivity
@@ -11,19 +12,19 @@ import dagger.android.ContributesAndroidInjector
 @Module
 abstract class ActivityBindingModule {
 
-    @PerActivity
+    @CryptScope
     @ContributesAndroidInjector
     abstract fun splashActivity(): SplashActivity
 
-    @PerActivity
+    @CryptScope
     @ContributesAndroidInjector
     abstract fun signInActivity(): SignInActivity
 
-    @PerActivity
+    @NoteScope
     @ContributesAndroidInjector
     abstract fun mainActivity(): MainActivity
 
-    @PerActivity
+    @NoteScope
     @ContributesAndroidInjector
     abstract fun noteActivity(): NoteActivity
 

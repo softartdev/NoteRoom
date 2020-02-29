@@ -1,13 +1,13 @@
 package com.softartdev.noteroom.ui.note
 
-import com.softartdev.noteroom.data.DataManager
+import com.softartdev.noteroom.data.NoteUseCase
 import com.softartdev.noteroom.ui.base.BaseViewModel
 import com.softartdev.noteroom.util.createTitle
 import timber.log.Timber
 import javax.inject.Inject
 
 class NoteViewModel @Inject constructor(
-        private val dataManager: DataManager
+        private val noteUseCase: NoteUseCase
 ) : BaseViewModel<NoteResult>() {
 
     private var noteId: Long = 0
@@ -19,14 +19,14 @@ class NoteViewModel @Inject constructor(
     override val loadingResult: NoteResult = NoteResult.Loading
 
     fun createNote() = launch {
-        val note = dataManager.createNote()
+        val note = noteUseCase.createNote()
         noteId = note
         Timber.d("Created note with id=$noteId")
         NoteResult.Created(note)
     }
 
     fun loadNote(id: Long) = launch {
-        val note = dataManager.loadNote(id)
+        val note = noteUseCase.loadNote(id)
         noteId = note.id
         Timber.d("Loaded note with id=$noteId")
         NoteResult.Loaded(note)
@@ -37,7 +37,7 @@ class NoteViewModel @Inject constructor(
             NoteResult.Empty
         } else {
             val noteTitle = title ?: createTitle(text)
-            dataManager.saveNote(noteId, noteTitle, text)
+            noteUseCase.saveNote(noteId, noteTitle, text)
             Timber.d("Saved note with id=$noteId")
             NoteResult.Saved(noteTitle)
         }
@@ -52,8 +52,8 @@ class NoteViewModel @Inject constructor(
 
     fun checkSaveChange(title: String?, text: String) = launch {
         val noteTitle = title ?: createTitle(text)
-        val changed = dataManager.checkChanges(noteId, noteTitle, text)
-        val empty = dataManager.emptyNote(noteId)
+        val changed = noteUseCase.isChanged(noteId, noteTitle, text)
+        val empty = noteUseCase.isEmpty(noteId)
         when {
             changed -> NoteResult.CheckSaveChange
             empty -> deleteNoteForResult()
@@ -63,13 +63,13 @@ class NoteViewModel @Inject constructor(
 
     fun saveNoteAndNavBack(title: String?, text: String) = launch {
         val noteTitle = title ?: createTitle(text)
-        dataManager.saveNote(noteId, noteTitle, text)
+        noteUseCase.saveNote(noteId, noteTitle, text)
         Timber.d("Saved and nav back")
         NoteResult.NavBack
     }
 
     fun doNotSaveAndNavBack() = launch {
-        val noteIsEmpty = dataManager.emptyNote(noteId)
+        val noteIsEmpty = noteUseCase.isEmpty(noteId)
         if (noteIsEmpty) {
             deleteNoteForResult()
         } else {
@@ -79,13 +79,13 @@ class NoteViewModel @Inject constructor(
     }
 
     private suspend fun deleteNoteForResult(): NoteResult {
-        dataManager.deleteNote(noteId)
+        noteUseCase.deleteNote(noteId)
         Timber.d("Deleted note with id=$noteId")
         return NoteResult.Deleted
     }
 
     private suspend fun subscribeToEditTitle() = launch(useIdling = false) {
-        val title = dataManager.titleChannel.receive()
+        val title = noteUseCase.titleChannel.receive()
         NoteResult.TitleUpdated(title)
     }
 

@@ -1,12 +1,12 @@
 package com.softartdev.noteroom.ui.settings.security.confirm
 
 import android.text.Editable
-import com.softartdev.noteroom.data.DataManager
+import com.softartdev.noteroom.data.CryptUseCase
 import com.softartdev.noteroom.ui.base.BaseViewModel
 import javax.inject.Inject
 
 class ConfirmViewModel @Inject constructor(
-        private val dataManager: DataManager
+        private val cryptUseCase: CryptUseCase
 ) : BaseViewModel<ConfirmResult>() {
 
     override val loadingResult: ConfirmResult = ConfirmResult.Loading
@@ -16,7 +16,7 @@ class ConfirmViewModel @Inject constructor(
             password.toString() != repeatPassword.toString() -> ConfirmResult.PasswordsNoMatchError
             password.isEmpty() -> ConfirmResult.EmptyPasswordError
             else -> {
-                dataManager.changePass(null, password)
+                cryptUseCase.changePassword(null, password)
                 ConfirmResult.Success
             }
         }

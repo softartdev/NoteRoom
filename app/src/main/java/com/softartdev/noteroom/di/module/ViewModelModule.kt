@@ -3,7 +3,7 @@ package com.softartdev.noteroom.di.module
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.softartdev.noteroom.di.ViewModelKey
-import com.softartdev.noteroom.model.NoteRoomViewModelFactory
+import com.softartdev.noteroom.ui.NoteRoomViewModelFactory
 import com.softartdev.noteroom.ui.main.MainViewModel
 import com.softartdev.noteroom.ui.note.NoteViewModel
 import com.softartdev.noteroom.ui.settings.SettingsViewModel

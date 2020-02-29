@@ -1,9 +1,8 @@
-package com.softartdev.noteroom.model
+package com.softartdev.noteroom.database
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
-import com.softartdev.noteroom.db.NoteTypeConverters
 import java.util.*
 
 @Entity
