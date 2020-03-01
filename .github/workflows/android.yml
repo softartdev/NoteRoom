@@ -26,8 +26,15 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 1.8
-      - name: Install ndk
-        run: sdkmanager 'ndk;20.0.5594570'
+      - name: install sdkmanager
+        working-directory: /home/runner
+        run: |
+          java -version
+          wget https://dl.google.com/android/repository/sdk-tools-linux-3859397.zip
+          unzip sdk-tools-linux-3859397.zip
+          export PATH=/home/runner/tools:/home/runner/tools/bin:$PATH
+          sdkmanager 'ndk;20.0.5594570'
+          sdkmanager --list
       - name: Build with Gradle
         run: ./gradlew build
   publish_job:
