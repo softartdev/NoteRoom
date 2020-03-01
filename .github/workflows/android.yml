@@ -7,7 +7,7 @@ on:
 
 jobs:
   build_test_publish_job:
-    name: Publish job
+    name: Build-Test-Publish job
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v1
