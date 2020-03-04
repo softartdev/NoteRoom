@@ -1,5 +1,7 @@
 package com.softartdev.noteroom
 
+import android.content.Context
+import androidx.multidex.MultiDex
 import com.crashlytics.android.Crashlytics
 import com.crashlytics.android.answers.Answers
 import com.crashlytics.android.core.CrashlyticsCore
@@ -19,6 +21,11 @@ class NoteRoomApp : DaggerApplication() {
     lateinit var preferencesHelper: PreferencesHelper
 
     override fun applicationInjector(): AndroidInjector<NoteRoomApp> = DaggerAppComponent.factory().create(this)
+
+    override fun attachBaseContext(base: Context?) {
+        super.attachBaseContext(base)
+        MultiDex.install(this)
+    }
 
     override fun onCreate() {
         super.onCreate()

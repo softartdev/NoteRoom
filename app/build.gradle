@@ -27,6 +27,7 @@ android {
         targetSdkVersion 29
         versionCode 37
         versionName "3.7"
+        multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         testInstrumentationRunnerArguments clearPackageData: 'true'
         vectorDrawables.useSupportLibrary = true
@@ -44,8 +45,8 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         release {
-            minifyEnabled true
-            shrinkResources true
+            minifyEnabled false
+            shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.config
         }
@@ -85,6 +86,7 @@ dependencies {
     implementation 'androidx.core:core-ktx:1.2.0'
     implementation 'androidx.activity:activity-ktx:1.1.0'
     implementation 'androidx.fragment:fragment-ktx:1.2.2'
+    implementation 'androidx.multidex:multidex:2.0.1'
     def arch_version = "2.1.0"
     implementation "androidx.arch.core:core-common:$arch_version"
     implementation "androidx.arch.core:core-runtime:$arch_version"
