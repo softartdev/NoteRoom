@@ -37,16 +37,16 @@ import java.util.*
 
 @LargeTest
 @RunWith(AndroidJUnit4::class)
-@UseExperimental(ExperimentalCoroutinesApi::class)
+@OptIn(ExperimentalCoroutinesApi::class)
 class CreateRemoveNoteWithDaoTest {
 
-    private val context: Context = ApplicationProvider.getApplicationContext<Context>()
+    private val context: Context = ApplicationProvider.getApplicationContext()
 
     @get:Rule var instantTaskExecutorRule = InstantTaskExecutorRule()
 
     @Rule
     @JvmField
-    var activityTestRule = ActivityTestRule<SplashActivity>(SplashActivity::class.java)
+    var activityTestRule = ActivityTestRule(SplashActivity::class.java)
 
     private lateinit var db: NoteDatabase
     private lateinit var noteDao: NoteDao

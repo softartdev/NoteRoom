@@ -82,6 +82,8 @@ class SettingPasswordTest {
                 .check(matches(isDisplayed()))
         confirmRepeatPasswordEditText.check(matches(withHint(R.string.confirm_password)))
 
+        togglePasswordVisibility(R.id.set_password_text_input_layout)
+
         val confirmOkButton = onView(allOf(
                 withId(android.R.id.button1),
                 withText(android.R.string.ok),
@@ -92,7 +94,6 @@ class SettingPasswordTest {
                         position = 3)))
         confirmOkButton.perform(click())
 
-        togglePasswordVisibility(R.id.set_password_text_input_layout)
         val confirmPasswordTextInputLayout = onView(withId(R.id.set_password_text_input_layout))
                 .inRoot(isDialog())
                 .check(matches(isDisplayed()))
@@ -100,9 +101,9 @@ class SettingPasswordTest {
 
         confirmPasswordEditText.perform(replaceText("1"), closeSoftKeyboard())
 
-        confirmOkButton.perform(click())
-
         togglePasswordVisibility(R.id.repeat_set_password_text_input_layout)
+
+        confirmOkButton.perform(click())
         val confirmRepeatPasswordTextInputLayout = onView(withId(R.id.repeat_set_password_text_input_layout))
                 .inRoot(isDialog())
                 .check(matches(isDisplayed()))
@@ -146,6 +147,8 @@ class SettingPasswordTest {
                 .check(matches(isDisplayed()))
         changeRepeatNewEditText.check(matches(withHint(R.string.repeat_new_password)))
 
+        togglePasswordVisibility(R.id.old_password_text_input_layout)
+
         val changeOkButton = onView(allOf(
                 withId(android.R.id.button1),
                 withText(android.R.string.ok),
@@ -156,7 +159,6 @@ class SettingPasswordTest {
                         position = 3)))
         changeOkButton.perform(click())
 
-        togglePasswordVisibility(R.id.old_password_text_input_layout)
         val changeOldPasswordTextInputLayout = onView(withId(R.id.old_password_text_input_layout))
                 .inRoot(isDialog())
                 .check(matches(isDisplayed()))
@@ -164,9 +166,9 @@ class SettingPasswordTest {
 
         changeOldEditText.perform(replaceText("2"), closeSoftKeyboard())
 
-        changeOkButton.perform(click())
-
         togglePasswordVisibility(R.id.new_password_text_input_layout)
+
+        changeOkButton.perform(click())
         val changeNewPasswordTextInputLayout = onView(withId(R.id.new_password_text_input_layout))
                 .inRoot(isDialog())
                 .check(matches(isDisplayed()))
@@ -174,9 +176,9 @@ class SettingPasswordTest {
 
         changeNewEditText.perform(replaceText("2"), closeSoftKeyboard())
 
-        changeOkButton.perform(click())
-
         togglePasswordVisibility(R.id.repeat_new_password_text_input_layout)
+
+        changeOkButton.perform(click())
         val changeRepeatPasswordTextInputLayout = onView(withId(R.id.repeat_new_password_text_input_layout))
                 .inRoot(isDialog())
                 .check(matches(isDisplayed()))
@@ -201,6 +203,8 @@ class SettingPasswordTest {
                 .check(matches(isDisplayed()))
         enterPasswordEditText.check(matches(withHint(R.string.enter_password)))
 
+        togglePasswordVisibility(R.id.enter_password_text_input_layout)
+
         val enterOkButton = onView(allOf(
                 withId(android.R.id.button1),
                 withText(android.R.string.ok),
@@ -211,7 +215,6 @@ class SettingPasswordTest {
                         position = 3)))
         enterOkButton.perform(click())
 
-        togglePasswordVisibility(R.id.enter_password_text_input_layout)
         val enterPasswordTextInputLayout = onView(withId(R.id.enter_password_text_input_layout))
                 .inRoot(isDialog())
                 .check(matches(isDisplayed()))
@@ -232,13 +235,18 @@ class SettingPasswordTest {
     }
 
     private fun togglePasswordVisibility(textInputLayoutResId: Int) {
+        val textInputLayoutFrameLayoutRoot = childAtPosition(
+                parentMatcher = withId(textInputLayoutResId),
+                position = 0)
+        val checkableImageButtonFrameLayoutRoot = childAtPosition(
+                parentMatcher = textInputLayoutFrameLayoutRoot,
+                position = 2
+        )
         val checkableImageButton = onView(allOf(
-                withId(R.id.text_input_password_toggle),
+                withId(R.id.text_input_end_icon),
                 childAtPosition(
-                        parentMatcher = childAtPosition(
-                                parentMatcher = withId(textInputLayoutResId),
-                                position = 0),
-                        position = 1),
+                        parentMatcher = checkableImageButtonFrameLayoutRoot,
+                        position = 0),
                 isDisplayed()))
         checkableImageButton.perform(click())
     }
