@@ -25,8 +25,9 @@ android {
         applicationId "com.softartdev.noteroom"
         minSdkVersion 16
         targetSdkVersion 29
-        versionCode 38
-        versionName "3.8"
+        versionCode 39
+        versionName "3.9"
+        multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         testInstrumentationRunnerArguments clearPackageData: 'true'
         vectorDrawables.useSupportLibrary = true
@@ -44,8 +45,8 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         release {
-            minifyEnabled true
-            shrinkResources true
+            minifyEnabled false
+            shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.config
         }
@@ -75,7 +76,7 @@ dependencies {
     implementation "androidx.legacy:legacy-support-v4:1.0.0"
     implementation "androidx.annotation:annotation:1.1.0"
     implementation "androidx.appcompat:appcompat:1.1.0"
-    implementation "com.google.android.material:material:1.0.0"
+    implementation "com.google.android.material:material:1.1.0"
     implementation "androidx.recyclerview:recyclerview:1.1.0"
     implementation "androidx.cardview:cardview:1.0.0"
     implementation "androidx.vectordrawable:vectordrawable:1.1.0"
@@ -85,6 +86,7 @@ dependencies {
     implementation 'androidx.core:core-ktx:1.2.0'
     implementation 'androidx.activity:activity-ktx:1.1.0'
     implementation 'androidx.fragment:fragment-ktx:1.2.2'
+    implementation 'androidx.multidex:multidex:2.0.1'
     def arch_version = "2.1.0"
     implementation "androidx.arch.core:core-common:$arch_version"
     implementation "androidx.arch.core:core-runtime:$arch_version"
@@ -106,7 +108,7 @@ dependencies {
     kapt "com.google.dagger:dagger-compiler:$dagger_version"
     kapt "com.google.dagger:dagger-android-processor:$dagger_version"
     compileOnly 'org.glassfish:javax.annotation:10.0-b28'
-    implementation 'com.google.firebase:firebase-analytics:17.2.2'
+    implementation 'com.google.firebase:firebase-analytics:17.2.3'
     implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
     implementation 'com.google.android.gms:play-services-oss-licenses:17.0.0'
     def espresso_version = "3.2.0"
