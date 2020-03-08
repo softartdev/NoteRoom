@@ -5,23 +5,22 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.preference.*
 import com.softartdev.noteroom.R
 import com.softartdev.noteroom.ui.base.BaseDialogFragment
-import com.softartdev.noteroom.ui.base.BasePrefFragment
 import com.softartdev.noteroom.ui.settings.security.change.ChangePasswordDialog
 import com.softartdev.noteroom.ui.settings.security.confirm.ConfirmPasswordDialog
 import com.softartdev.noteroom.ui.settings.security.enter.EnterPasswordDialog
 import com.softartdev.noteroom.util.ThemeHelper
 import com.softartdev.noteroom.util.tintIcon
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
 
 @SuppressLint("InflateParams")
-class SettingsFragment : BasePrefFragment(), Preference.OnPreferenceChangeListener, Observer<SecurityResult> {
+class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChangeListener, Observer<SecurityResult> {
 
-    private val settingsViewModel by viewModels<SettingsViewModel> { viewModelFactory }
+    private val settingsViewModel by viewModel<SettingsViewModel>()
     private var securityPreferences: SwitchPreference? = null
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {

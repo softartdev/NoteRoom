@@ -3,7 +3,6 @@ package com.softartdev.noteroom.ui.main
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
-import androidx.activity.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.softartdev.noteroom.R
@@ -17,10 +16,11 @@ import com.softartdev.noteroom.util.tintIcon
 import com.softartdev.noteroom.util.visible
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.view_error.view.*
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : BaseActivity(), MainAdapter.ClickListener, Observer<NoteListResult> {
 
-    private val mainViewModel by viewModels<MainViewModel> { viewModelFactory }
+    private val mainViewModel by viewModel<MainViewModel>()
     private var mainAdapter by autoCleared<MainAdapter>()
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -3,9 +3,9 @@ package com.softartdev.noteroom.ui.settings.security.enter
 import android.text.Editable
 import com.softartdev.noteroom.data.CryptUseCase
 import com.softartdev.noteroom.ui.base.BaseViewModel
-import javax.inject.Inject
 
-class EnterViewModel @Inject constructor(
+
+class EnterViewModel (
         private val dataManager: CryptUseCase
 ) : BaseViewModel<EnterResult>() {
 

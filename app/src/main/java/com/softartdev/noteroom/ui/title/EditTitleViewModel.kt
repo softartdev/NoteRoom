@@ -2,9 +2,9 @@ package com.softartdev.noteroom.ui.title
 
 import com.softartdev.noteroom.data.NoteUseCase
 import com.softartdev.noteroom.ui.base.BaseViewModel
-import javax.inject.Inject
 
-class EditTitleViewModel @Inject constructor(
+
+class EditTitleViewModel (
         private val noteUseCase: NoteUseCase
 ) : BaseViewModel<EditTitleResult>() {
 

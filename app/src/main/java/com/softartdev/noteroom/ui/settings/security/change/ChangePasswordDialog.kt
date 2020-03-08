@@ -2,7 +2,7 @@ package com.softartdev.noteroom.ui.settings.security.change
 
 import android.os.Bundle
 import android.widget.ProgressBar
-import androidx.fragment.app.viewModels
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
@@ -10,12 +10,13 @@ import com.softartdev.noteroom.R
 import com.softartdev.noteroom.ui.base.BaseDialogFragment
 import com.softartdev.noteroom.util.invisible
 import com.softartdev.noteroom.util.visible
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class ChangePasswordDialog : BaseDialogFragment(
         dialogLayoutRes = R.layout.dialog_change_password
 ), Observer<ChangeResult> {
 
-    private val changeViewModel by viewModels<ChangeViewModel> { viewModelFactory }
+    private val changeViewModel by viewModel<ChangeViewModel>()
 
     private val progressBar: ProgressBar
         get() = requireDialog().findViewById(R.id.dialog_change_progress_bar)
@@ -40,7 +41,7 @@ class ChangePasswordDialog : BaseDialogFragment(
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        changeViewModel.resultLiveData.observe(this, this)
+        changeViewModel.resultLiveData.observe(this as LifecycleOwner, this)
     }
 
     override fun onOkClicked() = changeViewModel.checkChange(

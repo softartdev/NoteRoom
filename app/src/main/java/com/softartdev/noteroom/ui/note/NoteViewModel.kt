@@ -4,9 +4,9 @@ import com.softartdev.noteroom.data.NoteUseCase
 import com.softartdev.noteroom.ui.base.BaseViewModel
 import com.softartdev.noteroom.util.createTitle
 import timber.log.Timber
-import javax.inject.Inject
 
-class NoteViewModel @Inject constructor(
+
+class NoteViewModel (
         private val noteUseCase: NoteUseCase
 ) : BaseViewModel<NoteResult>() {
 
