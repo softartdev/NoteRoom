@@ -10,13 +10,14 @@ import com.softartdev.noteroom.R
 import com.softartdev.noteroom.ui.base.BaseDialogFragment
 import com.softartdev.noteroom.util.invisible
 import com.softartdev.noteroom.util.visible
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.androidx.scope.lifecycleScope
+import org.koin.androidx.viewmodel.scope.viewModel
 
 class EditTitleDialog : BaseDialogFragment(
         dialogLayoutRes = R.layout.dialog_edit_title
 ), Observer<EditTitleResult> {
 
-    private val editTitleViewModel by viewModel<EditTitleViewModel>()
+    private val editTitleViewModel by lifecycleScope.viewModel<EditTitleViewModel>(this)
 
     private val noteId: Long
         get() = requireNotNull(arguments?.getLong(ARG_NOTE_ID))

@@ -7,10 +7,11 @@ import androidx.lifecycle.Observer
 import com.softartdev.noteroom.ui.base.BaseActivity
 import com.softartdev.noteroom.ui.main.MainActivity
 import com.softartdev.noteroom.ui.signin.SignInActivity
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.androidx.scope.lifecycleScope
+import org.koin.androidx.viewmodel.scope.viewModel
 
 class SplashActivity : BaseActivity(), Observer<SplashResult> {
-    private val splashViewModel by viewModel<SplashViewModel>()
+    private val splashViewModel by lifecycleScope.viewModel<SplashViewModel>(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

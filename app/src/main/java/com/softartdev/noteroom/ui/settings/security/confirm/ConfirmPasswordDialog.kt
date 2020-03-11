@@ -10,13 +10,14 @@ import com.softartdev.noteroom.R
 import com.softartdev.noteroom.ui.base.BaseDialogFragment
 import com.softartdev.noteroom.util.invisible
 import com.softartdev.noteroom.util.visible
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.androidx.scope.lifecycleScope
+import org.koin.androidx.viewmodel.scope.viewModel
 
 class ConfirmPasswordDialog : BaseDialogFragment(
         dialogLayoutRes = R.layout.dialog_set_password
 ), Observer<ConfirmResult> {
 
-    private val confirmViewModel by viewModel<ConfirmViewModel>()
+    private val confirmViewModel by lifecycleScope.viewModel<ConfirmViewModel>(this)
 
     private val progressBar: ProgressBar
         get() = requireDialog().findViewById(R.id.dialog_set_progress_bar)

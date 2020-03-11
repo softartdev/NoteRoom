@@ -15,11 +15,12 @@ import com.softartdev.noteroom.ui.base.BaseActivity
 import com.softartdev.noteroom.ui.title.EditTitleDialog
 import com.softartdev.noteroom.util.*
 import kotlinx.android.synthetic.main.activity_note.*
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.androidx.scope.lifecycleScope
+import org.koin.androidx.viewmodel.scope.viewModel
 
 class NoteActivity : BaseActivity(), Observer<NoteResult> {
 
-    private val noteViewModel by viewModel<NoteViewModel>()
+    private val noteViewModel by lifecycleScope.viewModel<NoteViewModel>(this)
 
     private val noteId: Long
         get() = intent.getLongExtra(NOTE_ID, 0L)

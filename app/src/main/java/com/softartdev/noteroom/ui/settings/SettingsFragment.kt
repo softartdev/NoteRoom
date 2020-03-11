@@ -14,13 +14,14 @@ import com.softartdev.noteroom.ui.settings.security.confirm.ConfirmPasswordDialo
 import com.softartdev.noteroom.ui.settings.security.enter.EnterPasswordDialog
 import com.softartdev.noteroom.util.ThemeHelper
 import com.softartdev.noteroom.util.tintIcon
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.androidx.scope.lifecycleScope
+import org.koin.androidx.viewmodel.scope.viewModel
 import timber.log.Timber
 
 @SuppressLint("InflateParams")
 class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChangeListener, Observer<SecurityResult> {
 
-    private val settingsViewModel by viewModel<SettingsViewModel>()
+    private val settingsViewModel by lifecycleScope.viewModel<SettingsViewModel>(this)
     private var securityPreferences: SwitchPreference? = null
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {

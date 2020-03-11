@@ -10,13 +10,14 @@ import com.softartdev.noteroom.R
 import com.softartdev.noteroom.ui.base.BaseDialogFragment
 import com.softartdev.noteroom.util.invisible
 import com.softartdev.noteroom.util.visible
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.androidx.scope.lifecycleScope
+import org.koin.androidx.viewmodel.scope.viewModel
 
 class EnterPasswordDialog : BaseDialogFragment(
         dialogLayoutRes = R.layout.dialog_password
 ), Observer<EnterResult> {
 
-    private val enterViewModel by viewModel<EnterViewModel>()
+    private val enterViewModel by lifecycleScope.viewModel<EnterViewModel>(this)
 
     private val progressBar: ProgressBar
         get() = requireDialog().findViewById(R.id.enter_progress_bar)
