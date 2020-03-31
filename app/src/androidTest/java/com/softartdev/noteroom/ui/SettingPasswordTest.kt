@@ -35,11 +35,11 @@ import timber.log.Timber
 @RunWith(AndroidJUnit4::class)
 class SettingPasswordTest {
 
-    private val context: Context = ApplicationProvider.getApplicationContext<Context>()
+    private val context: Context = ApplicationProvider.getApplicationContext()
 
     @Rule
     @JvmField
-    var activityTestRule = ActivityTestRule<SplashActivity>(SplashActivity::class.java)
+    var activityTestRule = ActivityTestRule(SplashActivity::class.java)
 
     @Before
     fun registerIdlingResource() {

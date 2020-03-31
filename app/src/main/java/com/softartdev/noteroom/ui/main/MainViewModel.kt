@@ -3,9 +3,9 @@ package com.softartdev.noteroom.ui.main
 import com.softartdev.noteroom.data.NoteUseCase
 import com.softartdev.noteroom.ui.base.BaseViewModel
 import net.sqlcipher.database.SQLiteException
-import javax.inject.Inject
 
-class MainViewModel @Inject constructor(
+
+class MainViewModel (
         private val noteUseCase: NoteUseCase
 ) : BaseViewModel<NoteListResult>() {
 

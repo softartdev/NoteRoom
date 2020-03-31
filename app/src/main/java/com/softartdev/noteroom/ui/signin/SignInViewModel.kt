@@ -3,9 +3,9 @@ package com.softartdev.noteroom.ui.signin
 import android.text.Editable
 import com.softartdev.noteroom.data.CryptUseCase
 import com.softartdev.noteroom.ui.base.BaseViewModel
-import javax.inject.Inject
 
-class SignInViewModel @Inject constructor(
+
+class SignInViewModel (
         private val cryptUseCase: CryptUseCase
 ) : BaseViewModel<SignInResult>() {
 
