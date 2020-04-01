@@ -10,6 +10,6 @@ import org.mockito.Mockito.mock
 val testModule = module {
     single { mock(PreferencesHelper::class.java) }
     single { mock(SafeRepo::class.java) }
-    single { CryptUseCase(get(), get()) }
+    single { CryptUseCase(get()) }
     single { NoteUseCase(get()) }
 }

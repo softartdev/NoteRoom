@@ -28,7 +28,7 @@ import org.koin.dsl.module
 val appModule = module {
     single { PreferencesHelper(get()) }
     single { SafeRepo(get()) }
-    single { CryptUseCase(get(), get()) }
+    single { CryptUseCase(get()) }
     single { NoteUseCase(get()) }
 }
 
