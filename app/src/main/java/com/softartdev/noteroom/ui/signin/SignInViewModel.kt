@@ -3,13 +3,12 @@ package com.softartdev.noteroom.ui.signin
 import android.text.Editable
 import com.softartdev.noteroom.data.CryptUseCase
 import com.softartdev.noteroom.ui.base.BaseViewModel
+import com.softartdev.noteroom.ui.base.ResultFactory
 
 
 class SignInViewModel (
         private val cryptUseCase: CryptUseCase
 ) : BaseViewModel<SignInResult>() {
-
-    override val loadingResult: SignInResult = SignInResult.ShowProgress
 
     fun signIn(pass: Editable) = launch {
         if (pass.isNotEmpty()) {
@@ -20,5 +19,5 @@ class SignInViewModel (
         } else SignInResult.ShowEmptyPassError
     }
 
-    override fun errorResult(throwable: Throwable): SignInResult = SignInResult.ShowError(throwable)
+    override val resultFactory: ResultFactory<SignInResult> = SignInResult.Factory()
 }

@@ -2,6 +2,7 @@ package com.softartdev.noteroom.ui.note
 
 import com.softartdev.noteroom.data.NoteUseCase
 import com.softartdev.noteroom.ui.base.BaseViewModel
+import com.softartdev.noteroom.ui.base.ResultFactory
 import com.softartdev.noteroom.util.createTitle
 import timber.log.Timber
 
@@ -15,8 +16,6 @@ class NoteViewModel (
             0L -> throw IllegalStateException()
             else -> field
         }
-
-    override val loadingResult: NoteResult = NoteResult.Loading
 
     fun createNote() = launch {
         val note = noteUseCase.createNote()
@@ -89,5 +88,5 @@ class NoteViewModel (
         NoteResult.TitleUpdated(title)
     }
 
-    override fun errorResult(throwable: Throwable): NoteResult = NoteResult.Error(throwable.message)
+    override val resultFactory: ResultFactory<NoteResult> = NoteResult.Factory()
 }

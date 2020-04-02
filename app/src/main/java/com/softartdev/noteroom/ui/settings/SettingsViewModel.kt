@@ -2,6 +2,7 @@ package com.softartdev.noteroom.ui.settings
 
 import com.softartdev.noteroom.data.CryptUseCase
 import com.softartdev.noteroom.ui.base.BaseViewModel
+import com.softartdev.noteroom.ui.base.ResultFactory
 
 
 class SettingsViewModel (
@@ -30,5 +31,5 @@ class SettingsViewModel (
             }
         }
 
-    override fun errorResult(throwable: Throwable): SecurityResult = SecurityResult.Error(throwable.message)
+    override val resultFactory: ResultFactory<SecurityResult> = SecurityResult.Factory()
 }

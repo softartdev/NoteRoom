@@ -2,13 +2,12 @@ package com.softartdev.noteroom.ui.title
 
 import com.softartdev.noteroom.data.NoteUseCase
 import com.softartdev.noteroom.ui.base.BaseViewModel
+import com.softartdev.noteroom.ui.base.ResultFactory
 
 
 class EditTitleViewModel (
         private val noteUseCase: NoteUseCase
 ) : BaseViewModel<EditTitleResult>() {
-
-    override val loadingResult: EditTitleResult = EditTitleResult.Loading
 
     fun loadTitle(noteId: Long) = launch {
         val note = noteUseCase.loadNote(noteId)
@@ -27,5 +26,5 @@ class EditTitleViewModel (
         }
     }
 
-    override fun errorResult(throwable: Throwable): EditTitleResult = EditTitleResult.Error(throwable.message)
+    override val resultFactory: ResultFactory<EditTitleResult> = EditTitleResult.Factory()
 }

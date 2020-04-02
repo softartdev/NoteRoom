@@ -1,6 +1,7 @@
 package com.softartdev.noteroom.ui.note
 
 import com.softartdev.noteroom.database.Note
+import com.softartdev.noteroom.ui.base.ResultFactory
 
 sealed class NoteResult {
     object Loading : NoteResult()
@@ -14,4 +15,9 @@ sealed class NoteResult {
     object CheckSaveChange : NoteResult()
     object NavBack : NoteResult()
     data class Error(val message: String?) : NoteResult()
+
+    class Factory : ResultFactory<NoteResult>() {
+        override val loadingResult = Loading
+        override fun errorResult(throwable: Throwable) = Error(throwable.message)
+    }
 }

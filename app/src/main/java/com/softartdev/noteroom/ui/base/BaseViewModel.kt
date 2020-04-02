@@ -14,7 +14,7 @@ abstract class BaseViewModel<T> : ViewModel() {
 
     val resultLiveData = MutableLiveData<T>()
 
-    open val loadingResult: T? = null
+    abstract val resultFactory: ResultFactory<T>
 
     fun launch(
             useIdling: Boolean = true,
@@ -23,13 +23,13 @@ abstract class BaseViewModel<T> : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             wrapEspressoIdlingResource(useIdling) {
                 if (useIdling) {
-                    loadingResult?.let { loading -> onResult(loading) }
+                    resultFactory.loadingResult?.let { loading -> onResult(loading) }
                 }
                 val result: T = try {
                     block()
                 } catch (e: Throwable) {
                     Timber.e(e)
-                    errorResult(e)
+                    resultFactory.errorResult(e)
                 }
                 onResult(result)
             }
@@ -39,6 +39,4 @@ abstract class BaseViewModel<T> : ViewModel() {
     private suspend inline fun onResult(result: T) = withContext(Dispatchers.Main) {
         resultLiveData.value = result
     }
-
-    abstract fun errorResult(throwable: Throwable): T
 }

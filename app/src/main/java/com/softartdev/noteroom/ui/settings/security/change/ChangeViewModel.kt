@@ -3,13 +3,12 @@ package com.softartdev.noteroom.ui.settings.security.change
 import android.text.Editable
 import com.softartdev.noteroom.data.CryptUseCase
 import com.softartdev.noteroom.ui.base.BaseViewModel
+import com.softartdev.noteroom.ui.base.ResultFactory
 
 
 class ChangeViewModel (
         private val cryptUseCase: CryptUseCase
 ) : BaseViewModel<ChangeResult>() {
-
-    override val loadingResult: ChangeResult = ChangeResult.Loading
 
     fun checkChange(
             oldPassword: Editable,
@@ -30,5 +29,5 @@ class ChangeViewModel (
         }
     }
 
-    override fun errorResult(throwable: Throwable): ChangeResult = ChangeResult.Error(throwable.message)
+    override val resultFactory: ResultFactory<ChangeResult> = ChangeResult.Factory()
 }

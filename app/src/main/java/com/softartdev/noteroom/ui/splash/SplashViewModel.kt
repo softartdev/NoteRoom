@@ -2,6 +2,7 @@ package com.softartdev.noteroom.ui.splash
 
 import com.softartdev.noteroom.data.CryptUseCase
 import com.softartdev.noteroom.ui.base.BaseViewModel
+import com.softartdev.noteroom.ui.base.ResultFactory
 
 class SplashViewModel(
         private val cryptUseCase: CryptUseCase
@@ -18,5 +19,5 @@ class SplashViewModel(
         }
     }
 
-    override fun errorResult(throwable: Throwable): SplashResult = SplashResult.ShowError(throwable.message)
+    override val resultFactory: ResultFactory<SplashResult> = SplashResult.Factory()
 }

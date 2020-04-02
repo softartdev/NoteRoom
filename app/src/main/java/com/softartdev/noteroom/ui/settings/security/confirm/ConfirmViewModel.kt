@@ -3,13 +3,12 @@ package com.softartdev.noteroom.ui.settings.security.confirm
 import android.text.Editable
 import com.softartdev.noteroom.data.CryptUseCase
 import com.softartdev.noteroom.ui.base.BaseViewModel
+import com.softartdev.noteroom.ui.base.ResultFactory
 
 
 class ConfirmViewModel (
         private val cryptUseCase: CryptUseCase
 ) : BaseViewModel<ConfirmResult>() {
-
-    override val loadingResult: ConfirmResult = ConfirmResult.Loading
 
     fun conformCheck(password: Editable, repeatPassword: Editable) = launch {
         when {
@@ -22,5 +21,5 @@ class ConfirmViewModel (
         }
     }
 
-    override fun errorResult(throwable: Throwable): ConfirmResult = ConfirmResult.Error(throwable.message)
+    override val resultFactory: ResultFactory<ConfirmResult> = ConfirmResult.Factory()
 }

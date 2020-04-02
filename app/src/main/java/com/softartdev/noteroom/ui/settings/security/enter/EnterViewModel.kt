@@ -3,13 +3,12 @@ package com.softartdev.noteroom.ui.settings.security.enter
 import android.text.Editable
 import com.softartdev.noteroom.data.CryptUseCase
 import com.softartdev.noteroom.ui.base.BaseViewModel
+import com.softartdev.noteroom.ui.base.ResultFactory
 
 
 class EnterViewModel (
         private val dataManager: CryptUseCase
 ) : BaseViewModel<EnterResult>() {
-
-    override val loadingResult: EnterResult = EnterResult.Loading
 
     fun enterCheck(password: Editable) = launch {
         if (password.isNotEmpty()) {
@@ -23,5 +22,5 @@ class EnterViewModel (
         } else EnterResult.EmptyPasswordError
     }
 
-    override fun errorResult(throwable: Throwable): EnterResult = EnterResult.Error(throwable.message)
+    override val resultFactory: ResultFactory<EnterResult> = EnterResult.Factory()
 }
