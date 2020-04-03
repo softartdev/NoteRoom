@@ -22,44 +22,39 @@ class MainViewModelTest {
     val mainCoroutineRule = MainCoroutineRule()
 
     private val noteUseCase = Mockito.mock(NoteUseCase::class.java)
+    private val mainViewModel = MainViewModel(noteUseCase)
 
     @Test
     fun success() = mainCoroutineRule.runBlockingTest {
         val notes = emptyList<Note>()
         Mockito.`when`(noteUseCase.getNotes()).thenReturn(notes)
-        pauseDispatcher()
-        val mainViewModel = MainViewModel(noteUseCase)
         mainViewModel.resultLiveData.assertValues(
                 NoteListResult.Loading,
                 NoteListResult.Success(notes)
         ) {
-            resumeDispatcher()
+            mainViewModel.updateNotes()
         }
     }
 
     @Test
     fun navMain() = mainCoroutineRule.runBlockingTest {
         Mockito.`when`(noteUseCase.getNotes()).thenThrow(SQLiteException::class.java)
-        pauseDispatcher()
-        val mainViewModel = MainViewModel(noteUseCase)
         mainViewModel.resultLiveData.assertValues(
                 NoteListResult.Loading,
                 NoteListResult.NavMain
         ){
-            resumeDispatcher()
+            mainViewModel.updateNotes()
         }
     }
 
     @Test
     fun error() = mainCoroutineRule.runBlockingTest {
         Mockito.`when`(noteUseCase.getNotes()).thenAnswer { throw Throwable() }
-        pauseDispatcher()
-        val mainViewModel = MainViewModel(noteUseCase)
         mainViewModel.resultLiveData.assertValues(
                 NoteListResult.Loading,
                 NoteListResult.Error(null)
         ) {
-            resumeDispatcher()
+            mainViewModel.updateNotes()
         }
     }
 }
