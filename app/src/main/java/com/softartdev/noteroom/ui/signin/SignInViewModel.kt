@@ -13,9 +13,9 @@ class SignInViewModel (
 
     fun signIn(pass: Editable) = launch {
         if (pass.isNotEmpty()) {
-            when (val checked = cryptUseCase.checkPassword(pass)) {
-                checked -> SignInResult.NavMain
-                else -> SignInResult.ShowIncorrectPassError
+            when (cryptUseCase.checkPassword(pass)) {
+                true -> SignInResult.NavMain
+                false -> SignInResult.ShowIncorrectPassError
             }
         } else SignInResult.ShowEmptyPassError
     }

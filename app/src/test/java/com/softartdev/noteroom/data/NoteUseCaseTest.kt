@@ -3,6 +3,7 @@ package com.softartdev.noteroom.data
 import com.softartdev.noteroom.database.Note
 import com.softartdev.noteroom.database.NoteDao
 import com.softartdev.noteroom.util.MainCoroutineRule
+import com.softartdev.noteroom.util.anyObject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.After
@@ -121,13 +122,4 @@ class NoteUseCaseTest {
         val note = notes.random()
         assertFalse(noteUseCase.isEmpty(note.id))
     }
-
-    //https://stackoverflow.com/a/30308199/8436645
-    private fun <T> anyObject(): T {
-        Mockito.any<T>()
-        return uninitialized()
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    private fun <T> uninitialized(): T = null as T
 }

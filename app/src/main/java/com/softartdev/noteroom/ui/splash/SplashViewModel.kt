@@ -18,5 +18,5 @@ class SplashViewModel(
         }
     }
 
-    override fun errorResult(throwable: Throwable): SplashResult = SplashResult.ShowError(throwable.message)
+    override fun errorResult(throwable: Throwable) = SplashResult.ShowError(throwable.message)
 }
