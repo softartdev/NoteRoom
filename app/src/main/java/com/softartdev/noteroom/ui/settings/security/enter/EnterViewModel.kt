@@ -6,16 +6,16 @@ import com.softartdev.noteroom.ui.base.BaseViewModel
 
 
 class EnterViewModel (
-        private val dataManager: CryptUseCase
+        private val cryptUseCase: CryptUseCase
 ) : BaseViewModel<EnterResult>() {
 
     override val loadingResult: EnterResult = EnterResult.Loading
 
     fun enterCheck(password: Editable) = launch {
         if (password.isNotEmpty()) {
-            when (dataManager.checkPassword(password)) {
+            when (cryptUseCase.checkPassword(password)) {
                 true -> {
-                    dataManager.changePassword(password, null)
+                    cryptUseCase.changePassword(password, null)
                     EnterResult.Success
                 }
                 false -> EnterResult.IncorrectPasswordError
@@ -23,5 +23,5 @@ class EnterViewModel (
         } else EnterResult.EmptyPasswordError
     }
 
-    override fun errorResult(throwable: Throwable): EnterResult = EnterResult.Error(throwable.message)
+    override fun errorResult(throwable: Throwable) = EnterResult.Error(throwable.message)
 }
