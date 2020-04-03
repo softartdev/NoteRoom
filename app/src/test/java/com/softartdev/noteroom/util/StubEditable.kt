@@ -7,6 +7,8 @@ class StubEditable(
         private val string: String
 ) : Editable, CharSequence by string {
 
+    override fun toString(): String = string
+
     override fun setSpan(what: Any?, start: Int, end: Int, flags: Int) {
         TODO("Not yet implemented")
     }
