@@ -3,7 +3,6 @@ package com.softartdev.noteroom.ui.signin
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
-import androidx.activity.viewModels
 import androidx.lifecycle.Observer
 import com.softartdev.noteroom.R
 import com.softartdev.noteroom.ui.base.BaseActivity
@@ -13,10 +12,12 @@ import com.softartdev.noteroom.util.hideKeyboard
 import com.softartdev.noteroom.util.visible
 import kotlinx.android.synthetic.main.activity_sign_in.*
 import kotlinx.android.synthetic.main.view_error.view.*
+import org.koin.androidx.scope.lifecycleScope
+import org.koin.androidx.viewmodel.scope.viewModel
 
 class SignInActivity : BaseActivity(), Observer<SignInResult> {
 
-    private val signInViewModel by viewModels<SignInViewModel> { viewModelFactory }
+    private val signInViewModel by lifecycleScope.viewModel<SignInViewModel>(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

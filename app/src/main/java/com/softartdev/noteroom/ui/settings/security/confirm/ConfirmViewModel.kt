@@ -3,9 +3,9 @@ package com.softartdev.noteroom.ui.settings.security.confirm
 import android.text.Editable
 import com.softartdev.noteroom.data.CryptUseCase
 import com.softartdev.noteroom.ui.base.BaseViewModel
-import javax.inject.Inject
 
-class ConfirmViewModel @Inject constructor(
+
+class ConfirmViewModel (
         private val cryptUseCase: CryptUseCase
 ) : BaseViewModel<ConfirmResult>() {
 

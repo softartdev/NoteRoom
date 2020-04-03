@@ -2,9 +2,8 @@ package com.softartdev.noteroom.ui.splash
 
 import com.softartdev.noteroom.data.CryptUseCase
 import com.softartdev.noteroom.ui.base.BaseViewModel
-import javax.inject.Inject
 
-class SplashViewModel @Inject constructor(
+class SplashViewModel(
         private val cryptUseCase: CryptUseCase
 ) : BaseViewModel<SplashResult>() {
 
@@ -19,5 +18,5 @@ class SplashViewModel @Inject constructor(
         }
     }
 
-    override fun errorResult(throwable: Throwable): SplashResult = SplashResult.ShowError(throwable.message)
+    override fun errorResult(throwable: Throwable) = SplashResult.ShowError(throwable.message)
 }

@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
-import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.NavUtils
 import androidx.lifecycle.Observer
@@ -16,10 +15,12 @@ import com.softartdev.noteroom.ui.base.BaseActivity
 import com.softartdev.noteroom.ui.title.EditTitleDialog
 import com.softartdev.noteroom.util.*
 import kotlinx.android.synthetic.main.activity_note.*
+import org.koin.androidx.scope.lifecycleScope
+import org.koin.androidx.viewmodel.scope.viewModel
 
 class NoteActivity : BaseActivity(), Observer<NoteResult> {
 
-    private val noteViewModel by viewModels<NoteViewModel> { viewModelFactory }
+    private val noteViewModel by lifecycleScope.viewModel<NoteViewModel>(this)
 
     private val noteId: Long
         get() = intent.getLongExtra(NOTE_ID, 0L)

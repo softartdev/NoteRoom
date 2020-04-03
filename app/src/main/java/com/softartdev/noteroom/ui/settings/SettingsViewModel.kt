@@ -2,9 +2,9 @@ package com.softartdev.noteroom.ui.settings
 
 import com.softartdev.noteroom.data.CryptUseCase
 import com.softartdev.noteroom.ui.base.BaseViewModel
-import javax.inject.Inject
 
-class SettingsViewModel @Inject constructor(
+
+class SettingsViewModel (
         private val cryptUseCase: CryptUseCase
 ) : BaseViewModel<SecurityResult>() {
 

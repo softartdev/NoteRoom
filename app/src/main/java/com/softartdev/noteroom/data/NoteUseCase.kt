@@ -8,7 +8,7 @@ class NoteUseCase(
         private val safeRepo: SafeRepo
 ) {
 
-    val titleChannel: Channel<String> by lazy { Channel<String>() }
+    val titleChannel: Channel<String> by lazy { return@lazy Channel<String>() }
     
     suspend fun getNotes(): List<Note> = safeRepo.noteDao.getNotes()
 
@@ -27,12 +27,12 @@ class NoteUseCase(
         return safeRepo.noteDao.updateNote(note)
     }
 
-    suspend fun updateTitle(id: Long, title: String) {
+    suspend fun updateTitle(id: Long, title: String): Int {
         val note = safeRepo.noteDao.getNoteById(id).copy(
                 title = title,
                 dateModified = Date()
         )
-        safeRepo.noteDao.updateNote(note)
+        return safeRepo.noteDao.updateNote(note)
     }
 
     suspend fun loadNote(noteId: Long): Note = safeRepo.noteDao.getNoteById(noteId)

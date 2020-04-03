@@ -4,20 +4,15 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.WindowManager
-import androidx.lifecycle.ViewModelProvider
+import androidx.appcompat.app.AppCompatActivity
 import com.softartdev.noteroom.R
 import com.softartdev.noteroom.ui.settings.SettingsActivity
 import com.softartdev.noteroom.util.PreferencesHelper
-import dagger.android.support.DaggerAppCompatActivity
-import javax.inject.Inject
+import org.koin.android.ext.android.inject
 
-abstract class BaseActivity : DaggerAppCompatActivity() {
+abstract class BaseActivity : AppCompatActivity() {
 
-    @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
-
-    @Inject
-    lateinit var preferencesHelper: PreferencesHelper
+    private val preferencesHelper by inject<PreferencesHelper>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

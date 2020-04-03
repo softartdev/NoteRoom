@@ -9,17 +9,12 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AlertDialog
-import androidx.lifecycle.ViewModelProvider
+import androidx.appcompat.app.AppCompatDialogFragment
 import com.google.android.material.snackbar.Snackbar
-import dagger.android.support.DaggerAppCompatDialogFragment
-import javax.inject.Inject
 
 abstract class BaseDialogFragment(
         @LayoutRes private val dialogLayoutRes: Int
-) : DaggerAppCompatDialogFragment() {
-
-    @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
+) : AppCompatDialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog = AlertDialog
             .Builder(requireActivity())

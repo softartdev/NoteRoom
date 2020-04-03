@@ -30,7 +30,7 @@ class CreateRemoveNoteTest {
 
     @Rule
     @JvmField
-    var activityTestRule = ActivityTestRule<SplashActivity>(SplashActivity::class.java)
+    var activityTestRule = ActivityTestRule(SplashActivity::class.java)
 
     @Before
     fun registerIdlingResource() {

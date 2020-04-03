@@ -1,4 +1,4 @@
-package com.softartdev.noteroom.util
+package com.softartdev.noteroom.util.log
 
 import com.crashlytics.android.Crashlytics
 import timber.log.Timber

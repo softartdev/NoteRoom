@@ -2,9 +2,9 @@ package com.softartdev.noteroom.ui.title
 
 import com.softartdev.noteroom.data.NoteUseCase
 import com.softartdev.noteroom.ui.base.BaseViewModel
-import javax.inject.Inject
 
-class EditTitleViewModel @Inject constructor(
+
+class EditTitleViewModel (
         private val noteUseCase: NoteUseCase
 ) : BaseViewModel<EditTitleResult>() {
 
@@ -27,5 +27,5 @@ class EditTitleViewModel @Inject constructor(
         }
     }
 
-    override fun errorResult(throwable: Throwable): EditTitleResult = EditTitleResult.Error(throwable.message)
+    override fun errorResult(throwable: Throwable) = EditTitleResult.Error(throwable.message)
 }

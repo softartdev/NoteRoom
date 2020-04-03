@@ -3,9 +3,9 @@ package com.softartdev.noteroom.ui.signin
 import android.text.Editable
 import com.softartdev.noteroom.data.CryptUseCase
 import com.softartdev.noteroom.ui.base.BaseViewModel
-import javax.inject.Inject
 
-class SignInViewModel @Inject constructor(
+
+class SignInViewModel (
         private val cryptUseCase: CryptUseCase
 ) : BaseViewModel<SignInResult>() {
 
@@ -13,9 +13,9 @@ class SignInViewModel @Inject constructor(
 
     fun signIn(pass: Editable) = launch {
         if (pass.isNotEmpty()) {
-            when (val checked = cryptUseCase.checkPassword(pass)) {
-                checked -> SignInResult.NavMain
-                else -> SignInResult.ShowIncorrectPassError
+            when (cryptUseCase.checkPassword(pass)) {
+                true -> SignInResult.NavMain
+                false -> SignInResult.ShowIncorrectPassError
             }
         } else SignInResult.ShowEmptyPassError
     }
