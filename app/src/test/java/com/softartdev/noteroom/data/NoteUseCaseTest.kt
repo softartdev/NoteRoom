@@ -22,7 +22,7 @@ class NoteUseCaseTest {
     val mainCoroutineRule = MainCoroutineRule()
 
     private val mockSafeRepo = Mockito.mock(SafeRepo::class.java)
-    private val noteUseCase = NoteUseCase(mockSafeRepo)
+    private val noteUseCase = NoteUseCaseImpl(mockSafeRepo)
 
     private val notes: MutableList<Note> = mutableListOf()
 

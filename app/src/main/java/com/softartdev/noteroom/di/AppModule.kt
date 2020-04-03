@@ -2,6 +2,7 @@ package com.softartdev.noteroom.di
 
 import com.softartdev.noteroom.data.CryptUseCase
 import com.softartdev.noteroom.data.NoteUseCase
+import com.softartdev.noteroom.data.NoteUseCaseImpl
 import com.softartdev.noteroom.data.SafeRepo
 import com.softartdev.noteroom.ui.main.MainActivity
 import com.softartdev.noteroom.ui.main.MainViewModel
@@ -29,7 +30,7 @@ val appModule = module {
     single { PreferencesHelper(get()) }
     single { SafeRepo(get()) }
     single { CryptUseCase(get()) }
-    single { NoteUseCase(get()) }
+    single<NoteUseCase> { NoteUseCaseImpl(get()) }
 }
 
 val mvvmModule = module {
