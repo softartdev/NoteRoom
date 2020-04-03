@@ -5,19 +5,19 @@ import com.softartdev.noteroom.data.NoteUseCase
 import com.softartdev.noteroom.database.Note
 import com.softartdev.noteroom.util.MainCoroutineRule
 import com.softartdev.noteroom.util.assertValues
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.After
+import org.junit.Assert.assertEquals
 import org.junit.Before
-import org.junit.Test
-
-import org.junit.Assert.*
 import org.junit.Rule
+import org.junit.Test
 import org.mockito.Mockito
 import java.util.*
 
-@Suppress("EXPERIMENTAL_API_USAGE")
+@OptIn(ExperimentalCoroutinesApi::class)
 class EditTitleViewModelTest {
 
     @get:Rule

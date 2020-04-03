@@ -5,13 +5,14 @@ import com.softartdev.noteroom.data.CryptUseCase
 import com.softartdev.noteroom.util.MainCoroutineRule
 import com.softartdev.noteroom.util.StubEditable
 import com.softartdev.noteroom.util.assertValues
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 import org.mockito.Mockito
 
-@Suppress("EXPERIMENTAL_API_USAGE")
+@OptIn(ExperimentalCoroutinesApi::class)
 class EnterViewModelTest {
 
     @get:Rule

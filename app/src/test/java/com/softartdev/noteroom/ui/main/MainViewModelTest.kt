@@ -5,13 +5,14 @@ import com.softartdev.noteroom.data.NoteUseCase
 import com.softartdev.noteroom.database.Note
 import com.softartdev.noteroom.util.MainCoroutineRule
 import com.softartdev.noteroom.util.assertValues
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import net.sqlcipher.database.SQLiteException
 import org.junit.Rule
 import org.junit.Test
 import org.mockito.Mockito
 
-@Suppress("EXPERIMENTAL_API_USAGE")
+@OptIn(ExperimentalCoroutinesApi::class)
 class MainViewModelTest {
 
     @get:Rule
