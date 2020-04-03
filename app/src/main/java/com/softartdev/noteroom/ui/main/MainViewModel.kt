@@ -9,10 +9,6 @@ class MainViewModel (
         private val noteUseCase: NoteUseCase
 ) : BaseViewModel<NoteListResult>() {
 
-    init {
-        updateNotes()
-    }
-
     override val loadingResult: NoteListResult = NoteListResult.Loading
 
     fun updateNotes() = launch {

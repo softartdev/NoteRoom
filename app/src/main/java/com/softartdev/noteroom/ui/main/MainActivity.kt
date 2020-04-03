@@ -45,6 +45,7 @@ class MainActivity : BaseActivity(), MainAdapter.ClickListener, Observer<NoteLis
         main_error_view.button_reload.setOnClickListener { mainViewModel.updateNotes() }
 
         mainViewModel.resultLiveData.observe(this, this)
+        mainViewModel.updateNotes()
     }
 
     override fun onChanged(noteListResult: NoteListResult) = when (noteListResult) {
