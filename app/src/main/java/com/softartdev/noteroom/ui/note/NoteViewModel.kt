@@ -1,5 +1,6 @@
 package com.softartdev.noteroom.ui.note
 
+import androidx.annotation.VisibleForTesting
 import com.softartdev.noteroom.data.NoteUseCase
 import com.softartdev.noteroom.ui.base.BaseViewModel
 import com.softartdev.noteroom.util.createTitle
@@ -12,7 +13,7 @@ class NoteViewModel (
 
     private var noteId: Long = 0
         get() = when (field) {
-            0L -> throw IllegalStateException()
+            0L -> throw IllegalStateException("Note doesn't loaded")
             else -> field
         }
 
@@ -90,4 +91,9 @@ class NoteViewModel (
     }
 
     override fun errorResult(throwable: Throwable): NoteResult = NoteResult.Error(throwable.message)
+
+    @VisibleForTesting
+    fun setIdForTest(id: Long) {
+        noteId = id
+    }
 }
