@@ -27,5 +27,5 @@ class EditTitleViewModel (
         }
     }
 
-    override fun errorResult(throwable: Throwable): EditTitleResult = EditTitleResult.Error(throwable.message)
+    override fun errorResult(throwable: Throwable) = EditTitleResult.Error(throwable.message)
 }

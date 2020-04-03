@@ -83,16 +83,14 @@ class NoteViewModelTest {
     }
 
     @Test
-    fun editTitle() {
-        noteViewModel.resultLiveData.assertValues(
-                NoteResult.Loading,
-                NoteResult.NavEditTitle(id),
-                NoteResult.TitleUpdated(title)
-        ) {
-            noteViewModel.setIdForTest(id)
-            noteViewModel.editTitle()
-            runBlocking { titleChannel.send(title) }
-        }
+    fun editTitle() = noteViewModel.resultLiveData.assertValues(
+            NoteResult.Loading,
+            NoteResult.NavEditTitle(id),
+            NoteResult.TitleUpdated(title)
+    ) {
+        noteViewModel.setIdForTest(id)
+        noteViewModel.editTitle()
+        runBlocking { titleChannel.send(title) }
     }
 
     @Test
