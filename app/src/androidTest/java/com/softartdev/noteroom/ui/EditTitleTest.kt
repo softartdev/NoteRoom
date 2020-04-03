@@ -3,7 +3,6 @@ package com.softartdev.noteroom.ui
 
 import android.content.Context
 import android.view.View
-import android.view.ViewGroup
 import androidx.annotation.IdRes
 import androidx.annotation.StringRes
 import androidx.test.core.app.ApplicationProvider
@@ -19,10 +18,8 @@ import androidx.test.rule.ActivityTestRule
 import com.softartdev.noteroom.R
 import com.softartdev.noteroom.ui.splash.SplashActivity
 import com.softartdev.noteroom.util.EspressoIdlingResource
-import org.hamcrest.Description
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers.allOf
-import org.hamcrest.TypeSafeMatcher
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -32,8 +29,6 @@ import org.junit.runner.RunWith
 @LargeTest
 @RunWith(AndroidJUnit4::class)
 class EditTitleTest {
-
-    private val context = ApplicationProvider.getApplicationContext<Context>()
 
     @Rule
     @JvmField
@@ -109,24 +104,10 @@ class EditTitleTest {
             onView(matcher).check(matches(isDisplayed()))
             matcher
         } catch (NoMatchingViewException: Exception) {
+            val context = ApplicationProvider.getApplicationContext<Context>()
             openActionBarOverflowOrOptionsMenu(context)
             withText(menuText)
         }
     }
 
-    private fun childAtPosition(
-            parentMatcher: Matcher<View>,
-            position: Int
-    ): Matcher<View> = object : TypeSafeMatcher<View>() {
-
-        public override fun matchesSafely(view: View): Boolean {
-            val parent = view.parent
-            return parent is ViewGroup && parentMatcher.matches(parent) && view == parent.getChildAt(position)
-        }
-
-        override fun describeTo(description: Description) {
-            description.appendText("Child at position $position in parent ")
-            parentMatcher.describeTo(description)
-        }
-    }
 }
