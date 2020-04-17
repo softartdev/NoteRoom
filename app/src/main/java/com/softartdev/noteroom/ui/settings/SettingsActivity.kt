@@ -9,7 +9,7 @@ import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.softartdev.noteroom.R
 import com.softartdev.noteroom.util.tintIcon
 
-class SettingsActivity : AppCompatActivity(R.layout.settings_activity) {
+class SettingsActivity : AppCompatActivity(R.layout.activity_settings) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
