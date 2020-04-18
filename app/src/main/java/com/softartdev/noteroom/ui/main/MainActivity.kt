@@ -29,8 +29,8 @@ class MainActivity : BaseActivity(
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         main_swipe_refresh.apply {
-            setProgressBackgroundColorSchemeResource(R.color.primary)
-            setColorSchemeResources(R.color.on_primary)
+            setProgressBackgroundColorSchemeResource(R.color.secondary)
+            setColorSchemeResources(R.color.on_secondary)
             setOnRefreshListener { mainViewModel.updateNotes() }
         }
         mainAdapter = MainAdapter()
