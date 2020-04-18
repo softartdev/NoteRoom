@@ -14,6 +14,7 @@ import org.koin.androidx.scope.lifecycleScope
 import org.koin.androidx.viewmodel.scope.viewModel
 
 class ConfirmPasswordDialog : BaseDialogFragment(
+        titleStringRes = R.string.dialog_title_conform_password,
         dialogLayoutRes = R.layout.dialog_set_password
 ), Observer<ConfirmResult> {
 

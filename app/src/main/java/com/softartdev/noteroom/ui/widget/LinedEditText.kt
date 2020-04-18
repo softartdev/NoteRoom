@@ -23,7 +23,7 @@ class LinedEditText @JvmOverloads constructor(
     private val rect = Rect()
     private val paint: Paint = Paint().apply {
         style = Paint.Style.STROKE
-        color = ContextCompat.getColor(context, R.color.colorAccent)
+        color = ContextCompat.getColor(context, R.color.secondary)
     }
 
     /**

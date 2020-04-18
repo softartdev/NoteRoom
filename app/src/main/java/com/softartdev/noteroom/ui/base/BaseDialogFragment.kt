@@ -8,20 +8,23 @@ import android.view.View
 import android.widget.Button
 import android.widget.Toast
 import androidx.annotation.LayoutRes
-import androidx.appcompat.app.AlertDialog
+import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatDialogFragment
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 
 abstract class BaseDialogFragment(
+        @StringRes private val titleStringRes: Int,
         @LayoutRes private val dialogLayoutRes: Int
 ) : AppCompatDialogFragment() {
 
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog = AlertDialog
-            .Builder(requireActivity())
-            .setView(dialogLayoutRes)
-            .setPositiveButton(android.R.string.ok, null)
-            .setNegativeButton(android.R.string.cancel, null)
-            .create()
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog =
+            MaterialAlertDialogBuilder(requireActivity())
+                    .setTitle(titleStringRes)
+                    .setView(dialogLayoutRes)
+                    .setPositiveButton(android.R.string.ok, null)
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .create()
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -42,8 +45,8 @@ abstract class BaseDialogFragment(
             .show()
 
     private fun showToast(text: String?) = Toast
-        .makeText(requireContext(), text, Toast.LENGTH_LONG)
-        .show()
+            .makeText(requireContext(), text, Toast.LENGTH_LONG)
+            .show()
 
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)

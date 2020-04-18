@@ -19,17 +19,17 @@ import kotlinx.android.synthetic.main.view_error.view.*
 import org.koin.androidx.scope.lifecycleScope
 import org.koin.androidx.viewmodel.scope.viewModel
 
-class MainActivity : BaseActivity(), MainAdapter.ClickListener, Observer<NoteListResult> {
+class MainActivity : BaseActivity(
+        contentLayoutId = R.layout.activity_main
+), MainAdapter.ClickListener, Observer<NoteListResult> {
 
     private val mainViewModel by lifecycleScope.viewModel<MainViewModel>(this)
     private var mainAdapter by autoCleared<MainAdapter>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-
         main_swipe_refresh.apply {
-            setProgressBackgroundColorSchemeResource(R.color.colorPrimary)
+            setProgressBackgroundColorSchemeResource(R.color.primary)
             setColorSchemeResources(R.color.on_primary)
             setOnRefreshListener { mainViewModel.updateNotes() }
         }
@@ -43,7 +43,6 @@ class MainActivity : BaseActivity(), MainAdapter.ClickListener, Observer<NoteLis
             startActivity(NoteActivity.getStartIntent(this, 0L))
         }
         main_error_view.button_reload.setOnClickListener { mainViewModel.updateNotes() }
-
         mainViewModel.resultLiveData.observe(this, this)
         mainViewModel.updateNotes()
     }

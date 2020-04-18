@@ -3,14 +3,15 @@ package com.softartdev.noteroom.ui.base
 import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
-import android.view.WindowManager
+import android.view.WindowManager.LayoutParams.FLAG_SECURE
+import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
 import com.softartdev.noteroom.R
 import com.softartdev.noteroom.ui.settings.SettingsActivity
 import com.softartdev.noteroom.util.PreferencesHelper
 import org.koin.android.ext.android.inject
 
-abstract class BaseActivity : AppCompatActivity() {
+abstract class BaseActivity(@LayoutRes contentLayoutId: Int) : AppCompatActivity(contentLayoutId) {
 
     private val preferencesHelper by inject<PreferencesHelper>()
 
@@ -18,7 +19,7 @@ abstract class BaseActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         // Hide task snapshot if enable in settings
         if (preferencesHelper.hideScreenContentsEntry) {
-            window.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE)
+            window.setFlags(FLAG_SECURE, FLAG_SECURE)
         }
     }
 
