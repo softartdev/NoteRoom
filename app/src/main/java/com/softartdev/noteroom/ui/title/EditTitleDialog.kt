@@ -14,6 +14,7 @@ import org.koin.androidx.scope.lifecycleScope
 import org.koin.androidx.viewmodel.scope.viewModel
 
 class EditTitleDialog : BaseDialogFragment(
+        titleStringRes = R.string.dialog_title_change_title,
         dialogLayoutRes = R.layout.dialog_edit_title
 ), Observer<EditTitleResult> {
 

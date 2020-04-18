@@ -45,4 +45,9 @@
     <string name="action_edit_title">Редактировать заголовок</string>
     <string name="enter_title">Введите заголовок</string>
     <string name="empty_title">Заголовок не должен быть пустым</string>
+    <string name="create_note">Создать заметку</string>
+    <string name="dialog_title_change_password">Смена пароля</string>
+    <string name="dialog_title_conform_password">Подтверждение пароля</string>
+    <string name="dialog_title_enter_password">Ввод пароля</string>
+    <string name="dialog_title_change_title">Редактирование заголовка</string>
 </resources>

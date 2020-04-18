@@ -52,4 +52,9 @@
     <string name="action_edit_title">Edit title</string>
     <string name="enter_title">Enter title</string>
     <string name="empty_title">Title must not be empty</string>
+    <string name="create_note">Create note</string>
+    <string name="dialog_title_change_password">Changing password</string>
+    <string name="dialog_title_conform_password">Confirming password</string>
+    <string name="dialog_title_enter_password">Entering password</string>
+    <string name="dialog_title_change_title">Editing title</string>
 </resources>

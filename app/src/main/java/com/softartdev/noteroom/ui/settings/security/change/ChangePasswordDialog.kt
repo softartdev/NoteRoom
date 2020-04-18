@@ -14,6 +14,7 @@ import org.koin.androidx.scope.lifecycleScope
 import org.koin.androidx.viewmodel.scope.viewModel
 
 class ChangePasswordDialog : BaseDialogFragment(
+        titleStringRes = R.string.dialog_title_change_password,
         dialogLayoutRes = R.layout.dialog_change_password
 ), Observer<ChangeResult> {
 

@@ -14,6 +14,7 @@ import org.koin.androidx.scope.lifecycleScope
 import org.koin.androidx.viewmodel.scope.viewModel
 
 class EnterPasswordDialog : BaseDialogFragment(
+        titleStringRes = R.string.dialog_title_enter_password,
         dialogLayoutRes = R.layout.dialog_password
 ), Observer<EnterResult> {
 

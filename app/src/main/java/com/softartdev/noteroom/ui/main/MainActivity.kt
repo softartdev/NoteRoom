@@ -29,7 +29,7 @@ class MainActivity : BaseActivity(), MainAdapter.ClickListener, Observer<NoteLis
         setContentView(R.layout.activity_main)
 
         main_swipe_refresh.apply {
-            setProgressBackgroundColorSchemeResource(R.color.colorPrimary)
+            setProgressBackgroundColorSchemeResource(R.color.primary)
             setColorSchemeResources(R.color.on_primary)
             setOnRefreshListener { mainViewModel.updateNotes() }
         }

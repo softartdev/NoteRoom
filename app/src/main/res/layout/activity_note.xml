@@ -30,7 +30,7 @@
         android:importantForAutofill="no"
         android:inputType="textMultiLine"
         android:scrollbars="vertical"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textSize="19.5sp"
         tools:text="@tools:sample/lorem/random" />
 
 </LinearLayout>
