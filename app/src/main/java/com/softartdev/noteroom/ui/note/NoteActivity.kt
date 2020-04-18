@@ -18,7 +18,7 @@ import kotlinx.android.synthetic.main.activity_note.*
 import org.koin.androidx.scope.lifecycleScope
 import org.koin.androidx.viewmodel.scope.viewModel
 
-class NoteActivity : BaseActivity(), Observer<NoteResult> {
+class NoteActivity : BaseActivity(R.layout.activity_note), Observer<NoteResult> {
 
     private val noteViewModel by lifecycleScope.viewModel<NoteViewModel>(this)
 
@@ -40,11 +40,7 @@ class NoteActivity : BaseActivity(), Observer<NoteResult> {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_note)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
-        noteViewModel.resultLiveData.observe(this, this)
-
         savedInstanceState?.let { bundle ->
             bundle.getString(KEY_TITLE)?.let { noteTitle = it }
             bundle.getString(KEY_TEXT)?.let { noteText = it }
@@ -52,6 +48,7 @@ class NoteActivity : BaseActivity(), Observer<NoteResult> {
             0L -> noteViewModel.createNote()
             else -> noteViewModel.loadNote(noteId)
         }
+        noteViewModel.resultLiveData.observe(this, this)
     }
 
     override fun onChanged(noteResult: NoteResult) {

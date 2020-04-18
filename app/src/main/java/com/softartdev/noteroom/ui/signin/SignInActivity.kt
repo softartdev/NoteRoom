@@ -15,22 +15,18 @@ import kotlinx.android.synthetic.main.view_error.view.*
 import org.koin.androidx.scope.lifecycleScope
 import org.koin.androidx.viewmodel.scope.viewModel
 
-class SignInActivity : BaseActivity(), Observer<SignInResult> {
+class SignInActivity : BaseActivity(R.layout.activity_sign_in), Observer<SignInResult> {
 
     private val signInViewModel by lifecycleScope.viewModel<SignInViewModel>(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_sign_in)
-
         sign_in_error_view.button_reload.setOnClickListener { attemptSignIn() }
-
         password_edit_text.setOnEditorActionListener { _, _, _ ->
             attemptSignIn()
             true
         }
         sign_in_button.setOnClickListener { attemptSignIn() }
-
         signInViewModel.resultLiveData.observe(this, this)
     }
 
