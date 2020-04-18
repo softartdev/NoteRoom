@@ -11,9 +11,7 @@ import com.softartdev.noteroom.ui.settings.SettingsActivity
 import com.softartdev.noteroom.util.PreferencesHelper
 import org.koin.android.ext.android.inject
 
-abstract class BaseActivity : AppCompatActivity {
-    constructor()
-    constructor(@LayoutRes contentLayoutId: Int) : super(contentLayoutId)
+abstract class BaseActivity(@LayoutRes contentLayoutId: Int) : AppCompatActivity(contentLayoutId) {
 
     private val preferencesHelper by inject<PreferencesHelper>()
 

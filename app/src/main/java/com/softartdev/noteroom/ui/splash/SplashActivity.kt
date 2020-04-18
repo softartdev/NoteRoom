@@ -3,14 +3,14 @@ package com.softartdev.noteroom.ui.splash
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
-import com.softartdev.noteroom.ui.base.BaseActivity
 import com.softartdev.noteroom.ui.main.MainActivity
 import com.softartdev.noteroom.ui.signin.SignInActivity
 import org.koin.androidx.scope.lifecycleScope
 import org.koin.androidx.viewmodel.scope.viewModel
 
-class SplashActivity : BaseActivity(), Observer<SplashResult> {
+class SplashActivity : AppCompatActivity(), Observer<SplashResult> {
     private val splashViewModel by lifecycleScope.viewModel<SplashViewModel>(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
