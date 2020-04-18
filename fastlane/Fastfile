@@ -33,7 +33,7 @@ platform :android do
   desc "Deploy a new version to the Google Play"
   lane :deploy do
     gradle(task: "clean assembleRelease")
-    upload_to_play_store
+    upload_to_play_store # Uploads the APK built in the gradle step above
   end
 
   lane :playstore do
@@ -41,7 +41,7 @@ platform :android do
       task: 'clean bundle',
       build_type: 'Release'
     )
-    upload_to_play_store # Uploads the APK built in the gradle step above
+    upload_to_play_store # Uploads the AAB built in the gradle step above
   end
 
   lane :clean_test_bundle_publish do
@@ -49,6 +49,14 @@ platform :android do
       task: 'clean test bundle',
       build_type: 'Release'
     )
-    upload_to_play_store # Uploads the APK built in the gradle step above
+    upload_to_play_store # Uploads the AAB built in the gradle step above
+  end
+
+  lane :build_bundle_publish do
+    gradle(
+      task: 'build bundle', # Task 'build' include 'assemble', 'lint' & 'test'
+      build_type: 'Release'
+    )
+    upload_to_play_store # Uploads the AAB built in the gradle step above
   end
 end
