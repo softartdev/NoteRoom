@@ -4,12 +4,12 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.softartdev.noteroom.R
+import com.softartdev.noteroom.ui.base.BaseActivity
 import com.softartdev.noteroom.util.tintIcon
 
-class SettingsActivity : AppCompatActivity(R.layout.activity_settings) {
+class SettingsActivity : BaseActivity(R.layout.activity_settings) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,10 +25,6 @@ class SettingsActivity : AppCompatActivity(R.layout.activity_settings) {
     override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
         R.id.action_oss -> {
             startActivity(Intent(this, OssLicensesMenuActivity::class.java))
-            true
-        }
-        android.R.id.home -> {
-            finish()
             true
         }
         else -> super.onOptionsItemSelected(item)
