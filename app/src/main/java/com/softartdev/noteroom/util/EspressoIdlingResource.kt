@@ -38,14 +38,3 @@ object EspressoIdlingResource {
         }
     }
 }
-
-// Espresso does not work well with coroutines yet. See
-// https://github.com/Kotlin/kotlinx.coroutines/issues/982
-inline fun <T> wrapEspressoIdlingResource(use: Boolean = true, function: () -> T): T = if (use) {
-    EspressoIdlingResource.increment() // Set app as busy.
-    try {
-        function()
-    } finally {
-        EspressoIdlingResource.decrement() // Set app as idle.
-    }
-} else function()

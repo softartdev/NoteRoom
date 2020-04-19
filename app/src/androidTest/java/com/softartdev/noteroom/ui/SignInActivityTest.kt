@@ -15,6 +15,7 @@ import com.softartdev.noteroom.R
 import com.softartdev.noteroom.data.SafeRepo
 import com.softartdev.noteroom.ui.splash.SplashActivity
 import com.softartdev.noteroom.util.EspressoIdlingResource
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
@@ -36,7 +37,7 @@ class SignInActivityTest {
             val safeRepo by inject(SafeRepo::class.java)
             while (safeRepo.databaseState == SQLCipherUtils.State.DOES_NOT_EXIST) {
                 val db = safeRepo.buildDatabaseInstanceIfNeed()
-                val notes = runBlocking { db.noteDao().getNotes() }
+                val notes = runBlocking { db.noteDao().getNotes().first() }
                 Timber.d("notes = %s", notes)
                 Timber.d("databaseState = %s", safeRepo.databaseState.name)
             }

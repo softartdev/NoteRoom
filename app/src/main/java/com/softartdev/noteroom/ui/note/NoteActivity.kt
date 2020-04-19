@@ -7,7 +7,6 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.core.app.NavUtils
 import androidx.lifecycle.Observer
 import com.google.android.material.snackbar.Snackbar
 import com.softartdev.noteroom.R
@@ -140,7 +139,7 @@ class NoteActivity : BaseActivity(R.layout.activity_note), Observer<NoteResult> 
         }
     }
 
-    private fun onNavBack() = NavUtils.navigateUpFromSameTask(this)
+    private fun onNavBack() = finish()
 
     private fun showError(message: String?) = with(AlertDialog.Builder(this)) {
         setTitle(android.R.string.dialog_alert_title)

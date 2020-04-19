@@ -29,12 +29,7 @@
         <activity android:name=".ui.main.MainActivity" />
         <activity
             android:name=".ui.note.NoteActivity"
-            android:label="@string/title_activity_note"
-            android:parentActivityName=".ui.main.MainActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.softartdev.noteroom.ui.main.MainActivity" />
-        </activity>
+            android:label="@string/title_activity_note" />
         <activity
             android:name=".ui.settings.SettingsActivity"
             android:label="@string/settings" />
