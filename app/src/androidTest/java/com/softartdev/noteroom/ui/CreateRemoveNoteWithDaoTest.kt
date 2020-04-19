@@ -1,11 +1,8 @@
 package com.softartdev.noteroom.ui
 
 
-import android.content.Context
 import android.view.View
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.room.Room
-import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.UiController
@@ -17,10 +14,8 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.rule.ActivityTestRule
 import com.softartdev.noteroom.R
-import com.softartdev.noteroom.data.SafeRepo.Companion.DB_NAME
+import com.softartdev.noteroom.data.SafeRepo
 import com.softartdev.noteroom.database.Note
-import com.softartdev.noteroom.database.NoteDao
-import com.softartdev.noteroom.database.NoteDatabase
 import com.softartdev.noteroom.ui.splash.SplashActivity
 import com.softartdev.noteroom.util.EspressoIdlingResource
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -33,7 +28,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.io.IOException
+import org.koin.java.KoinJavaComponent.inject
 import java.util.*
 
 @LargeTest
@@ -41,42 +36,34 @@ import java.util.*
 @OptIn(ExperimentalCoroutinesApi::class)
 class CreateRemoveNoteWithDaoTest {
 
-    private val context: Context = ApplicationProvider.getApplicationContext()
-
     @get:Rule var instantTaskExecutorRule = InstantTaskExecutorRule()
 
     @Rule
     @JvmField
     var activityTestRule = ActivityTestRule(SplashActivity::class.java)
 
-    private lateinit var db: NoteDatabase
-    private lateinit var noteDao: NoteDao
+    private val safeRepo by inject(SafeRepo::class.java)
+    private val noteDao = safeRepo.noteDao
+
     private val note = Note(
             id = 0,
             title = "Test title",
             text = "Test text",
             dateCreated = Date(),
-            dateModified = Date()
-    )
+            dateModified = Date())
 
     @Before
-    fun createDb() {
-        db = Room.databaseBuilder(context, NoteDatabase::class.java, DB_NAME).build()
-        noteDao = db.noteDao()
-
+    fun registerIdlingResource() {
         IdlingRegistry.getInstance().register(EspressoIdlingResource.countingIdlingResource)
     }
 
     @After
-    @Throws(IOException::class)
-    fun closeDb() {
-        db.close()
-
+    fun unregisterIdlingResource() {
         IdlingRegistry.getInstance().unregister(EspressoIdlingResource.countingIdlingResource)
     }
 
     @Test
-    fun createRemoveNoteWithDao() = runBlockingTest {
+    fun createRemoveNote() = runBlockingTest {
         val messageTextView = onView(withId(R.id.text_message))
         messageTextView.check(matches(withText(R.string.label_empty_result)))
 

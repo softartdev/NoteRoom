@@ -52,7 +52,7 @@ class CreateRemoveNoteWithUseCaseTest {
     }
 
     @Test
-    fun createRemoveNoteWithDao() = runBlockingTest {
+    fun createRemoveNote() = runBlockingTest {
         val messageTextView = onView(withId(R.id.text_message))
         messageTextView.check(matches(withText(R.string.label_empty_result)))
 
