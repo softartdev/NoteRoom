@@ -4,7 +4,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.softartdev.noteroom.util.EspressoIdlingResource
-import com.softartdev.noteroom.util.wrapEspressoIdlingResource
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import timber.log.Timber
@@ -20,19 +19,19 @@ abstract class BaseViewModel<T> : ViewModel() {
             block: suspend CoroutineScope.() -> T
     ) {
         viewModelScope.launch(Dispatchers.IO) {
-            wrapEspressoIdlingResource(useIdling) {
+            try {
                 if (useIdling) {
+                    EspressoIdlingResource.increment()
                     loadingResult?.let { loading -> onResult(loading) }
                 }
-                val result: T = try {
-                    block()
-                } catch (e: Throwable) {
-                    Timber.e(e)
-                    errorResult(e)
-                }
-                onResult(result)
+                onResult(block())
+            } catch (e: Throwable) {
+                Timber.e(e)
+                onResult(errorResult(e))
+            } finally {
+                if (useIdling) EspressoIdlingResource.decrement()
             }
-        }
+        }.start()
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
