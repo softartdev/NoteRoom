@@ -6,6 +6,8 @@ import com.softartdev.noteroom.database.Note
 import com.softartdev.noteroom.util.MainCoroutineRule
 import com.softartdev.noteroom.util.assertValues
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
 import net.sqlcipher.database.SQLiteException
 import org.junit.Rule
@@ -27,7 +29,7 @@ class MainViewModelTest {
     @Test
     fun success() = mainCoroutineRule.runBlockingTest {
         val notes = emptyList<Note>()
-        Mockito.`when`(noteUseCase.getNotes()).thenReturn(notes)
+        Mockito.`when`(noteUseCase.getNotes()).thenReturn(flowOf(notes))
         mainViewModel.resultLiveData.assertValues(
                 NoteListResult.Loading,
                 NoteListResult.Success(notes)
@@ -38,7 +40,7 @@ class MainViewModelTest {
 
     @Test
     fun navMain() = mainCoroutineRule.runBlockingTest {
-        Mockito.`when`(noteUseCase.getNotes()).thenThrow(SQLiteException::class.java)
+        Mockito.`when`(noteUseCase.getNotes()).thenReturn(flow { throw SQLiteException() })
         mainViewModel.resultLiveData.assertValues(
                 NoteListResult.Loading,
                 NoteListResult.NavMain
@@ -49,7 +51,7 @@ class MainViewModelTest {
 
     @Test
     fun error() = mainCoroutineRule.runBlockingTest {
-        Mockito.`when`(noteUseCase.getNotes()).thenAnswer { throw Throwable() }
+        Mockito.`when`(noteUseCase.getNotes()).thenReturn(flow { throw Throwable() })
         mainViewModel.resultLiveData.assertValues(
                 NoteListResult.Loading,
                 NoteListResult.Error(null)

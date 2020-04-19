@@ -24,6 +24,7 @@ import com.softartdev.noteroom.database.NoteDatabase
 import com.softartdev.noteroom.ui.splash.SplashActivity
 import com.softartdev.noteroom.util.EspressoIdlingResource
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runBlockingTest
 import org.hamcrest.Matcher
 import org.junit.After
@@ -79,7 +80,7 @@ class CreateRemoveNoteWithDaoTest {
         val messageTextView = onView(withId(R.id.text_message))
         messageTextView.check(matches(withText(R.string.label_empty_result)))
 
-        var act = noteDao.getNotes()
+        var act = noteDao.getNotes().first()
         var exp = emptyList<Note>()
         assertEquals(exp, act)
 
@@ -87,7 +88,7 @@ class CreateRemoveNoteWithDaoTest {
         val actId = noteDao.insertNote(note)
         assertEquals(expId, actId)
 
-        act = noteDao.getNotes()
+        act = noteDao.getNotes().first()
         exp = listOf(note.copy(id = expId))
         assertEquals(exp, act)
 
@@ -103,7 +104,7 @@ class CreateRemoveNoteWithDaoTest {
         val expDeleted = 1
         assertEquals(expDeleted, actDeleted)
 
-        act = noteDao.getNotes()
+        act = noteDao.getNotes().first()
         exp = emptyList()
         assertEquals(exp, act)
 
