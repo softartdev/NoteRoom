@@ -10,8 +10,11 @@ import java.util.*
 class NoteUseCase(
         private val safeRepo: SafeRepo
 ) {
-
     val titleChannel: Channel<String> by lazy { return@lazy Channel<String>() }
+
+    fun doOnRelaunchFlow(function: () -> Unit) {
+        safeRepo.relaunchFlowEmitter = function
+    }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     fun getNotes(): Flow<List<Note>> = safeRepo.noteDao.getNotes().distinctUntilChanged()

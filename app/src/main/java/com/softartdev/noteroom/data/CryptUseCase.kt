@@ -39,5 +39,6 @@ class CryptUseCase(
             requireNotNull(newPass)
             safeRepo.encrypt(newPass)
         }
+        safeRepo.relaunchFlowEmitter?.invoke()
     }
 }

@@ -22,6 +22,8 @@ class SafeRepo(
     val noteDao: NoteDao
         get() = noteDatabase?.noteDao() ?: throw SafeSQLiteException("DB is null")
 
+    var relaunchFlowEmitter: (() -> Unit)? = null
+
     fun buildDatabaseInstanceIfNeed(
             passphrase: Editable = SpannableStringBuilder()
     ): NoteDatabase = synchronized(this) {

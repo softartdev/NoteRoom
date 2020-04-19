@@ -13,6 +13,10 @@ class MainViewModel (
 
     override val loadingResult: NoteListResult = NoteListResult.Loading
 
+    init {
+        noteUseCase.doOnRelaunchFlow(this::updateNotes)
+    }
+
     fun updateNotes() = launch(
             flow = noteUseCase.getNotes().map { notes: List<Note> ->
                 NoteListResult.Success(notes)
