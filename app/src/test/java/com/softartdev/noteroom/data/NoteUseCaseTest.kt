@@ -5,6 +5,8 @@ import com.softartdev.noteroom.database.NoteDao
 import com.softartdev.noteroom.util.MainCoroutineRule
 import com.softartdev.noteroom.util.anyObject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.After
 import org.junit.Assert.*
@@ -33,7 +35,7 @@ class NoteUseCaseTest {
         notes.addAll(listOf(firstNote, secondNote, thirdNote))
         val mockNoteDao = Mockito.mock(NoteDao::class.java)
         Mockito.`when`(mockSafeRepo.noteDao).thenReturn(mockNoteDao)
-        Mockito.`when`(mockNoteDao.getNotes()).thenReturn(notes)
+        Mockito.`when`(mockNoteDao.getNotes()).thenReturn(flowOf(notes))
         Mockito.`when`(mockNoteDao.insertNote(anyObject())).thenReturn(notes.last().id.inc())
         Mockito.`when`(mockNoteDao.getNoteById(Mockito.anyLong())).thenAnswer { invocationOnMock ->
             val id: Long = invocationOnMock.arguments[0] as Long
@@ -65,7 +67,7 @@ class NoteUseCaseTest {
 
     @Test
     fun getNotes() = mainCoroutineRule.runBlockingTest {
-        assertEquals(notes, noteUseCase.getNotes())
+        assertEquals(notes, noteUseCase.getNotes().first())
     }
 
     @Test

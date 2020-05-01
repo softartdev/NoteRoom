@@ -5,6 +5,7 @@ import com.softartdev.noteroom.database.NoteDao
 import com.softartdev.noteroom.util.MainCoroutineRule
 import com.softartdev.noteroom.util.StubEditable
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -43,6 +44,7 @@ class CryptUseCaseTest {
     fun `check correct password`() = mainCoroutineRule.runBlockingTest {
         val mockNoteDao = Mockito.mock(NoteDao::class.java)
         Mockito.`when`(mockSafeRepo.noteDao).thenReturn(mockNoteDao)
+        Mockito.`when`(mockNoteDao.getNotes()).thenReturn(flowOf(emptyList()))
         val pass = StubEditable("correct password")
         assertTrue(cryptUseCase.checkPassword(pass))
     }

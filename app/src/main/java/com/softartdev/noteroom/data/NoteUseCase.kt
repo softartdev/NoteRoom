@@ -1,16 +1,23 @@
 package com.softartdev.noteroom.data
 
 import com.softartdev.noteroom.database.Note
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import java.util.*
 
 class NoteUseCase(
         private val safeRepo: SafeRepo
 ) {
-
     val titleChannel: Channel<String> by lazy { return@lazy Channel<String>() }
-    
-    suspend fun getNotes(): List<Note> = safeRepo.noteDao.getNotes()
+
+    fun doOnRelaunchFlow(function: () -> Unit) {
+        safeRepo.relaunchFlowEmitter = function
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    fun getNotes(): Flow<List<Note>> = safeRepo.noteDao.getNotes().distinctUntilChanged()
 
     suspend fun createNote(title: String = "", text: String = ""): Long {
         val date = Date()

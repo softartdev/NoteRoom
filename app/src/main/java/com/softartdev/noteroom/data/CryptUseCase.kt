@@ -3,6 +3,8 @@ package com.softartdev.noteroom.data
 import android.text.Editable
 import android.text.SpannableStringBuilder
 import com.commonsware.cwac.saferoom.SQLCipherUtils
+import kotlinx.coroutines.flow.first
+import timber.log.Timber
 
 class CryptUseCase(
         private val safeRepo: SafeRepo
@@ -18,10 +20,10 @@ class CryptUseCase(
         safeRepo.closeDatabase()
         val passphrase = SpannableStringBuilder(pass) // threadsafe
         safeRepo.buildDatabaseInstanceIfNeed(passphrase)
-        safeRepo.noteDao.getNotes()//TODO remove if no need (after tests for sign in)
+        safeRepo.noteDao.getNotes().first()//TODO remove if no need (after tests for sign in)
         true
     } catch (e: Exception) {
-        e.printStackTrace()
+        Timber.e(e)
         false
     }
 
@@ -37,5 +39,6 @@ class CryptUseCase(
             requireNotNull(newPass)
             safeRepo.encrypt(newPass)
         }
+        safeRepo.relaunchFlowEmitter?.invoke()
     }
 }

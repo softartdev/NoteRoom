@@ -1,6 +1,7 @@
 package com.softartdev.noteroom.database
 
 import androidx.room.*
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface NoteDao {
@@ -11,7 +12,7 @@ interface NoteDao {
      * @return all notes.
      */
     @Query("SELECT * FROM note")
-    suspend fun getNotes(): List<Note>
+    fun getNotes(): Flow<List<Note>>
 
     /**
      * Select a note by id.
