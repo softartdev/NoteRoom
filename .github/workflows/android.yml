@@ -18,8 +18,6 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-      - name: set up GnuPG
-        run: brew install gnupg
       - name: Decrypt large secret
         run: ./.github/scripts/decrypt_secret.sh
         env:
