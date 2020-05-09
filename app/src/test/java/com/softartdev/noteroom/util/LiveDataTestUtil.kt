@@ -17,6 +17,12 @@ package com.softartdev.noteroom.util
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
+import androidx.lifecycle.viewModelScope
+import com.softartdev.noteroom.ui.base.BaseViewModel
+import kotlinx.coroutines.InternalCoroutinesApi
+import kotlinx.coroutines.flow.FlowCollector
+import kotlinx.coroutines.flow.conflate
+import kotlinx.coroutines.launch
 import org.junit.Assert.fail
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.*
@@ -102,6 +108,47 @@ fun <T> LiveData<T>.assertValues(
         if (expect != actual) fail("Values emitted at index $i do not match\nExpected: $expectedValues\nActual  : $actualValues")
     }
     verify(observer, times(expectedValues.size)).onChanged(any())
+}
+
+@OptIn(InternalCoroutinesApi::class)
+fun <T:Any> BaseViewModel<T>.assertValues(
+        vararg expectedRaw: T,
+        timeout: Long = 2,
+        block: () -> Unit = {}
+) {
+    val actualValues = mutableListOf<T>()
+    val latch = CountDownLatch(expectedRaw.size)
+
+    val collector: FlowCollector<T> = spy(object : FlowCollector<T> {
+        override suspend fun emit(value: T) {
+            actualValues += value
+            latch.countDown()
+        }
+    })
+    val job = viewModelScope.launch {
+        flow.conflate().collect(collector)
+    }
+    block.invoke()
+//    job.cancel()
+    // Don't wait indefinitely if the LiveData is not set.
+    if (!latch.await(timeout, TimeUnit.SECONDS)) {
+        fail("Flow value was never set.")
+    }
+    // Arrays do not print prettily, so convert them to a list
+    val expectedValues: List<T> = expectedRaw.asList()
+    if (actualValues.size > expectedValues.size) {
+        fail("Flow emitted more values than expected\nExpected: $expectedValues\nActual  : $actualValues")
+    }
+    if (actualValues.size < expectedValues.size) {
+        fail("Flow emitted fewer values than expected\nExpected: $expectedValues\nActual  : $actualValues")
+    }
+    expectedValues.zip(actualValues).forEachIndexed { i, (expect, actual) ->
+        if (expect != actual) fail("Values emitted at index $i do not match\nExpected: $expectedValues\nActual  : $actualValues")
+    }
+//    viewModelScope.launch {
+//        verify(collector, times(expectedValues.size)).emit(any())
+//    }
+    job.cancel()
 }
 
 fun <T> LiveData<T>.getOrAwaitValues(

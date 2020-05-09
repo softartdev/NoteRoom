@@ -6,6 +6,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.viewModelScope
 import androidx.preference.*
 import com.softartdev.noteroom.R
 import com.softartdev.noteroom.ui.base.BaseDialogFragment
@@ -14,6 +15,9 @@ import com.softartdev.noteroom.ui.settings.security.confirm.ConfirmPasswordDialo
 import com.softartdev.noteroom.ui.settings.security.enter.EnterPasswordDialog
 import com.softartdev.noteroom.util.ThemeHelper
 import com.softartdev.noteroom.util.tintIcon
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import org.koin.androidx.scope.lifecycleScope
 import org.koin.androidx.viewmodel.scope.viewModel
 import timber.log.Timber
@@ -53,7 +57,7 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChan
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        settingsViewModel.resultLiveData.observe(this, this)
+        settingsViewModel.viewModelScope.launch(Dispatchers.Main) { settingsViewModel.flow.collect { onChanged(it) } }
         settingsViewModel.checkEncryption()
     }
 

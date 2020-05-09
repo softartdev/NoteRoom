@@ -3,8 +3,10 @@ package com.softartdev.noteroom.ui.settings
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.softartdev.noteroom.data.CryptUseCase
 import com.softartdev.noteroom.util.MainCoroutineRule
-import com.softartdev.noteroom.util.getOrAwaitValue
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
@@ -28,45 +30,51 @@ class SettingsViewModelTest {
     @Test
     fun checkEncryptionFalse() = assertEncryption(false)
 
-    private fun assertEncryption(encryption: Boolean) {
+    private fun assertEncryption(encryption: Boolean) = mainCoroutineRule.runBlockingTest {
         Mockito.`when`(cryptUseCase.dbIsEncrypted()).thenReturn(encryption)
         settingsViewModel.checkEncryption()
-        assertEquals(settingsViewModel.resultLiveData.getOrAwaitValue(), SecurityResult.EncryptEnable(encryption))
+        launch {
+            assertEquals(settingsViewModel.flow.first(), SecurityResult.EncryptEnable(encryption))
+        }.cancel()
     }
 
     @Test
-    fun changeEncryptionSetPasswordDialog() {
+    fun changeEncryptionSetPasswordDialog() = mainCoroutineRule.runBlockingTest {
         settingsViewModel.changeEncryption(true)
-        assertEquals(settingsViewModel.resultLiveData.getOrAwaitValue(), SecurityResult.SetPasswordDialog)
+        launch {
+            assertEquals(settingsViewModel.flow.first(), SecurityResult.SetPasswordDialog)
+        }.cancel()
     }
 
     @Test
-    fun changeEncryptionPasswordDialog() {
+    fun changeEncryptionPasswordDialog() = mainCoroutineRule.runBlockingTest {
         Mockito.`when`(cryptUseCase.dbIsEncrypted()).thenReturn(true)
         settingsViewModel.changeEncryption(false)
-        assertEquals(settingsViewModel.resultLiveData.getOrAwaitValue(), SecurityResult.PasswordDialog)
+        launch {
+            assertEquals(settingsViewModel.flow.first(), SecurityResult.PasswordDialog)
+        }.cancel()
     }
 
     @Test
-    fun changeEncryptionEncryptEnableFalse() {
+    fun changeEncryptionEncryptEnableFalse() = mainCoroutineRule.launch {
         Mockito.`when`(cryptUseCase.dbIsEncrypted()).thenReturn(false)
         settingsViewModel.changeEncryption(false)
-        assertEquals(settingsViewModel.resultLiveData.getOrAwaitValue(), SecurityResult.EncryptEnable(false))
-    }
+        assertEquals(settingsViewModel.flow.first(), SecurityResult.EncryptEnable(false))
+    }.cancel()
 
     @Test
-    fun changePasswordChangePasswordDialog() {
+    fun changePasswordChangePasswordDialog() = mainCoroutineRule.launch {
         Mockito.`when`(cryptUseCase.dbIsEncrypted()).thenReturn(true)
         settingsViewModel.changePassword()
-        assertEquals(settingsViewModel.resultLiveData.getOrAwaitValue(), SecurityResult.ChangePasswordDialog)
-    }
+        assertEquals(settingsViewModel.flow.first(), SecurityResult.ChangePasswordDialog)
+    }.cancel()
 
     @Test
-    fun changePasswordSetPasswordDialog() {
+    fun changePasswordSetPasswordDialog() = mainCoroutineRule.launch {
         Mockito.`when`(cryptUseCase.dbIsEncrypted()).thenReturn(false)
         settingsViewModel.changePassword()
-        assertEquals(settingsViewModel.resultLiveData.getOrAwaitValue(), SecurityResult.SetPasswordDialog)
-    }
+        assertEquals(settingsViewModel.flow.first(), SecurityResult.SetPasswordDialog)
+    }.cancel()
 
     @Test
     fun errorResult() {

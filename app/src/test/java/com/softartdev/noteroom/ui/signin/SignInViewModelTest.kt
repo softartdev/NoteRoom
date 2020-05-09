@@ -28,7 +28,7 @@ class SignInViewModelTest {
     fun navMain() = mainCoroutineRule.runBlockingTest {
         val pass = StubEditable("pass")
         Mockito.`when`(cryptUseCase.checkPassword(pass)).thenReturn(true)
-        signInViewModel.resultLiveData.assertValues(
+        signInViewModel.assertValues(
                 SignInResult.ShowProgress,
                 SignInResult.NavMain
         ) {
@@ -37,18 +37,20 @@ class SignInViewModelTest {
     }
 
     @Test
-    fun showEmptyPassError() = signInViewModel.resultLiveData.assertValues(
-            SignInResult.ShowProgress,
-            SignInResult.ShowEmptyPassError
-    ) {
-        signInViewModel.signIn(pass = StubEditable(""))
+    fun showEmptyPassError() = mainCoroutineRule.runBlockingTest {
+        signInViewModel.assertValues(
+                SignInResult.ShowProgress,
+                SignInResult.ShowEmptyPassError
+        ) {
+            signInViewModel.signIn(pass = StubEditable(""))
+        }
     }
 
     @Test
     fun showIncorrectPassError() = mainCoroutineRule.runBlockingTest {
         val pass = StubEditable("pass")
         Mockito.`when`(cryptUseCase.checkPassword(pass)).thenReturn(false)
-        signInViewModel.resultLiveData.assertValues(
+        signInViewModel.assertValues(
                 SignInResult.ShowProgress,
                 SignInResult.ShowIncorrectPassError
         ) {
@@ -60,7 +62,7 @@ class SignInViewModelTest {
     fun showError() = mainCoroutineRule.runBlockingTest {
         val throwable = Throwable()
         Mockito.`when`(cryptUseCase.checkPassword(anyObject())).then { throw throwable }
-        signInViewModel.resultLiveData.assertValues(
+        signInViewModel.assertValues(
                 SignInResult.ShowProgress,
                 SignInResult.ShowError(throwable)
         ) {

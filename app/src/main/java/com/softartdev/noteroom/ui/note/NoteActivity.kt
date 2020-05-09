@@ -8,12 +8,16 @@ import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Observer
+import androidx.lifecycle.viewModelScope
 import com.google.android.material.snackbar.Snackbar
 import com.softartdev.noteroom.R
 import com.softartdev.noteroom.ui.base.BaseActivity
 import com.softartdev.noteroom.ui.title.EditTitleDialog
 import com.softartdev.noteroom.util.*
 import kotlinx.android.synthetic.main.activity_note.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import org.koin.androidx.scope.lifecycleScope
 import org.koin.androidx.viewmodel.scope.viewModel
 
@@ -47,7 +51,7 @@ class NoteActivity : BaseActivity(R.layout.activity_note), Observer<NoteResult> 
             0L -> noteViewModel.createNote()
             else -> noteViewModel.loadNote(noteId)
         }
-        noteViewModel.resultLiveData.observe(this, this)
+        noteViewModel.viewModelScope.launch(Dispatchers.Main) { noteViewModel.flow.collect { onChanged(it) } }
     }
 
     override fun onChanged(noteResult: NoteResult) {

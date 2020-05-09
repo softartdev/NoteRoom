@@ -45,34 +45,40 @@ class EditTitleViewModelTest {
 
     @After
     fun tearDown() = mainCoroutineRule.runBlockingTest {
-        editTitleViewModel.resultLiveData.value = null
+//        editTitleViewModel.flow.value = null
     }
 
     @Test
-    fun loadTitle() = editTitleViewModel.resultLiveData.assertValues(
-            EditTitleResult.Loading,
-            EditTitleResult.Loaded(title)
-    ) {
-        editTitleViewModel.loadTitle(id)
+    fun loadTitle() = mainCoroutineRule.runBlockingTest {
+        editTitleViewModel.assertValues(
+                EditTitleResult.Loading,
+                EditTitleResult.Loaded(title)
+        ) {
+            editTitleViewModel.loadTitle(id)
+        }
     }
 
     @Test
-    fun editTitleSuccess() = editTitleViewModel.resultLiveData.assertValues(
-            EditTitleResult.Loading,
-            EditTitleResult.Success
-    ) {
-        val exp = "new title"
-        editTitleViewModel.editTitle(id, exp)
-        val act = runBlocking { titleChannel.receive() }
-        assertEquals(exp, act)
+    fun editTitleSuccess() = mainCoroutineRule.runBlockingTest {
+        editTitleViewModel.assertValues(
+                EditTitleResult.Loading,
+                EditTitleResult.Success
+        ) {
+            val exp = "new title"
+            editTitleViewModel.editTitle(id, exp)
+            val act = runBlocking { titleChannel.receive() }
+            assertEquals(exp, act)
+        }
     }
 
     @Test
-    fun editTitleEmptyTitleError() = editTitleViewModel.resultLiveData.assertValues(
-            EditTitleResult.Loading,
-            EditTitleResult.EmptyTitleError
-    ) {
-        editTitleViewModel.editTitle(id, "")
+    fun editTitleEmptyTitleError() = mainCoroutineRule.runBlockingTest {
+        editTitleViewModel.assertValues(
+                EditTitleResult.Loading,
+                EditTitleResult.EmptyTitleError
+        ) {
+            editTitleViewModel.editTitle(id, "")
+        }
     }
 
     @Test

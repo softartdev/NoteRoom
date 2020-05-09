@@ -2,14 +2,17 @@ package com.softartdev.noteroom.ui.settings.security.change
 
 import android.os.Bundle
 import android.widget.ProgressBar
-import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
+import androidx.lifecycle.viewModelScope
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.softartdev.noteroom.R
 import com.softartdev.noteroom.ui.base.BaseDialogFragment
 import com.softartdev.noteroom.util.invisible
 import com.softartdev.noteroom.util.visible
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import org.koin.androidx.scope.lifecycleScope
 import org.koin.androidx.viewmodel.scope.viewModel
 
@@ -43,7 +46,7 @@ class ChangePasswordDialog : BaseDialogFragment(
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        changeViewModel.resultLiveData.observe(this as LifecycleOwner, this)
+        changeViewModel.viewModelScope.launch(Dispatchers.Main) { changeViewModel.flow.collect { onChanged(it) } }
     }
 
     override fun onOkClicked() = changeViewModel.checkChange(

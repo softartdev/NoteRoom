@@ -5,6 +5,7 @@ import com.softartdev.noteroom.data.CryptUseCase
 import com.softartdev.noteroom.util.MainCoroutineRule
 import com.softartdev.noteroom.util.StubEditable
 import com.softartdev.noteroom.util.assertValues
+import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
@@ -22,27 +23,33 @@ class ConfirmViewModelTest {
     private val confirmViewModel = ConfirmViewModel(cryptUseCase)
 
     @Test
-    fun conformCheckPasswordsNoMatchError() = confirmViewModel.resultLiveData.assertValues(
-            ConfirmResult.Loading,
-            ConfirmResult.PasswordsNoMatchError
-    ) {
-        confirmViewModel.conformCheck(StubEditable("pass"), StubEditable("new pass"))
+    fun conformCheckPasswordsNoMatchError() = mainCoroutineRule.runBlockingTest {
+        confirmViewModel.assertValues(
+                ConfirmResult.Loading,
+                ConfirmResult.PasswordsNoMatchError
+        ) {
+            confirmViewModel.conformCheck(StubEditable("pass"), StubEditable("new pass"))
+        }
     }
 
     @Test
-    fun conformCheckEmptyPasswordError() = confirmViewModel.resultLiveData.assertValues(
-            ConfirmResult.Loading,
-            ConfirmResult.EmptyPasswordError
-    ) {
-        confirmViewModel.conformCheck(StubEditable(""), StubEditable(""))
+    fun conformCheckEmptyPasswordError() = mainCoroutineRule.runBlockingTest {
+        confirmViewModel.assertValues(
+                ConfirmResult.Loading,
+                ConfirmResult.EmptyPasswordError
+        ) {
+            confirmViewModel.conformCheck(StubEditable(""), StubEditable(""))
+        }
     }
 
     @Test
-    fun conformCheckSuccess() = confirmViewModel.resultLiveData.assertValues(
-            ConfirmResult.Loading,
-            ConfirmResult.Success
-    ) {
-        confirmViewModel.conformCheck(StubEditable("pass"), StubEditable("pass"))
+    fun conformCheckSuccess() = mainCoroutineRule.runBlockingTest {
+        confirmViewModel.assertValues(
+                ConfirmResult.Loading,
+                ConfirmResult.Success
+        ) {
+            confirmViewModel.conformCheck(StubEditable("pass"), StubEditable("pass"))
+        }
     }
 
     @Test

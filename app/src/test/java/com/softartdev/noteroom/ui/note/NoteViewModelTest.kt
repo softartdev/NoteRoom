@@ -47,67 +47,79 @@ class NoteViewModelTest {
 
     @After
     fun tearDown() = mainCoroutineRule.runBlockingTest {
-        noteViewModel.resultLiveData.value = null
+//        noteViewModel.flow.value = null
     }
 
     @Test
-    fun createNote() = noteViewModel.resultLiveData.assertValues(
-            NoteResult.Loading,
-            NoteResult.Created(id)
-    ) {
-        noteViewModel.createNote()
+    fun createNote() = mainCoroutineRule.runBlockingTest {
+        noteViewModel.assertValues(
+                NoteResult.Loading,
+                NoteResult.Created(id)
+        ) {
+            noteViewModel.createNote()
+        }
     }
 
     @Test
-    fun loadNote() = noteViewModel.resultLiveData.assertValues(
-            NoteResult.Loading,
-            NoteResult.Loaded(note)
-    ) {
-        noteViewModel.loadNote(id)
+    fun loadNote() = mainCoroutineRule.runBlockingTest {
+        noteViewModel.assertValues(
+                NoteResult.Loading,
+                NoteResult.Loaded(note)
+        ) {
+            noteViewModel.loadNote(id)
+        }
     }
 
     @Test
-    fun saveNoteEmpty() = noteViewModel.resultLiveData.assertValues(
-            NoteResult.Loading,
-            NoteResult.Empty
-    ) {
-        noteViewModel.saveNote("", "")
+    fun saveNoteEmpty() = mainCoroutineRule.runBlockingTest {
+        noteViewModel.assertValues(
+                NoteResult.Loading,
+                NoteResult.Empty
+        ) {
+            noteViewModel.saveNote("", "")
+        }
     }
 
     @Test
-    fun saveNote() = noteViewModel.resultLiveData.assertValues(
-            NoteResult.Loading,
-            NoteResult.Saved(title)
-    ) {
-        noteViewModel.setIdForTest(id)
-        noteViewModel.saveNote(title, text)
+    fun saveNote() = mainCoroutineRule.runBlockingTest {
+        noteViewModel.assertValues(
+                NoteResult.Loading,
+                NoteResult.Saved(title)
+        ) {
+            noteViewModel.setIdForTest(id)
+            noteViewModel.saveNote(title, text)
+        }
     }
 
     @Test
-    fun editTitle() = noteViewModel.resultLiveData.assertValues(
-            NoteResult.Loading,
-            NoteResult.NavEditTitle(id),
-            NoteResult.TitleUpdated(title)
-    ) {
-        noteViewModel.setIdForTest(id)
-        noteViewModel.editTitle()
-        runBlocking { titleChannel.send(title) }
+    fun editTitle() = mainCoroutineRule.runBlockingTest {
+        noteViewModel.assertValues(
+                NoteResult.Loading,
+                NoteResult.NavEditTitle(id),
+                NoteResult.TitleUpdated(title)
+        ) {
+            noteViewModel.setIdForTest(id)
+            noteViewModel.editTitle()
+            runBlocking { titleChannel.send(title) }
+        }
     }
 
     @Test
-    fun deleteNote() = noteViewModel.resultLiveData.assertValues(
-            NoteResult.Loading,
-            NoteResult.Deleted
-    ) {
-        noteViewModel.setIdForTest(id)
-        noteViewModel.deleteNote()
+    fun deleteNote() = mainCoroutineRule.runBlockingTest {
+        noteViewModel.assertValues(
+                NoteResult.Loading,
+                NoteResult.Deleted
+        ) {
+            noteViewModel.setIdForTest(id)
+            noteViewModel.deleteNote()
+        }
     }
 
     @Test
     fun checkSaveChange() = mainCoroutineRule.runBlockingTest {
         Mockito.`when`(noteUseCase.isChanged(id, title, text)).thenReturn(true)
         Mockito.`when`(noteUseCase.isEmpty(id)).thenReturn(false)
-        noteViewModel.resultLiveData.assertValues(
+        noteViewModel.assertValues(
                 NoteResult.Loading,
                 NoteResult.CheckSaveChange
         ) {
@@ -120,7 +132,7 @@ class NoteViewModelTest {
     fun checkSaveChangeNavBack() = mainCoroutineRule.runBlockingTest {
         Mockito.`when`(noteUseCase.isChanged(id, title, text)).thenReturn(false)
         Mockito.`when`(noteUseCase.isEmpty(id)).thenReturn(false)
-        noteViewModel.resultLiveData.assertValues(
+        noteViewModel.assertValues(
                 NoteResult.Loading,
                 NoteResult.NavBack
         ) {
@@ -133,7 +145,7 @@ class NoteViewModelTest {
     fun checkSaveChangeDeleted() = mainCoroutineRule.runBlockingTest {
         Mockito.`when`(noteUseCase.isChanged(id, title, text)).thenReturn(false)
         Mockito.`when`(noteUseCase.isEmpty(id)).thenReturn(true)
-        noteViewModel.resultLiveData.assertValues(
+        noteViewModel.assertValues(
                 NoteResult.Loading,
                 NoteResult.Deleted
         ) {
@@ -143,18 +155,20 @@ class NoteViewModelTest {
     }
 
     @Test
-    fun saveNoteAndNavBack() = noteViewModel.resultLiveData.assertValues(
-            NoteResult.Loading,
-            NoteResult.NavBack
-    ) {
-        noteViewModel.setIdForTest(id)
-        noteViewModel.saveNoteAndNavBack(title, text)
+    fun saveNoteAndNavBack() = mainCoroutineRule.runBlockingTest {
+        noteViewModel.assertValues(
+                NoteResult.Loading,
+                NoteResult.NavBack
+        ) {
+            noteViewModel.setIdForTest(id)
+            noteViewModel.saveNoteAndNavBack(title, text)
+        }
     }
 
     @Test
     fun doNotSaveAndNavBack() = mainCoroutineRule.runBlockingTest {
         Mockito.`when`(noteUseCase.isEmpty(id)).thenReturn(false)
-        noteViewModel.resultLiveData.assertValues(
+        noteViewModel.assertValues(
                 NoteResult.Loading,
                 NoteResult.NavBack
         ) {
@@ -166,7 +180,7 @@ class NoteViewModelTest {
     @Test
     fun doNotSaveAndNavBackDeleted() = mainCoroutineRule.runBlockingTest {
         Mockito.`when`(noteUseCase.isEmpty(id)).thenReturn(true)
-        noteViewModel.resultLiveData.assertValues(
+        noteViewModel.assertValues(
                 NoteResult.Loading,
                 NoteResult.Deleted
         ) {

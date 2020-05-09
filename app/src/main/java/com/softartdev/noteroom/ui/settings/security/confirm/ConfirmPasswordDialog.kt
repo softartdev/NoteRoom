@@ -2,14 +2,17 @@ package com.softartdev.noteroom.ui.settings.security.confirm
 
 import android.os.Bundle
 import android.widget.ProgressBar
-import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
+import androidx.lifecycle.viewModelScope
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.softartdev.noteroom.R
 import com.softartdev.noteroom.ui.base.BaseDialogFragment
 import com.softartdev.noteroom.util.invisible
 import com.softartdev.noteroom.util.visible
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import org.koin.androidx.scope.lifecycleScope
 import org.koin.androidx.viewmodel.scope.viewModel
 
@@ -37,7 +40,7 @@ class ConfirmPasswordDialog : BaseDialogFragment(
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        confirmViewModel.resultLiveData.observe(this as LifecycleOwner, this)
+        confirmViewModel.viewModelScope.launch(Dispatchers.Main) { confirmViewModel.flow.collect { onChanged(it) } }
     }
 
     override fun onOkClicked() = confirmViewModel.conformCheck(

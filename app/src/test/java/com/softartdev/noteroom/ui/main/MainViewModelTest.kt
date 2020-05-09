@@ -30,7 +30,7 @@ class MainViewModelTest {
     fun success() = mainCoroutineRule.runBlockingTest {
         val notes = emptyList<Note>()
         Mockito.`when`(noteUseCase.getNotes()).thenReturn(flowOf(notes))
-        mainViewModel.resultLiveData.assertValues(
+        mainViewModel.assertValues(
                 NoteListResult.Loading,
                 NoteListResult.Success(notes)
         ) {
@@ -41,7 +41,7 @@ class MainViewModelTest {
     @Test
     fun navMain() = mainCoroutineRule.runBlockingTest {
         Mockito.`when`(noteUseCase.getNotes()).thenReturn(flow { throw SQLiteException() })
-        mainViewModel.resultLiveData.assertValues(
+        mainViewModel.assertValues(
                 NoteListResult.Loading,
                 NoteListResult.NavMain
         ){
@@ -52,7 +52,7 @@ class MainViewModelTest {
     @Test
     fun error() = mainCoroutineRule.runBlockingTest {
         Mockito.`when`(noteUseCase.getNotes()).thenReturn(flow { throw Throwable() })
-        mainViewModel.resultLiveData.assertValues(
+        mainViewModel.assertValues(
                 NoteListResult.Loading,
                 NoteListResult.Error(null)
         ) {

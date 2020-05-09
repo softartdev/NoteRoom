@@ -1,6 +1,5 @@
 package com.softartdev.noteroom.ui.base
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.softartdev.noteroom.util.EspressoIdlingResource
@@ -8,9 +7,13 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import timber.log.Timber
 
-abstract class BaseViewModel<T> : ViewModel() {
+@OptIn(ExperimentalCoroutinesApi::class)
+abstract class BaseViewModel<T : Any> : ViewModel() {
 
-    val resultLiveData = MutableLiveData<T>()
+//    val resultLiveData = MutableLiveData<T>()
+    private val _stateFlow = MutableStateFlow<T?>(null)
+    private val stateFlow: StateFlow<T?> get() = _stateFlow
+    val flow: Flow<T> get() = _stateFlow.filterNotNull()
 
     open val loadingResult: T? = null
 
@@ -51,7 +54,7 @@ abstract class BaseViewModel<T> : ViewModel() {
     }
 
     private suspend inline fun onResult(result: T) = withContext(Dispatchers.Main) {
-        resultLiveData.value = result
+        _stateFlow.value = result
     }
 
     abstract fun errorResult(throwable: Throwable): T

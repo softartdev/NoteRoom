@@ -28,7 +28,7 @@ class EnterViewModelTest {
     fun enterCheckSuccess() = mainCoroutineRule.runBlockingTest {
         val pass = StubEditable("pass")
         Mockito.`when`(cryptUseCase.checkPassword(pass)).thenReturn(true)
-        enterViewModel.resultLiveData.assertValues(
+        enterViewModel.assertValues(
                 EnterResult.Loading,
                 EnterResult.Success
         ) {
@@ -40,7 +40,7 @@ class EnterViewModelTest {
     fun enterCheckIncorrectPasswordError() = mainCoroutineRule.runBlockingTest {
         val pass = StubEditable("pass")
         Mockito.`when`(cryptUseCase.checkPassword(pass)).thenReturn(false)
-        enterViewModel.resultLiveData.assertValues(
+        enterViewModel.assertValues(
                 EnterResult.Loading,
                 EnterResult.IncorrectPasswordError
         ) {
@@ -49,11 +49,13 @@ class EnterViewModelTest {
     }
 
     @Test
-    fun enterCheckEmptyPasswordError() = enterViewModel.resultLiveData.assertValues(
-            EnterResult.Loading,
-            EnterResult.EmptyPasswordError
-    ) {
-        enterViewModel.enterCheck(StubEditable(""))
+    fun enterCheckEmptyPasswordError() = mainCoroutineRule.runBlockingTest {
+        enterViewModel.assertValues(
+                EnterResult.Loading,
+                EnterResult.EmptyPasswordError
+        ) {
+            enterViewModel.enterCheck(StubEditable(""))
+        }
     }
 
     @Test

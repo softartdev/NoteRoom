@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import androidx.lifecycle.Observer
+import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.softartdev.noteroom.R
 import com.softartdev.noteroom.database.Note
@@ -16,6 +17,9 @@ import com.softartdev.noteroom.util.tintIcon
 import com.softartdev.noteroom.util.visible
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.view_error.view.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import org.koin.androidx.scope.lifecycleScope
 import org.koin.androidx.viewmodel.scope.viewModel
 
@@ -43,7 +47,7 @@ class MainActivity : BaseActivity(
             startActivity(NoteActivity.getStartIntent(this, 0L))
         }
         main_error_view.button_reload.setOnClickListener { mainViewModel.updateNotes() }
-        mainViewModel.resultLiveData.observe(this, this)
+        mainViewModel.viewModelScope.launch(Dispatchers.Main) { mainViewModel.flow.collect { onChanged(it) } }
         mainViewModel.updateNotes()
     }
 

@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import androidx.lifecycle.Observer
+import androidx.lifecycle.viewModelScope
 import com.softartdev.noteroom.R
 import com.softartdev.noteroom.ui.base.BaseActivity
 import com.softartdev.noteroom.ui.main.MainActivity
@@ -12,6 +13,9 @@ import com.softartdev.noteroom.util.hideKeyboard
 import com.softartdev.noteroom.util.visible
 import kotlinx.android.synthetic.main.activity_sign_in.*
 import kotlinx.android.synthetic.main.view_error.view.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import org.koin.androidx.scope.lifecycleScope
 import org.koin.androidx.viewmodel.scope.viewModel
 
@@ -27,7 +31,7 @@ class SignInActivity : BaseActivity(R.layout.activity_sign_in), Observer<SignInR
             true
         }
         sign_in_button.setOnClickListener { attemptSignIn() }
-        signInViewModel.resultLiveData.observe(this, this)
+        signInViewModel.viewModelScope.launch(Dispatchers.Main) { signInViewModel.flow.collect { onChanged(it) } }
     }
 
     private fun attemptSignIn() {
