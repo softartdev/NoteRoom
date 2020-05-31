@@ -37,12 +37,10 @@ fun <T> LiveData<T>.getOrAwaitValue(
 ): T {
     var data: T? = null
     val latch = CountDownLatch(1)
-    val observer = object : Observer<T> {
-        override fun onChanged(o: T?) {
-            data = o
-            latch.countDown()
+    val observer = Observer<T> { o ->
+        data = o
+        latch.countDown()
 //            this@getOrAwaitValue.removeObserver(this)
-        }
     }
     this.observeForever(observer)
     afterObserve.invoke()
@@ -53,19 +51,6 @@ fun <T> LiveData<T>.getOrAwaitValue(
     this.removeObserver(observer)
     @Suppress("UNCHECKED_CAST")
     return data as T
-}
-
-/**
- * Observes a [LiveData] until the `block` is done executing.
- */
-fun <T> LiveData<T>.observeForTesting(block: () -> Unit) {
-    val observer = Observer<T> { }
-    try {
-        observeForever(observer)
-        block()
-    } finally {
-        removeObserver(observer)
-    }
 }
 
 /**
@@ -104,25 +89,3 @@ fun <T> LiveData<T>.assertValues(
     verify(observer, times(expectedValues.size)).onChanged(any())
 }
 
-fun <T> LiveData<T>.getOrAwaitValues(
-        count: Int,
-        time: Long = 2,
-        timeUnit: TimeUnit = TimeUnit.SECONDS,
-        afterObserve: () -> Unit = {}
-): List<T> {
-    val data = mutableListOf<T>()
-    val latch = CountDownLatch(count)
-    val observer = Observer<T> {
-        data += it
-        latch.countDown()
-    }
-    this.observeForever(observer)
-    afterObserve.invoke()
-    // Don't wait indefinitely if the LiveData is not set.
-    if (!latch.await(time, timeUnit)) {
-        throw TimeoutException("LiveData value was never set.")
-    }
-    this.removeObserver(observer)
-    @Suppress("UNCHECKED_CAST")
-    return data
-}
