@@ -9,27 +9,27 @@ jobs:
   ui_test_job:
     name: UI-tests on emulator
     runs-on: macos-latest
-      strategy:
-        matrix:
-          api-level: [16, 23, 29]
-      steps:
-        - uses: actions/checkout@v1
-        - name: Cache gradle
-          uses: actions/cache@v1
-          with:
-            path: ~/.gradle/caches
-            key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
-            restore-keys: |
-              ${{ runner.os }}-gradle-
-        - name: Decrypt large secret
-          run: ./.github/scripts/decrypt_secret.sh
-          env:
-            LARGE_SECRET_PASSPHRASE: ${{ secrets.LARGE_SECRET_PASSPHRASE }}
-        - name: Run UI-tests on emulator
-          uses: reactivecircus/android-emulator-runner@v2
-          with:
-            api-level: ${{ matrix.api-level }}
-            script: ./gradlew connectedCheck
+    strategy:
+      matrix:
+        api-level: [16, 23, 29]
+    steps:
+      - uses: actions/checkout@v1
+      - name: Cache gradle
+        uses: actions/cache@v1
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      - name: Decrypt large secret
+        run: ./.github/scripts/decrypt_secret.sh
+        env:
+          LARGE_SECRET_PASSPHRASE: ${{ secrets.LARGE_SECRET_PASSPHRASE }}
+      - name: Run UI-tests on emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ matrix.api-level }}
+          script: ./gradlew connectedCheck
   build_unit_test_publish_job:
     name: Build -> Unit-test -> Publish
     needs: ui_test_job
