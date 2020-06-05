@@ -9,6 +9,9 @@ jobs:
   build_test_publish_job:
     name: Build-Test-Publish job
     runs-on: macos-latest
+    strategy:
+      matrix:
+        api-level: [16, 23, 29]
     steps:
       - uses: actions/checkout@v1
       - name: Cache gradle
@@ -22,6 +25,11 @@ jobs:
         run: ./.github/scripts/decrypt_secret.sh
         env:
           LARGE_SECRET_PASSPHRASE: ${{ secrets.LARGE_SECRET_PASSPHRASE }}
+      - name: Run UI-tests on emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ matrix.api-level }}
+          script: ./gradlew connectedCheck
       - name: Upload to Google Play
         run: bundle exec fastlane build_bundle_publish
       - name: Archive output artifacts
