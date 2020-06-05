@@ -29,6 +29,7 @@ jobs:
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: ${{ matrix.api-level }}
+          target: google_apis
           script: ./gradlew connectedCheck
   build_unit_test_publish_job:
     name: Build -> Unit-test -> Publish
