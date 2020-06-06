@@ -9,7 +9,9 @@ jobs:
   ui_test_job:
     name: UI-tests on emulator
     runs-on: macos-latest
+    continue-on-error: true
     strategy:
+      fail-fast: false
       matrix:
         api-level: [21, 23, 29]
     steps:
