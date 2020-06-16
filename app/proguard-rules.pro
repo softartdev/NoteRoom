@@ -30,11 +30,11 @@
 -dontobfuscate
 
 -keepattributes *Annotation*
--keepattributes SourceFile,LineNumberTable
--keep public class * extends java.lang.Exception
+-keepattributes SourceFile,LineNumberTable        # Keep file names and line numbers.
+-keep public class * extends java.lang.Exception  # Optional: Keep custom exceptions.
 
--keep class com.crashlytics.** { *; }
--dontwarn com.crashlytics.**
+-keep class com.google.firebase.crashlytics.** { *; }
+-dontwarn com.google.firebase.crashlytics.**
 
 -keep interface com.softartdev.noteroom.database.NoteDao
 
