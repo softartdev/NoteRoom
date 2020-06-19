@@ -56,4 +56,4 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
           name: output-artifacts
-          path: app/build/outputs/
+          path: app/build/
