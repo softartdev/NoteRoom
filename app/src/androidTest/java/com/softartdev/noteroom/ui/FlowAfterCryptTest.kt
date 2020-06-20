@@ -63,11 +63,6 @@ class FlowAfterCryptTest {
         val settingsMaterialTextView = onView(Matchers.allOf(
                 withId(R.id.title),
                 withText(R.string.settings),
-                childAtPosition(
-                        parentMatcher = childAtPosition(
-                                parentMatcher = withId(R.id.content),
-                                position = 0),
-                        position = 0),
                 isDisplayed()))
         settingsMaterialTextView.perform(click())
 
