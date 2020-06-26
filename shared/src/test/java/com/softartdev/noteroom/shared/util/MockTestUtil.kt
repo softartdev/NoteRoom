@@ -1,4 +1,4 @@
-package com.softartdev.noteroom.util
+package com.softartdev.noteroom.shared.util
 
 import org.mockito.Mockito
 

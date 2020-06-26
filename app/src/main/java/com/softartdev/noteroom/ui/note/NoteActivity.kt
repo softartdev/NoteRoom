@@ -120,7 +120,7 @@ class NoteActivity : BaseActivity(R.layout.activity_note), Observer<NoteResult> 
     private fun showDeleteDialog() = with(AlertDialog.Builder(this)) {
         setTitle(R.string.action_delete_note)
         setMessage(R.string.note_delete_dialog_message)
-        setPositiveButton(android.R.string.yes) { _, _ -> noteViewModel.deleteNote() }
+        setPositiveButton(android.R.string.ok) { _, _ -> noteViewModel.deleteNote() }
         setNegativeButton(android.R.string.cancel) { dialog, _ -> dialog.cancel() }
         show()
     }

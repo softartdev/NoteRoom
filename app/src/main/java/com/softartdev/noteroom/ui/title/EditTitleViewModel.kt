@@ -1,6 +1,6 @@
 package com.softartdev.noteroom.ui.title
 
-import com.softartdev.noteroom.data.NoteUseCase
+import com.softartdev.noteroom.shared.data.NoteUseCase
 import com.softartdev.noteroom.ui.base.BaseViewModel
 
 

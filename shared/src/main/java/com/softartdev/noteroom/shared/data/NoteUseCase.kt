@@ -1,6 +1,6 @@
-package com.softartdev.noteroom.data
+package com.softartdev.noteroom.shared.data
 
-import com.softartdev.noteroom.database.Note
+import com.softartdev.noteroom.shared.database.Note
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow

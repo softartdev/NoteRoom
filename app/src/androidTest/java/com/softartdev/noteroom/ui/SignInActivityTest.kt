@@ -12,7 +12,7 @@ import androidx.test.filters.LargeTest
 import androidx.test.rule.ActivityTestRule
 import com.commonsware.cwac.saferoom.SQLCipherUtils
 import com.softartdev.noteroom.R
-import com.softartdev.noteroom.data.SafeRepo
+import com.softartdev.noteroom.shared.data.SafeRepo
 import com.softartdev.noteroom.ui.splash.SplashActivity
 import com.softartdev.noteroom.util.EspressoIdlingResource
 import kotlinx.coroutines.flow.first

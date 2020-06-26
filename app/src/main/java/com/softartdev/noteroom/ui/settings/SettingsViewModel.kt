@@ -1,6 +1,6 @@
 package com.softartdev.noteroom.ui.settings
 
-import com.softartdev.noteroom.data.CryptUseCase
+import com.softartdev.noteroom.shared.data.CryptUseCase
 import com.softartdev.noteroom.ui.base.BaseViewModel
 
 

@@ -1,4 +1,4 @@
-package com.softartdev.noteroom.data
+package com.softartdev.noteroom.shared.data
 
 import android.text.Editable
 import android.text.SpannableStringBuilder

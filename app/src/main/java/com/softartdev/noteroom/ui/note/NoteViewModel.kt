@@ -1,7 +1,7 @@
 package com.softartdev.noteroom.ui.note
 
 import androidx.annotation.VisibleForTesting
-import com.softartdev.noteroom.data.NoteUseCase
+import com.softartdev.noteroom.shared.data.NoteUseCase
 import com.softartdev.noteroom.ui.base.BaseViewModel
 import com.softartdev.noteroom.util.createTitle
 import timber.log.Timber

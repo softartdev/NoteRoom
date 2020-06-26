@@ -2,7 +2,7 @@ package com.softartdev.noteroom.di
 
 import android.content.Context
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.softartdev.noteroom.util.MainCoroutineRule
+import com.softartdev.noteroom.shared.util.MainCoroutineRule
 import org.junit.Rule
 import org.junit.Test
 import org.junit.experimental.categories.Category

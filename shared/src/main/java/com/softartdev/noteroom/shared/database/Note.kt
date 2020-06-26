@@ -1,4 +1,4 @@
-package com.softartdev.noteroom.database
+package com.softartdev.noteroom.shared.database
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

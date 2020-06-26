@@ -1,4 +1,4 @@
-package com.softartdev.noteroom.data
+package com.softartdev.noteroom.shared.data
 
 import android.content.Context
 import android.text.Editable
@@ -6,8 +6,8 @@ import android.text.SpannableStringBuilder
 import androidx.room.Room
 import com.commonsware.cwac.saferoom.SQLCipherUtils
 import com.commonsware.cwac.saferoom.SafeHelperFactory
-import com.softartdev.noteroom.database.NoteDao
-import com.softartdev.noteroom.database.NoteDatabase
+import com.softartdev.noteroom.shared.database.NoteDao
+import com.softartdev.noteroom.shared.database.NoteDatabase
 
 class SafeRepo(
         private val context: Context

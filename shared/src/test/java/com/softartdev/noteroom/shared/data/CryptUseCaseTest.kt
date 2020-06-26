@@ -1,9 +1,9 @@
-package com.softartdev.noteroom.data
+package com.softartdev.noteroom.shared.data
 
 import com.commonsware.cwac.saferoom.SQLCipherUtils
-import com.softartdev.noteroom.database.NoteDao
-import com.softartdev.noteroom.util.MainCoroutineRule
-import com.softartdev.noteroom.util.StubEditable
+import com.softartdev.noteroom.shared.database.NoteDao
+import com.softartdev.noteroom.shared.util.MainCoroutineRule
+import com.softartdev.noteroom.shared.util.StubEditable
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
