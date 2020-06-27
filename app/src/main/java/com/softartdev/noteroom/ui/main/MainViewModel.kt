@@ -1,7 +1,7 @@
 package com.softartdev.noteroom.ui.main
 
-import com.softartdev.noteroom.data.NoteUseCase
-import com.softartdev.noteroom.database.Note
+import com.softartdev.noteroom.shared.data.NoteUseCase
+import com.softartdev.noteroom.shared.database.Note
 import com.softartdev.noteroom.ui.base.BaseViewModel
 import kotlinx.coroutines.flow.map
 import net.sqlcipher.database.SQLiteException

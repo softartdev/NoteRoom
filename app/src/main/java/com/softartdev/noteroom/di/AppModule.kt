@@ -1,8 +1,8 @@
 package com.softartdev.noteroom.di
 
-import com.softartdev.noteroom.data.CryptUseCase
-import com.softartdev.noteroom.data.NoteUseCase
-import com.softartdev.noteroom.data.SafeRepo
+import com.softartdev.noteroom.shared.data.CryptUseCase
+import com.softartdev.noteroom.shared.data.NoteUseCase
+import com.softartdev.noteroom.shared.data.SafeRepo
 import com.softartdev.noteroom.ui.main.MainActivity
 import com.softartdev.noteroom.ui.main.MainViewModel
 import com.softartdev.noteroom.ui.note.NoteActivity
