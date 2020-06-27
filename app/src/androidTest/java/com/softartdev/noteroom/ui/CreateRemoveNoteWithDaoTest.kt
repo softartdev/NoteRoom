@@ -14,8 +14,8 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.rule.ActivityTestRule
 import com.softartdev.noteroom.R
-import com.softartdev.noteroom.data.SafeRepo
-import com.softartdev.noteroom.database.Note
+import com.softartdev.noteroom.shared.data.SafeRepo
+import com.softartdev.noteroom.shared.database.Note
 import com.softartdev.noteroom.ui.splash.SplashActivity
 import com.softartdev.noteroom.util.EspressoIdlingResource
 import kotlinx.coroutines.ExperimentalCoroutinesApi

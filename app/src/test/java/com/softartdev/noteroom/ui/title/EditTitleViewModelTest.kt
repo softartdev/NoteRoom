@@ -1,10 +1,10 @@
 package com.softartdev.noteroom.ui.title
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.softartdev.noteroom.data.NoteUseCase
-import com.softartdev.noteroom.database.Note
-import com.softartdev.noteroom.util.MainCoroutineRule
-import com.softartdev.noteroom.util.assertValues
+import com.softartdev.noteroom.shared.data.NoteUseCase
+import com.softartdev.noteroom.shared.database.Note
+import com.softartdev.noteroom.shared.test.util.MainCoroutineRule
+import com.softartdev.noteroom.shared.test.util.assertValues
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.runBlocking

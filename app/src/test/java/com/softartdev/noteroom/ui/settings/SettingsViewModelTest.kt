@@ -1,9 +1,9 @@
 package com.softartdev.noteroom.ui.settings
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.softartdev.noteroom.data.CryptUseCase
-import com.softartdev.noteroom.util.MainCoroutineRule
-import com.softartdev.noteroom.util.getOrAwaitValue
+import com.softartdev.noteroom.shared.data.CryptUseCase
+import com.softartdev.noteroom.shared.test.util.MainCoroutineRule
+import com.softartdev.noteroom.shared.test.util.getOrAwaitValue
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.Assert.assertEquals
 import org.junit.Rule

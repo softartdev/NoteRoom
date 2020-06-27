@@ -1,10 +1,10 @@
 package com.softartdev.noteroom.ui.splash
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.softartdev.noteroom.data.CryptUseCase
-import com.softartdev.noteroom.data.SafeSQLiteException
-import com.softartdev.noteroom.util.MainCoroutineRule
-import com.softartdev.noteroom.util.getOrAwaitValue
+import com.softartdev.noteroom.shared.data.CryptUseCase
+import com.softartdev.noteroom.shared.data.SafeSQLiteException
+import com.softartdev.noteroom.shared.test.util.MainCoroutineRule
+import com.softartdev.noteroom.shared.test.util.getOrAwaitValue
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test

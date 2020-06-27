@@ -1,7 +1,7 @@
 package com.softartdev.noteroom.ui.settings.security.confirm
 
 import android.text.Editable
-import com.softartdev.noteroom.data.CryptUseCase
+import com.softartdev.noteroom.shared.data.CryptUseCase
 import com.softartdev.noteroom.ui.base.BaseViewModel
 
 
