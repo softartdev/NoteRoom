@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.softartdev.noteroom.util
+package com.softartdev.noteroom.shared.test.util
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer

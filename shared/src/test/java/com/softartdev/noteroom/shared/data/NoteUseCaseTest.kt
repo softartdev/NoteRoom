@@ -2,8 +2,8 @@ package com.softartdev.noteroom.shared.data
 
 import com.softartdev.noteroom.shared.database.Note
 import com.softartdev.noteroom.shared.database.NoteDao
-import com.softartdev.noteroom.shared.util.MainCoroutineRule
-import com.softartdev.noteroom.shared.util.anyObject
+import com.softartdev.noteroom.shared.test.util.MainCoroutineRule
+import com.softartdev.noteroom.shared.test.util.anyObject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf

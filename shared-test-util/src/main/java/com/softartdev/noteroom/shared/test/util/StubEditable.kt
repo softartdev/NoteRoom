@@ -1,4 +1,4 @@
-package com.softartdev.noteroom.shared.util
+package com.softartdev.noteroom.shared.test.util
 
 import android.text.Editable
 import android.text.InputFilter

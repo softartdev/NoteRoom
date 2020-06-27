@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.softartdev.noteroom.shared.util
+package com.softartdev.noteroom.shared.test.util
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi

@@ -39,6 +39,7 @@ dependencies {
     api "com.commonsware.cwac:saferoom.x:1.2.1"
     api 'net.zetetic:android-database-sqlcipher:4.4.0@aar'
     implementation "com.jakewharton.timber:timber:$timber_version"
+    testImplementation project(path: ':shared-test-util')
     testImplementation "junit:junit:$junit_version"
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version"
     testImplementation "org.mockito:mockito-core:$mockito_version"
