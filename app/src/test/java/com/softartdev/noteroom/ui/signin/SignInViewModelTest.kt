@@ -1,11 +1,11 @@
 package com.softartdev.noteroom.ui.signin
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.softartdev.noteroom.data.CryptUseCase
-import com.softartdev.noteroom.util.MainCoroutineRule
-import com.softartdev.noteroom.util.StubEditable
-import com.softartdev.noteroom.util.anyObject
-import com.softartdev.noteroom.util.assertValues
+import com.softartdev.noteroom.shared.data.CryptUseCase
+import com.softartdev.noteroom.shared.test.util.MainCoroutineRule
+import com.softartdev.noteroom.shared.test.util.StubEditable
+import com.softartdev.noteroom.shared.test.util.anyObject
+import com.softartdev.noteroom.shared.test.util.assertValues
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Rule

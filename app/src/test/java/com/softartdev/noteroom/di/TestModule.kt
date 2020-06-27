@@ -1,8 +1,8 @@
 package com.softartdev.noteroom.di
 
-import com.softartdev.noteroom.data.CryptUseCase
-import com.softartdev.noteroom.data.NoteUseCase
-import com.softartdev.noteroom.data.SafeRepo
+import com.softartdev.noteroom.shared.data.CryptUseCase
+import com.softartdev.noteroom.shared.data.NoteUseCase
+import com.softartdev.noteroom.shared.data.SafeRepo
 import com.softartdev.noteroom.util.PreferencesHelper
 import org.koin.dsl.module
 import org.mockito.Mockito.mock

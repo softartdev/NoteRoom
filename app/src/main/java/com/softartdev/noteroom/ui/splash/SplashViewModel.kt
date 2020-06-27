@@ -1,6 +1,6 @@
 package com.softartdev.noteroom.ui.splash
 
-import com.softartdev.noteroom.data.CryptUseCase
+import com.softartdev.noteroom.shared.data.CryptUseCase
 import com.softartdev.noteroom.ui.base.BaseViewModel
 
 class SplashViewModel(

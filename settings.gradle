@@ -1,1 +1,3 @@
+include ':shared-test-util'
+include ':shared'
 include ':app'
