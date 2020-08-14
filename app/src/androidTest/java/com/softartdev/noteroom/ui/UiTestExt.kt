@@ -17,18 +17,9 @@ import timber.log.Timber
 
 
 fun togglePasswordVisibility(textInputLayoutResId: Int) {
-    val textInputLayoutFrameLayoutRoot = childAtPosition(
-            parentMatcher = ViewMatchers.withId(textInputLayoutResId),
-            position = 0)
-    val checkableImageButtonFrameLayoutRoot = childAtPosition(
-            parentMatcher = textInputLayoutFrameLayoutRoot,
-            position = 2
-    )
     val checkableImageButton = Espresso.onView(Matchers.allOf(
             ViewMatchers.withId(R.id.text_input_end_icon),
-            childAtPosition(
-                    parentMatcher = checkableImageButtonFrameLayoutRoot,
-                    position = 0),
+            ViewMatchers.isDescendantOfA(ViewMatchers.withId(textInputLayoutResId)),
             ViewMatchers.isDisplayed()))
     checkableImageButton.perform(ViewActions.click())
 }
