@@ -123,5 +123,5 @@ dependencies {
     androidTestImplementation "androidx.room:room-testing:$room_version"
     androidTestImplementation "androidx.arch.core:core-testing:$arch_version"
     androidTestImplementation 'androidx.test:runner:1.2.0'
-    androidTestUtil 'androidx.test:orchestrator:1.2.0'
+    androidTestUtil 'androidx.test:orchestrator:1.3.0'
 }
